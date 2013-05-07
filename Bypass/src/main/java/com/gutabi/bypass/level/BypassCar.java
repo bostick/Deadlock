@@ -144,7 +144,7 @@ public class BypassCar extends Car {
 			return;
 		} else {
 			
-			if (driver.overallPos.angle == newPos.angle) {
+			if (DMath.equals(driver.overallPos.angle, newPos.angle)) {
 				OBB so = Geom.localToWorld(localAABB, driver.overallPos.angle, driver.overallPos.p);
 				OBB eo = Geom.localToWorld(localAABB, newPos.angle, newPos.p);
 				SweptOBB swept = new SweptOBB(so, eo);

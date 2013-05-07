@@ -483,59 +483,6 @@ public class GraphPositionPathPosition implements Serializable {
 		return new GraphPositionPathPosition(path, path.nextVertexIndex(index, param), 0.0);
 	}
 	
-	
-	
-	
-	GPPAccumulator forwardSearchAcc = new GPPAccumulator() {
-		
-		Point p;
-		
-		int closestIndex;
-		double closestParam;
-		double closestDistance;
-		
-		public void reset(Point p) {
-			this.p = p;
-			closestIndex = GraphPositionPathPosition.this.index;
-			closestParam = GraphPositionPathPosition.this.param;
-			closestDistance = Point.distance(p, GraphPositionPathPosition.this.p);
-		}
-		
-		public void apply(GraphPositionPathPosition p0, GraphPositionPathPosition p1) {
-			
-			assert p0.combo < p1.combo;
-			
-			GraphPositionPathPosition a = p0.floor();
-			GraphPositionPathPosition b = p1.ceil();
-			Point aa = a.p;
-			Point bb = b.p;
-			
-			double u = Point.u(aa, p, bb);
-			if (u < 0.0) {
-				u = 0.0;
-			} else if (u > 1.0) {
-				u = 1.0;
-			}
-			
-			Point pOnPath = Point.point(aa, bb, u);
-				
-			double dist = Point.distance(p, pOnPath);
-			if (dist < closestDistance) {
-				closestIndex = a.index;
-				closestParam = u;
-				
-				closestDistance = dist;
-				
-			}
-			
-		}
-		
-		public GraphPositionPathPosition result() {
-			return new GraphPositionPathPosition(path, closestIndex, closestParam);
-		}
-		
-	};
-	
 	/**
 	 * searches forward from start position
 	 * 
@@ -543,6 +490,7 @@ public class GraphPositionPathPosition implements Serializable {
 	 */
 	public GraphPositionPathPosition forwardSearch(final Point p, double lengthFromStart) {
 		
+		GPPAccumulator forwardSearchAcc = new GPPAccumulator(this);
 		forwardSearchAcc.reset(p);
 		
 		travelByBound(lengthFromStart, true, forwardSearchAcc);
@@ -557,6 +505,7 @@ public class GraphPositionPathPosition implements Serializable {
 	 */
 	public GraphPositionPathPosition backwardSearch(Point p, double lengthFromStart) {
 		
+		GPPAccumulator forwardSearchAcc = new GPPAccumulator(this);
 		forwardSearchAcc.reset(p);
 		
 		travelByBound(lengthFromStart, false, forwardSearchAcc);
