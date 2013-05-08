@@ -1,6 +1,11 @@
 
 render graph as separate image (make sure to cut off exit)
 
+figure out timing differences between animations in AWT and android
+
+
+
+
 
 antialiasing?
 

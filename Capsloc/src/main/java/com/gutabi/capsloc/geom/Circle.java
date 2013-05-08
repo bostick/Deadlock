@@ -9,13 +9,15 @@ public class Circle {
 	public final Point center;
 	public final double radius;
 	
-	private AABB aabb;
+	public AABB aabb;
 	
 	private int hash;
 	
 	public Circle(Point center, double radius) {
 		this.center = center;
 		this.radius = radius;
+		
+		aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
 	
 	public boolean equals(Object o) {
@@ -43,13 +45,6 @@ public class Circle {
 			hash = h;
 		}
 		return hash;
-	}
-	
-	public AABB getAABB() {
-		if (aabb == null) {
-			aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
-		}
-		return aabb;
 	}
 	
 	public double getRadius() {

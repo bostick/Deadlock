@@ -271,7 +271,7 @@ public class CarMap {
 		
 	}
 	
-	private DrivingEvent findDeadlockEvent(AutonomousDriver d) {
+	private static DrivingEvent findDeadlockEvent(AutonomousDriver d) {
 		if (d == null) {
 			return null;
 		}
@@ -309,7 +309,7 @@ public class CarMap {
 		return null;
 	}
 	
-	private AutonomousDriver findDeadlockCause(AutonomousDriver d) {
+	private static AutonomousDriver findDeadlockCause(AutonomousDriver d) {
 		if (d == null) {
 			return null;
 		}

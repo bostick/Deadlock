@@ -653,7 +653,7 @@ public class SweepUtils {
 	
 	public static List<SweepEvent> sweepCSoverC(Object stillParent, Circle still, MutableCapsuleSequence moving, int index, int offset) {
 		
-		if (!ShapeUtils.intersectAA(still.getAABB(), moving.aabb)) {
+		if (!ShapeUtils.intersectAA(still.aabb, moving.aabb)) {
 			return Collections.emptyList();
 		}
 		

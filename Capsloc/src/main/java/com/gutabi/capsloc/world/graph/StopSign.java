@@ -71,11 +71,11 @@ public class StopSign extends Entity {
 	}
 	
 	public void preStart() {
-		;
+		
 	}
 	
 	public void postStop() {
-		;
+		
 	}
 	
 	public boolean preStep(double t) {
@@ -130,7 +130,7 @@ public class StopSign extends Entity {
 				ctxt.popTransform();
 				
 				if (APP.DEBUG_DRAW) {
-					shape.getAABB().draw(ctxt);
+					shape.aabb.draw(ctxt);
 				}
 				
 			}

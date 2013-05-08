@@ -184,7 +184,7 @@ public class CapsuleSequence implements SweeperShape, CompoundShape {
 	/**
 	 * find closest position on <c, d> to the point b
 	 */
-	private double closestParam(Point p, Capsule c) {
+	private static double closestParam(Point p, Capsule c) {
 		if (p.equals(c.a)) {
 			return 0.0;
 		}
@@ -228,10 +228,10 @@ public class CapsuleSequence implements SweeperShape, CompoundShape {
 		
 	}
 	
-	public boolean contains(Object s) {
-		assert false;
-		return false;
-	}
+//	public boolean contains(Object s) {
+//		assert false;
+//		return false;
+//	}
 	
 	public void paint(RenderingContext ctxt) {
 		path.paint(ctxt);

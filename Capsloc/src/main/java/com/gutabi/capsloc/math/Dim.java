@@ -9,6 +9,8 @@ public class Dim implements Serializable {
 	public final double width;
 	public final double height;
 	
+	private int hash;
+	
 	public Dim(double width, double height) {
 		assert DMath.greaterThanEquals(width, 0.0);
 		assert DMath.greaterThanEquals(height, 0.0);
@@ -25,6 +27,20 @@ public class Dim implements Serializable {
 			Dim b = (Dim)o;
 			return DMath.equals(width, b.width) && DMath.equals(height, b.height);
 		}
+	}
+	
+	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			long l = Double.doubleToLongBits(width);
+			int c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			l = Double.doubleToLongBits(height);
+			c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			hash = h;
+		}
+		return hash;
 	}
 	
 	public Dim multiply(double scale) {

@@ -162,7 +162,10 @@ public class RoadPosition extends EdgePosition {
 		return travelBackward(e, e.pointCount()-2, 1.0, dist);
 	}
 	
-	private static GraphPosition travelForward(Road e, int index, double param, double dist) {
+	private static GraphPosition travelForward(Road e, int preIndex, double preParam, double dist) {
+		
+		int index = preIndex;
+		double param = preParam;
 		
 		double distanceToTravel = dist;
 		
@@ -186,7 +189,10 @@ public class RoadPosition extends EdgePosition {
 		}
 	}
 	
-	private static GraphPosition travelBackward(Road e, int index, double param, double dist) {
+	private static GraphPosition travelBackward(Road e, int preIndex, double preParam, double dist) {
+		
+		int index = preIndex;
+		double param = preParam;
 		
 		double distanceToTravel = dist;
 		

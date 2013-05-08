@@ -34,6 +34,8 @@ public class AABB implements Serializable {
 	private transient Line p2p3Line;
 	private transient Line p3p0Line;
 	
+	private int hash;
+	
 	public AABB(double x, double y, double width, double height) {
 		this.x = x;
 		this.y = y;
@@ -66,6 +68,26 @@ public class AABB implements Serializable {
 			AABB b = (AABB)o;
 			return DMath.equals(x, b.x) && DMath.equals(y, b.y) && DMath.equals(width, b.width) && DMath.equals(height, b.height);
 		}
+	}
+	
+	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			long l = Double.doubleToLongBits(x);
+			int c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			l = Double.doubleToLongBits(y);
+			c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			l = Double.doubleToLongBits(width);
+			c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			l = Double.doubleToLongBits(height);
+			c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			hash = h;
+		}
+		return hash;
 	}
 	
 	public AABB getAABB() {

@@ -195,6 +195,7 @@ public class CircleTool extends WorldToolBase {
 				knob = brKnob;
 				origKnobCenter = knob.p;
 			}
+			//$FALL-THROUGH$
 		case KNOB:
 			
 			Point diff = new Point(world.lastDraggedWorldPoint.x - world.lastPressedWorldPoint.x, world.lastDraggedWorldPoint.y - world.lastPressedWorldPoint.y);

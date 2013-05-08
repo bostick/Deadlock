@@ -148,7 +148,7 @@ public class ShapeUtils {
 	
 	public static boolean intersectAC(AABB a0, Circle c1) {
 		
-		if (!intersectAA(a0, c1.getAABB())) {
+		if (!intersectAA(a0, c1.aabb)) {
 			return false;
 		}
 		
@@ -289,7 +289,7 @@ public class ShapeUtils {
 	
 	public static boolean intersectCO(Circle c0, OBB o1) {
 		
-		if (!intersectAA(c0.getAABB(), o1.aabb)) {
+		if (!intersectAA(c0.aabb, o1.aabb)) {
 			return false;
 		}
 		
@@ -322,7 +322,7 @@ public class ShapeUtils {
 	
 	public static boolean intersectCO(Circle c0, MutableOBB o1) {
 		
-		if (!intersectAA(c0.getAABB(), o1.aabb)) {
+		if (!intersectAA(c0.aabb, o1.aabb)) {
 			return false;
 		}
 		

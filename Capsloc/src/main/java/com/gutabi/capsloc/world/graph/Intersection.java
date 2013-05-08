@@ -29,7 +29,7 @@ public class Intersection extends Vertex {
 	}
 	
 	public void preStart() {
-		;
+		
 	}
 	
 	public void postStop() {
@@ -100,6 +100,10 @@ public class Intersection extends Vertex {
 		return i;
 	}
 	
+	public void render() {
+		
+	}
+	
 	public void paint_panel(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.GRAY);
@@ -107,7 +111,7 @@ public class Intersection extends Vertex {
 		shape.paint(ctxt);
 		
 		if (APP.DEBUG_DRAW) {
-			shape.getAABB().draw(ctxt);
+			shape.aabb.draw(ctxt);
 		}
 		
 	}
@@ -121,7 +125,7 @@ public class Intersection extends Vertex {
 	}
 	
 	public void paintScene(RenderingContext ctxt) {
-		;
+		
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {

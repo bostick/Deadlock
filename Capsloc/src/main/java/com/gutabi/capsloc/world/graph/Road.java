@@ -21,6 +21,7 @@ import com.gutabi.capsloc.geom.Triangle;
 import com.gutabi.capsloc.math.ColinearException;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.Image;
 import com.gutabi.capsloc.ui.paint.Cap;
 import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.Join;
@@ -60,6 +61,8 @@ public class Road extends Edge {
 	private int hash;
 	
 	public CapsuleSequence shape;
+	
+	public Image img;
 	
 	private GeometryPath arrowPointerPath = APP.platform.createGeometryPath();
 	
@@ -246,11 +249,11 @@ public class Road extends Edge {
 	
 	
 	public void preStart() {
-		;
+		
 	}
 	
 	public void postStop() {
-		;
+		
 	}
 	
 	public boolean preStep(double t) {
@@ -760,14 +763,57 @@ public class Road extends Edge {
 		return rd;
 	}
 	
+	public void render() {
+		
+		switch (world.background.method) {
+		case MONOLITHIC:
+			break;
+		case DYNAMIC:
+			break;
+		case RENDERED_GRAPH:
+			break;
+		case RENDERED_ROADS:
+		case RENDERED_ROADS_VERTICES:
+		case RENDERED_ROADS_VERTICES_BOARDS:
+			img = APP.platform.createTransparentImage((int)(shape.aabb.width * world.worldCamera.pixelsPerMeter), (int)(shape.aabb.height * world.worldCamera.pixelsPerMeter));
+			
+			RenderingContext ctxt = APP.platform.createRenderingContext();
+			APP.platform.setRenderingContextFields1(ctxt, img);
+			
+			ctxt.cam = world.worldCamera;
+			
+			ctxt.scale(world.worldCamera.pixelsPerMeter);
+			ctxt.translate(-shape.aabb.x, -shape.aabb.y);
+			
+			paintPath_panel(ctxt);
+			
+			ctxt.dispose();
+			
+			break;
+		
+		}
+		
+	}
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-//		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
-//			return;
-//		}
+		switch (world.background.method) {
+		case MONOLITHIC:
+			break;
+		case DYNAMIC:
+			paintPath_panel(ctxt);
+			break;
+		case RENDERED_GRAPH:
+			break;
+		case RENDERED_ROADS:
+		case RENDERED_ROADS_VERTICES:
+		case RENDERED_ROADS_VERTICES_BOARDS:
+			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter,
+					shape.aabb.x, shape.aabb.y, shape.aabb.x+shape.aabb.width, shape.aabb.y+shape.aabb.height,
+					0, 0, img.getWidth(), img.getHeight());
+			break;
 		
-		paintPath_panel(ctxt);
+		}
 		
 		if (APP.DEBUG_DRAW) {
 			ctxt.setColor(Color.BLACK);

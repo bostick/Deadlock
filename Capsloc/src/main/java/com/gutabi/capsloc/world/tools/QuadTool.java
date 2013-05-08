@@ -235,6 +235,7 @@ public class QuadTool extends WorldToolBase {
 				knob = endKnob;
 				origKnobCenter = knob.p;
 			}
+			//$FALL-THROUGH$
 		case KNOB:
 			Point diff = new Point(world.lastDraggedWorldPoint.x - world.lastPressedWorldPoint.x, world.lastDraggedWorldPoint.y - world.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));

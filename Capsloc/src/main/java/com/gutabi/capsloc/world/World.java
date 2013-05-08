@@ -38,7 +38,7 @@ public class World extends PhysicsWorld {
 	public AtomicBoolean simThreadTrigger = new AtomicBoolean();
 	public Thread simThread;
 	
-	WorldBackground background;
+	public WorldBackground background;
 	public Image previewImage;
 	
 	public QuadrantMap quadrantMap;
@@ -448,9 +448,9 @@ public class World extends PhysicsWorld {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		ctxt.pushTransform();
-		
 		background.paint_pixels(ctxt);
+		
+		ctxt.pushTransform();
 		
 		ctxt.scale(worldCamera.pixelsPerMeter);
 		ctxt.translate(-worldCamera.worldViewport.x, -worldCamera.worldViewport.y);

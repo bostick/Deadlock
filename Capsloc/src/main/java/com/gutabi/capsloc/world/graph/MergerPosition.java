@@ -241,7 +241,10 @@ public class MergerPosition extends EdgePosition {
 		}
 	}
 	
-	private static GraphPosition travelToLeft(Merger m, int index, double param, double dist) {
+	private static GraphPosition travelToLeft(Merger m, int preIndex, double preParam, double dist) {
+		
+		int index = preIndex;
+		double param = preParam;
 		
 		double distanceToTravel = dist;
 		
@@ -266,7 +269,10 @@ public class MergerPosition extends EdgePosition {
 		
 	}
 	
-	private static GraphPosition travelToRight(Merger m, int index, double param, double dist) {
+	private static GraphPosition travelToRight(Merger m, int preIndex, double preParam, double dist) {
+		
+		int index = preIndex;
+		double param = preParam;
 		
 		double distanceToTravel = dist;
 		
@@ -291,7 +297,10 @@ public class MergerPosition extends EdgePosition {
 		
 	}
 	
-	private static GraphPosition travelToTop(Merger m, int index, double param, double dist) {
+	private static GraphPosition travelToTop(Merger m, int preIndex, double preParam, double dist) {
+		
+		int index = preIndex;
+		double param = preParam;
 		
 		double distanceToTravel = dist;
 		
@@ -316,7 +325,10 @@ public class MergerPosition extends EdgePosition {
 		
 	}
 	
-	private static GraphPosition travelToBottom(Merger m, int index, double param, double dist) {
+	private static GraphPosition travelToBottom(Merger m, int preIndex, double preParam, double dist) {
+		
+		int index = preIndex;
+		double param = preParam;
 		
 		double distanceToTravel = dist;
 		

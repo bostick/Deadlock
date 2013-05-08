@@ -769,7 +769,7 @@ public class Stroke {
 		
 		MutableAABB aabbTmp = new MutableAABB();
 		for (Circle c : cs) {
-			aabbTmp.union(c.getAABB());
+			aabbTmp.union(c.aabb);
 		}
 		aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 	}

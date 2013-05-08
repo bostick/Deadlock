@@ -1,7 +1,7 @@
 package com.gutabi.bypass;
 
-import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
+import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.WindowConstants;
 
 import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.ui.WindowInfo;
@@ -19,7 +20,7 @@ public class Main {
 	static void createAndShowGUI() throws Exception {
 		
 		JFrame mainFrame = new JFrame("Bypass");
-		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		mainFrame.addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent e) {
 		        APP.platform.exit();
@@ -29,7 +30,7 @@ public class Main {
 		mainFrame.setLocation((int)WindowInfo.windowDim().width/2 - PlatformImpl.MAINWINDOW_WIDTH/2, (int)WindowInfo.windowDim().height/2 - PlatformImpl.MAINWINDOW_HEIGHT/2);
 		
 		JFrame debuggerFrame = new JFrame("Debug Control Panel");
-		debuggerFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		debuggerFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
 		debuggerFrame.setLocation((int)WindowInfo.windowDim().width/2 + PlatformImpl.MAINWINDOW_WIDTH/2 + 100, 0);
 		
@@ -45,7 +46,7 @@ public class Main {
 			}
 		}
 		
-		APP.DEBUG_DRAW = true;
+		APP.DEBUG_DRAW = false;
 		
 		APP.platform.action(MainMenu.class);
 		

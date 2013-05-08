@@ -33,10 +33,10 @@ public class MergerToolShape implements CompoundShape {
 		
 		MutableAABB aabbTmp = new MutableAABB();
 		aabbTmp.union(worldQ);
-		aabbTmp.union(worldTop.getAABB());
-		aabbTmp.union(worldLeft.getAABB());
-		aabbTmp.union(worldRight.getAABB());
-		aabbTmp.union(worldBottom.getAABB());
+		aabbTmp.union(worldTop.aabb);
+		aabbTmp.union(worldLeft.aabb);
+		aabbTmp.union(worldRight.aabb);
+		aabbTmp.union(worldBottom.aabb);
 		aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 	}
 	

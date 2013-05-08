@@ -15,6 +15,8 @@ public class BypassBoardPosition extends GraphPosition {
 	
 	final boolean bound;
 	
+	private int hash;
+	
 	public BypassBoardPosition(BypassBoard b, double rowCombo, double colCombo) {
 		super(b.point(rowCombo, colCombo), b);
 		
@@ -50,6 +52,21 @@ public class BypassBoardPosition extends GraphPosition {
 			BypassBoardPosition b = (BypassBoardPosition)o;
 			return DMath.equals(rowCombo, b.rowCombo) && DMath.equals(colCombo, b.colCombo);
 		}
+	}
+	
+	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			h = 37 * h + entity.hashCode();
+			long l = Double.doubleToLongBits(rowCombo);
+			int c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			l = Double.doubleToLongBits(colCombo);
+			c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			hash = h;
+		}
+		return hash;
 	}
 	
 	public boolean isBound() {

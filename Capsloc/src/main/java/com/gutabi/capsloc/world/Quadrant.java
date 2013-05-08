@@ -4,6 +4,7 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Line;
+import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.Cap;
@@ -113,9 +114,9 @@ public class Quadrant {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-//		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
-//			return;
-//		}
+		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
+			return;
+		}
 		
 		if (!active) {
 			ctxt.setColor(Color.DARK_GRAY);
@@ -124,15 +125,15 @@ public class Quadrant {
 		}
 		
 		if (!APP.DEBUG_DRAW) {
-			ctxt.pushTransform();
+//			ctxt.pushTransform();
 			
-			ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
+//			ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
 			ctxt.paintImage(map.quadrantGrass,
 					ctxt.cam.pixelsPerMeter,
-					0.0, 0.0, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT,
+					c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT, c * QuadrantMap.QUADRANT_WIDTH+QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT+QuadrantMap.QUADRANT_HEIGHT,
 					0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
 			
-			ctxt.popTransform();
+//			ctxt.popTransform();
 			
 		} else {
 			ctxt.setColor(Color.DARKGREEN);

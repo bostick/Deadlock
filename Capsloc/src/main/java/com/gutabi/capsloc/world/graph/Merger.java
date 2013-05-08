@@ -211,11 +211,11 @@ public class Merger extends Edge {
 	}
 	
 	public void preStart() {
-		;
+		
 	}
 	
 	public void postStop() {
-		;
+		
 	}
 	
 	public boolean preStep(double t) {
@@ -342,11 +342,11 @@ public class Merger extends Edge {
 	}
 	
 	public void paintBorders(RenderingContext ctxt) {
-		;
+		
 	}
 	
 	public void paintDecorations(RenderingContext ctxt) {
-		;
+		
 	}
 	
 }

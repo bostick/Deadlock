@@ -13,6 +13,8 @@ public class SweptOBB {
 	public final double dist;
 	public final Point dir;
 	
+	private int hash;
+	
 	public SweptOBB(OBB start, OBB end) {
 		this.start = start;
 		this.end = end;
@@ -73,6 +75,16 @@ public class SweptOBB {
 			SweptOBB b = (SweptOBB)o;
 			return start.equals(b.start) && end.equals(b.end);
 		}
+	}
+	
+	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			h = 37 * h + start.hashCode();
+			h = 37 * h + end.hashCode();
+			hash = h;
+		}
+		return hash;
 	}
 	
 }

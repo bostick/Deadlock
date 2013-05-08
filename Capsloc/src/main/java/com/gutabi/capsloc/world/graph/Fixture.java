@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.Image;
 import com.gutabi.capsloc.ui.paint.Cap;
 import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.Join;
@@ -40,6 +41,8 @@ public final class Fixture extends Vertex {
 	public double lastSpawnTime;
 	public int outstandingCars;
 	private ProgressMeter progress;
+	
+	Image img;
 	
 	public Fixture(World w, Point p, Axis a) {
 		super(w, p);
@@ -213,7 +216,7 @@ public final class Fixture extends Vertex {
 			return false;
 		}
 		
-		boolean carIntersecting = world.intersectsPhysicsBodies(shape.getAABB());
+		boolean carIntersecting = world.intersectsPhysicsBodies(shape.aabb);
 		
 		if (carIntersecting) {
 			return false;
@@ -366,24 +369,73 @@ public final class Fixture extends Vertex {
 		return f;
 	}
 	
+	public void render() {
+		
+		switch (world.background.method) {
+		case MONOLITHIC:
+			break;
+		case DYNAMIC:
+			break;
+		case RENDERED_GRAPH:
+			break;
+		case RENDERED_ROADS:
+			break;
+		case RENDERED_ROADS_VERTICES:
+		case RENDERED_ROADS_VERTICES_BOARDS:
+			
+			img = APP.platform.createTransparentImage((int)(shape.aabb.width * world.worldCamera.pixelsPerMeter), (int)(shape.aabb.height * world.worldCamera.pixelsPerMeter));
+			
+			RenderingContext ctxt = APP.platform.createRenderingContext();
+			APP.platform.setRenderingContextFields1(ctxt, img);
+			
+			ctxt.cam = world.worldCamera;
+			
+			ctxt.scale(world.worldCamera.pixelsPerMeter);
+			ctxt.translate(-shape.aabb.x, -shape.aabb.y);
+			
+			ctxt.setColor(FIXTURECOLOR);
+			shape.paint(ctxt);
+			
+			ctxt.dispose();
+			
+			break;
+		
+		}
+		
+	}
+	
 	public void paint_panel(RenderingContext ctxt) {
+		
+		switch (world.background.method) {
+		case MONOLITHIC:
+			break;
+		case DYNAMIC:
+			ctxt.setColor(FIXTURECOLOR);
+			shape.paint(ctxt);
+			break;
+		case RENDERED_GRAPH:
+			break;
+		case RENDERED_ROADS:
+			ctxt.setColor(FIXTURECOLOR);
+			shape.paint(ctxt);
+			break;
+		case RENDERED_ROADS_VERTICES:
+		case RENDERED_ROADS_VERTICES_BOARDS:
+			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter,
+					shape.aabb.x, shape.aabb.y, shape.aabb.x+shape.aabb.width, shape.aabb.y+shape.aabb.height,
+					0, 0, img.getWidth(), img.getHeight());
+			break;
+		
+		}
 		
 //		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
 //			return;
 //		}
 		
-		if (!APP.DEBUG_DRAW) {
-			
-			ctxt.setColor(FIXTURECOLOR);
-			shape.paint(ctxt);
-			
-		} else {
-			ctxt.setColor(FIXTURECOLOR);
-			shape.paint(ctxt);
-			
+		if (APP.DEBUG_DRAW) {
 			ctxt.setColor(Color.BLACK);
 			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
-			shape.getAABB().draw(ctxt);
+			shape.aabb.draw(ctxt);
 		}
 		
 	}
@@ -402,7 +454,7 @@ public final class Fixture extends Vertex {
 	
 	public void paintScene(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
+		if (!ShapeUtils.intersectAA(shape.aabb, ctxt.cam.worldViewport)) {
 			return;
 		}
 		

@@ -74,7 +74,7 @@ public class PlatformContentPaneImpl extends PlatformContentPane implements java
 	}
 	
 	public void keyPressed(KeyEvent ev) {
-		;
+		
 	}
 
 	public void keyReleased(KeyEvent ev) {
@@ -112,7 +112,7 @@ public class PlatformContentPaneImpl extends PlatformContentPane implements java
 			
 			int mods = ev.getModifiersEx();
 			
-			if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+			if ((mods & java.awt.event.InputEvent.CTRL_DOWN_MASK) == java.awt.event.InputEvent.CTRL_DOWN_MASK) {
 				APP.tool.ctrlSKey();
 			} else {
 				APP.tool.sKey();
@@ -126,7 +126,7 @@ public class PlatformContentPaneImpl extends PlatformContentPane implements java
 			
 			int mods = ev.getModifiersEx();
 			
-			if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+			if ((mods & java.awt.event.InputEvent.CTRL_DOWN_MASK) == java.awt.event.InputEvent.CTRL_DOWN_MASK) {
 				APP.tool.ctrlOKey();
 			}
 			
@@ -134,7 +134,7 @@ public class PlatformContentPaneImpl extends PlatformContentPane implements java
 	}
 
 	public void keyTyped(KeyEvent ev) {
-		;
+		
 	}
 	
 	public void repaint() {

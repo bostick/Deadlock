@@ -686,11 +686,11 @@ public class Point implements Serializable {
 				(p.y - cam.worldViewport.y) * cam.pixelsPerMeter);
 	}
 	
-	public static Point worldToBackgroundImage(double x, double y, WorldCamera cam) {
-		return new Point(
-				(x ) * cam.pixelsPerMeter,
-				(y ) * cam.pixelsPerMeter);
-	}
+//	public static Point worldToBackgroundImage(double x, double y, WorldCamera cam) {
+//		return new Point(
+//				(x ) * cam.pixelsPerMeter,
+//				(y ) * cam.pixelsPerMeter);
+//	}
 	
 	public static Point worldToPanel(double x, double y, WorldCamera cam) {
 		return new Point(

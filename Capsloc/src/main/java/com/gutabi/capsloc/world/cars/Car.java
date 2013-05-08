@@ -126,11 +126,11 @@ public abstract class Car extends PhysicsBody {
 	}
 	
 	public void preStart() {
-		;
+		
 	}
 	
 	public void postStop() {
-		;
+		
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {

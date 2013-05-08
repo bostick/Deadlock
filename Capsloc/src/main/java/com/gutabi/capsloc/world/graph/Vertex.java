@@ -270,6 +270,8 @@ public abstract class Vertex extends Entity {
 
 	public abstract String toFileString();
 	
+	public abstract void render();
+	
 	public abstract void paint_panel(RenderingContext ctxt);
 	
 	public abstract void paint_preview(RenderingContext ctxt);

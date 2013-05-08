@@ -13,6 +13,8 @@ public class MutableSweptOBB {
 	public double dist;
 	public Point dir;
 	
+	int hash;
+	
 	public void setShape(MutableOBB start, MutableOBB end) {
 		this.start = start;
 		this.end = end;
@@ -62,6 +64,8 @@ public class MutableSweptOBB {
 			aabb.setShape(ulX, ulY, (brX - ulX), (brY - ulY));
 		}
 		
+		hash = 0;
+		
 	}
 	
 	public boolean equals(Object o) {
@@ -73,6 +77,16 @@ public class MutableSweptOBB {
 			SweptOBB b = (SweptOBB)o;
 			return start.equals(b.start) && end.equals(b.end);
 		}
+	}
+	
+	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			h = 37 * h + start.hashCode();
+			h = 37 * h + end.hashCode();
+			hash = h;
+		}
+		return hash;
 	}
 	
 }

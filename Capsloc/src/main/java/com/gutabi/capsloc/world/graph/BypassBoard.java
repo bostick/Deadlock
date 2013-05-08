@@ -16,6 +16,7 @@ import com.gutabi.capsloc.geom.Line;
 import com.gutabi.capsloc.geom.MutableAABB;
 import com.gutabi.capsloc.geom.MutableOBB;
 import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.Image;
 import com.gutabi.capsloc.ui.paint.Cap;
 import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.Join;
@@ -64,6 +65,8 @@ public class BypassBoard extends Entity {
 	Map<Integer, List<GraphPosition>> colTracks = new HashMap<Integer, List<GraphPosition>>();
 	private Map<Integer, GraphPositionPath> rowPaths = new HashMap<Integer, GraphPositionPath>();
 	private Map<Integer, GraphPositionPath> colPaths = new HashMap<Integer, GraphPositionPath>();
+	
+	Image img;
 	
 	public BypassBoard(World world, Point center, char[][] ini) {
 		this.world = world;
@@ -609,7 +612,7 @@ public class BypassBoard extends Entity {
 	/**
 	 * 
 	 */
-	private void addExitRoadToTrack(List<GraphPosition> track, BorderStud yStud) {
+	private static void addExitRoadToTrack(List<GraphPosition> track, BorderStud yStud) {
 		
 		Road r;
 		switch(yStud.f.getFacingSide()) {
@@ -1299,15 +1302,62 @@ public class BypassBoard extends Entity {
 		return true;
 	}
 	
+	public void render() {
+		
+		switch (world.background.method) {
+			case MONOLITHIC:
+				break;
+			case DYNAMIC:
+				break;
+			case RENDERED_GRAPH:
+				break;
+			case RENDERED_ROADS:
+			case RENDERED_ROADS_VERTICES:
+				break;
+			case RENDERED_ROADS_VERTICES_BOARDS:
+				
+				img = APP.platform.createTransparentImage((int)(allStudsAABB.width * world.worldCamera.pixelsPerMeter), (int)(allStudsAABB.height * world.worldCamera.pixelsPerMeter));
+				
+				RenderingContext ctxt = APP.platform.createRenderingContext();
+				APP.platform.setRenderingContextFields1(ctxt, img);
+				
+				ctxt.cam = world.worldCamera;
+				
+				ctxt.scale(world.worldCamera.pixelsPerMeter);
+				ctxt.translate(-allStudsAABB.x, -allStudsAABB.y);
+				
+				paintStuds(ctxt);
+				
+				ctxt.dispose();
+				
+				break;
+			
+		}
+		
+	}
+	
 	public void paint_panel(RenderingContext ctxt) {
 		
 //		if (!ShapeUtils.intersectAA(allStudsAABB, ctxt.cam.worldViewport)) {
 //			return;
 //		}
 		
-		for (int i = 0; i < studs.size(); i++) {
-			BypassStud s = studs.get(i);
-			s.paint(ctxt);
+		switch (world.background.method) {
+		case MONOLITHIC:
+			break;
+		case DYNAMIC:
+			paintStuds(ctxt);
+			break;
+		case RENDERED_GRAPH:
+			break;
+		case RENDERED_ROADS:
+		case RENDERED_ROADS_VERTICES:
+			break;
+		case RENDERED_ROADS_VERTICES_BOARDS:
+			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter,
+					allStudsAABB.x, allStudsAABB.y, allStudsAABB.x+allStudsAABB.width, allStudsAABB.y+allStudsAABB.height,
+					0, 0, img.getWidth(), img.getHeight());
+			break;
 		}
 		
 		if (APP.DEBUG_DRAW) {
@@ -1327,6 +1377,15 @@ public class BypassBoard extends Entity {
 			
 			ctxt.setColor(Color.YELLOW);
 			zoomingAABB.draw(ctxt);
+		}
+		
+	}
+	
+	public void paintStuds(RenderingContext ctxt) {
+		
+		for (int i = 0; i < studs.size(); i++) {
+			BypassStud s = studs.get(i);
+			s.paint(ctxt);
 		}
 		
 	}

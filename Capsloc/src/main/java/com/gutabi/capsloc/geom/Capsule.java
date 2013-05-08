@@ -75,8 +75,8 @@ public class Capsule {
 			debugSkeletonLine = new Line(a, b);
 			
 			MutableAABB aabbTmp = new MutableAABB();
-			aabbTmp.union(ac.getAABB());
-			aabbTmp.union(bc.getAABB());
+			aabbTmp.union(ac.aabb);
+			aabbTmp.union(bc.aabb);
 			aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 			
 		} else {
@@ -95,8 +95,8 @@ public class Capsule {
 			debugSkeletonLine = new Line(a, b);
 			
 			MutableAABB aabbTmp = new MutableAABB();
-			aabbTmp.union(ac.getAABB());
-			aabbTmp.union(bc.getAABB());
+			aabbTmp.union(ac.aabb);
+			aabbTmp.union(bc.aabb);
 			aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 			
 		}

@@ -22,6 +22,7 @@ import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.OverlappingException;
 import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.Image;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.World;
 
@@ -38,7 +39,9 @@ public class Graph {
 	
 	public final List<GraphPositionPath> paths = new ArrayList<GraphPositionPath>();
 	
-	private AABB aabb;
+	public AABB aabb;
+	
+	public Image img;
 	
 	public Graph(World world) {
 		this.world = world;
@@ -131,9 +134,9 @@ public class Graph {
 		computeAABB();
 	}
 	
-	public AABB getAABB() {
-		return aabb;
-	}
+//	public AABB getAABB() {
+//		return aabb;
+//	}
 	
 	public Set<Vertex> addVertexTop(Vertex v) {
 		
@@ -197,6 +200,7 @@ public class Graph {
 		
 		boards.add(b);
 		
+		computeAABB();
 	}	
 	
 	
@@ -373,7 +377,7 @@ public class Graph {
 		MutableAABB aabbTmp = new MutableAABB();
 		for (int i = 0; i < vertices.size(); i++) {
 			Vertex v = vertices.get(i);
-			aabbTmp.union(v.getShape().getAABB());
+			aabbTmp.union(v.getShape().aabb);
 		}
 		for (int i = 0; i < roads.size(); i++) {
 			Road r = roads.get(i);
@@ -382,6 +386,10 @@ public class Graph {
 		for (int i = 0; i < mergers.size(); i++) {
 			Merger m = mergers.get(i);
 			aabbTmp.union(m.getShape().getAABB());
+		}
+		for (int i = 0; i < boards.size(); i++) {
+			BypassBoard b = boards.get(i);
+			aabbTmp.union(b.allStudsAABB);
 		}
 		aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 	}
@@ -1234,30 +1242,118 @@ public class Graph {
 		return g;
 	}
 	
+	public void render() {
+		
+		switch (world.background.method) {
+		case DYNAMIC:
+			break;
+		case MONOLITHIC:
+			break;
+		case RENDERED_GRAPH:
+			img = APP.platform.createTransparentImage((int)(aabb.width * world.worldCamera.pixelsPerMeter), (int)(aabb.height * world.worldCamera.pixelsPerMeter));
+			
+			RenderingContext ctxt = APP.platform.createRenderingContext();
+			APP.platform.setRenderingContextFields1(ctxt, img);
+			
+			ctxt.cam = world.worldCamera;
+			
+			ctxt.scale(world.worldCamera.pixelsPerMeter);
+			ctxt.translate(-world.graph.aabb.x, -world.graph.aabb.y);
+			
+			paint_panel(ctxt);
+			
+			ctxt.dispose();
+			break;
+		case RENDERED_ROADS_VERTICES_BOARDS:
+			for (int i = 0; i < boards.size(); i++) {
+				BypassBoard b = boards.get(i);
+				b.render();
+			}
+			//$FALL-THROUGH$
+		case RENDERED_ROADS_VERTICES:
+			for (int i = 0; i < vertices.size(); i++) {
+				Vertex v = vertices.get(i);
+				v.render();
+			}
+			//$FALL-THROUGH$
+		case RENDERED_ROADS:
+			for (int i = 0; i < roads.size(); i++) {
+				Road r = roads.get(i);
+				r.render();
+			}
+			break;
+		}
+	}
+	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		for (int i = 0; i < roads.size(); i++) {
-			Road r = roads.get(i);
-			r.paint_panel(ctxt);
-		}
-		for (int i = 0; i < mergers.size(); i++) {
-			Merger m = mergers.get(i);
-			m.paint_panel(ctxt);
-		}
+		switch (world.background.method) {
+		case DYNAMIC:
+			
+			for (int i = 0; i < roads.size(); i++) {
+				Road r = roads.get(i);
+				r.paint_panel(ctxt);
+			}
+			for (int i = 0; i < mergers.size(); i++) {
+				Merger m = mergers.get(i);
+				m.paint_panel(ctxt);
+			}
+			
+			for (int i = 0; i < vertices.size(); i++) {
+				Vertex v = vertices.get(i);
+				v.paint_panel(ctxt);
+			}
+			
+			for (int i = 0; i < boards.size(); i++) {
+				BypassBoard b = boards.get(i);
+				b.paint_panel(ctxt);
+			}
+			
+			for (int i = 0; i < roads.size(); i++) {
+				Road r = roads.get(i);
+				r.paintDecorations(ctxt);
+			}
+			
+			break;
+		case MONOLITHIC:
+			break;
+		case RENDERED_GRAPH:
+			
+			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter,
+					aabb.x, aabb.y, aabb.x+aabb.width, aabb.y+aabb.height,
+					0, 0, img.getWidth(), img.getHeight());
+			
+			break;
+		case RENDERED_ROADS:
+		case RENDERED_ROADS_VERTICES:
+		case RENDERED_ROADS_VERTICES_BOARDS:
+			
+			for (int i = 0; i < roads.size(); i++) {
+				Road r = roads.get(i);
+				r.paint_panel(ctxt);
+			}
+			for (int i = 0; i < mergers.size(); i++) {
+				Merger m = mergers.get(i);
+				m.paint_panel(ctxt);
+			}
+			
+			for (int i = 0; i < vertices.size(); i++) {
+				Vertex v = vertices.get(i);
+				v.paint_panel(ctxt);
+			}
+			
+			for (int i = 0; i < boards.size(); i++) {
+				BypassBoard b = boards.get(i);
+				b.paint_panel(ctxt);
+			}
+			
+			for (int i = 0; i < roads.size(); i++) {
+				Road r = roads.get(i);
+				r.paintDecorations(ctxt);
+			}
+			
+			break;
 		
-		for (int i = 0; i < vertices.size(); i++) {
-			Vertex v = vertices.get(i);
-			v.paint_panel(ctxt);
-		}
-		
-		for (int i = 0; i < boards.size(); i++) {
-			BypassBoard b = boards.get(i);
-			b.paint_panel(ctxt);
-		}
-		
-		for (int i = 0; i < roads.size(); i++) {
-			Road r = roads.get(i);
-			r.paintDecorations(ctxt);
 		}
 		
 	}
