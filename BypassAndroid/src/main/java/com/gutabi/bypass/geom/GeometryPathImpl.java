@@ -1,6 +1,5 @@
 package com.gutabi.bypass.geom;
 
-import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.RectF;
@@ -107,15 +106,13 @@ public class GeometryPathImpl implements GeometryPath {
 	public void paint(RenderingContext ctxt) {
 		RenderingContextImpl c = (RenderingContextImpl)ctxt;
 		
-		c.paint.setStyle(Style.FILL);
-		c.canvas.drawPath(p, c.paint);
+		c.paintPath(this);
 	}
 
 	public void draw(RenderingContext ctxt) {
 		RenderingContextImpl c = (RenderingContextImpl)ctxt;
 		
-		c.paint.setStyle(Style.STROKE);
-		c.canvas.drawPath(p, c.paint);
+		c.drawPath(this);
 	}
 
 }

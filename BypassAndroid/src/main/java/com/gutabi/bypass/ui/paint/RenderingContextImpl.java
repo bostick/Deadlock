@@ -168,7 +168,12 @@ public class RenderingContextImpl extends RenderingContext {
 		GeometryPathImpl pp = (GeometryPathImpl)p;
 		
 		paint.setStyle(Style.STROKE);
+		int fs = paint.getFlags();
+		paint.setFlags(Paint.ANTI_ALIAS_FLAG);
+		
 		canvas.drawPath(pp.p, paint);
+		
+		paint.setFlags(fs);
 	}
 	
 	public void paintPath(GeometryPath p) {
@@ -176,7 +181,13 @@ public class RenderingContextImpl extends RenderingContext {
 		GeometryPathImpl pp = (GeometryPathImpl)p;
 		
 		paint.setStyle(Style.FILL);
+		
+		int fs = paint.getFlags();
+		paint.setFlags(Paint.ANTI_ALIAS_FLAG);
+		
 		canvas.drawPath(pp.p, paint);
+		
+		paint.setFlags(fs);
 	}
 	
 	
@@ -186,12 +197,24 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void drawCircle(Circle c) {
 		paint.setStyle(Style.STROKE);
+		
+		int fs = paint.getFlags();
+		paint.setFlags(Paint.ANTI_ALIAS_FLAG);
+		
 		canvas.drawCircle((float)c.center.x, (float)c.center.y, (float)c.radius, paint);
+		
+		paint.setFlags(fs);
 	}
 	
 	public void paintCircle(Circle c) {
 		paint.setStyle(Style.FILL);
+		
+		int fs = paint.getFlags();
+		paint.setFlags(Paint.ANTI_ALIAS_FLAG);
+		
 		canvas.drawCircle((float)c.center.x, (float)c.center.y, (float)c.radius, paint);
+		
+		paint.setFlags(fs);
 	}
 	
 	public void scale(double s) {

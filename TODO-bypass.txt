@@ -1,14 +1,4 @@
 
-render graph as separate image (make sure to cut off exit)
-
-figure out timing differences between animations in AWT and android
-
-
-jerking around while dragging
-
-
-
-
 antialiasing?
 
 
@@ -112,6 +102,8 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+render graph as separate image (make sure to cut off exit)
 
 get rid of uithread and draw on demand
 could draw from event thread from user actions (hilite menuitem, drag menu, drag car, winner menu appears)

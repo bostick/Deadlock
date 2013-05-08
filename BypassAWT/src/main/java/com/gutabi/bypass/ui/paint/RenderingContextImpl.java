@@ -7,6 +7,7 @@ import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -227,14 +228,24 @@ public class RenderingContextImpl extends RenderingContext {
 		
 		GeometryPathImpl pp = (GeometryPathImpl)p;
 		
+		RenderingHints h = g2.getRenderingHints();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		g2.draw(pp.path);
+		
+		g2.setRenderingHints(h);
 	}
 	
 	public void paintPath(GeometryPath p) {
 		
 		GeometryPathImpl pp = (GeometryPathImpl)p;
 		
+		RenderingHints h = g2.getRenderingHints();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		g2.fill(pp.path);
+		
+		g2.setRenderingHints(h);
 	}
 	
 	
@@ -245,12 +256,24 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void drawCircle(Circle c) {
 		Ellipse2D e = new Ellipse2D.Double(c.center.x - c.radius, c.center.y - c.radius, 2 * c.radius, 2 * c.radius);
+		
+		RenderingHints h = g2.getRenderingHints();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		g2.draw(e);
+		
+		g2.setRenderingHints(h);
 	}
 	
 	public void paintCircle(Circle c) {
 		Ellipse2D e = new Ellipse2D.Double(c.center.x - c.radius, c.center.y - c.radius, 2 * c.radius, 2 * c.radius);
+		
+		RenderingHints h = g2.getRenderingHints();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		g2.fill(e);
+		
+		g2.setRenderingHints(h);
 	}
 	
 	public void dispose() {

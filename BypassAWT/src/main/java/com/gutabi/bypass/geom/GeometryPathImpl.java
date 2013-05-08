@@ -102,12 +102,12 @@ public class GeometryPathImpl implements GeometryPath {
 	
 	public void paint(RenderingContext ctxt) {
 		RenderingContextImpl ct = (RenderingContextImpl)ctxt;
-		ct.g2.fill(path);
+		ct.paintPath(this);
 	}
 
 	public void draw(RenderingContext ctxt) {
 		RenderingContextImpl ct = (RenderingContextImpl)ctxt;
-		ct.g2.draw(path);
+		ct.drawPath(this);
 	}
 	
 }
