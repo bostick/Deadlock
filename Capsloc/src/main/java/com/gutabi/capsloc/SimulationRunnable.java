@@ -4,8 +4,6 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.gutabi.capsloc.Integratable;
-
 public class SimulationRunnable implements Runnable {
 	
 	AtomicBoolean trigger;
@@ -23,6 +21,8 @@ public class SimulationRunnable implements Runnable {
 		
 		long currentTimeMillis = APP.platform.monotonicClockMillis();
 		long newTimeMillis = APP.platform.monotonicClockMillis();
+		
+//		long lastIntegrateTime = 0;
 		
 		try {
 			
@@ -45,13 +45,13 @@ public class SimulationRunnable implements Runnable {
 					/*
 					 * this max value is a heuristic
 					 */
-					if (frameTimeSeconds > 1 * Integratable.DT) {
-						frameTimeSeconds = 1 * Integratable.DT;
-					}
-					if (frameTimeSeconds < 0.5 * Integratable.DT) {
-						Thread.sleep(frameTimeMillis);
-						frameTimeSeconds += frameTimeSeconds;
-					}
+//					if (frameTimeSeconds > 1 * Integratable.DT) {
+//						frameTimeSeconds = 1 * Integratable.DT;
+//					}
+//					if (frameTimeSeconds < 0.5 * Integratable.DT) {
+//						Thread.sleep((long)(1000 * 0.5 * Integratable.DT));
+//						frameTimeSeconds += (0.5 * Integratable.DT);
+//					}
 //					Thread.sleep(frameTimeMillis);
 					
 					accumulator += frameTimeSeconds;
@@ -59,7 +59,10 @@ public class SimulationRunnable implements Runnable {
 					boolean paint = false;
 					while (accumulator >= Integratable.DT) {
 						
+//						long cur = APP.platform.monotonicClockMillis();
 						paint = paint | iable.integrate(t);
+//						System.out.println(APP.platform.monotonicClockMillis() - cur);
+//						lastIntegrateTime = cur;
 						
 						accumulator -= Integratable.DT;
 						t += Integratable.DT;
@@ -68,6 +71,8 @@ public class SimulationRunnable implements Runnable {
 					if (paint) {
 						APP.appScreen.contentPane.repaint();
 					}
+					
+					Thread.sleep(4);
 					
 				} // outer
 			
