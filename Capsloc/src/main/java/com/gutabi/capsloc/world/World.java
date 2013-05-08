@@ -55,7 +55,7 @@ public class World extends PhysicsWorld {
 	
 	Shimmer shimmer;
 	
-	AABB worldEdge;
+//	AABB worldEdge;
 	
 	public World() {
 		
@@ -77,8 +77,8 @@ public class World extends PhysicsWorld {
 	public void panelPostDisplay(int width, int height) {
 				
 		worldCamera.worldViewport.setShape(
-				-(width / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
-				-(height / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
+				-(width / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldAABB.width/2 ,
+				-(height / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldAABB.height/2,
 				width / worldCamera.pixelsPerMeter,
 				height / worldCamera.pixelsPerMeter);
 		
@@ -430,8 +430,8 @@ public class World extends PhysicsWorld {
 		ctxt.pushTransform();
 		
 		ctxt.translate(
-				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldWidth / 2),
-				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldHeight / 2));
+				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.width / 2),
+				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.height / 2));
 		
 		ctxt.scale(worldCamera.previewPixelsPerMeter);
 		
@@ -510,8 +510,8 @@ public class World extends PhysicsWorld {
 		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 		
 		ctxt.translate(
-				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldWidth / 2),
-				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldHeight / 2));
+				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.width / 2),
+				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.height / 2));
 		
 		ctxt.setColor(Color.BLUE);
 		prev.draw(ctxt);

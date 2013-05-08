@@ -20,8 +20,9 @@ public class QuadrantMap {
 	public static final double QUADRANT_WIDTH = 16.0;
 	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
 	
-	public final double worldWidth;
-	public final double worldHeight;
+//	public final double worldWidth;
+//	public final double worldHeight;
+	public final AABB worldAABB;
 	
 	public final int quadrantCols;
 	public final int quadrantRows;
@@ -32,8 +33,6 @@ public class QuadrantMap {
 	public Image quadrantGrass;
 	
 	public GrassMap grassMap = new GrassMap();
-	
-	public final AABB aabb;
 
 	public QuadrantMap(int[][] ini) {
 		this.ini = ini;
@@ -43,10 +42,10 @@ public class QuadrantMap {
 		quadrantCols = quadrants[0].length;
 		quadrantRows = quadrants.length;
 		
-		worldWidth = quadrantCols * QuadrantMap.QUADRANT_WIDTH;
-		worldHeight = quadrantRows * QuadrantMap.QUADRANT_HEIGHT;
+//		worldWidth = quadrantCols * QuadrantMap.QUADRANT_WIDTH;
+//		worldHeight = quadrantRows * QuadrantMap.QUADRANT_HEIGHT;
 		
-		aabb = new AABB(0, 0, quadrantCols * QUADRANT_WIDTH, quadrantRows * QUADRANT_HEIGHT);
+		worldAABB = new AABB(0, 0, quadrantCols * QUADRANT_WIDTH, quadrantRows * QUADRANT_HEIGHT);
 	}
 	
 	private Quadrant[][] initQuadrants(int[][] ini) {
@@ -216,7 +215,7 @@ public class QuadrantMap {
 	
 	public boolean contains(Object s) {
 		
-		if (!ShapeUtils.contains(aabb, s)) {
+		if (!ShapeUtils.contains(worldAABB, s)) {
 			return false;
 		}
 		

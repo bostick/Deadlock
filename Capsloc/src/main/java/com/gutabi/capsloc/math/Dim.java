@@ -12,8 +12,12 @@ public class Dim implements Serializable {
 	private int hash;
 	
 	public Dim(double width, double height) {
-		assert DMath.greaterThanEquals(width, 0.0);
-		assert DMath.greaterThanEquals(height, 0.0);
+		if (width <= 0) {
+			throw new IllegalArgumentException();
+		}
+		if (height <= 0) {
+			throw new IllegalArgumentException();
+		}
 		this.width = width;
 		this.height = height;
 	}

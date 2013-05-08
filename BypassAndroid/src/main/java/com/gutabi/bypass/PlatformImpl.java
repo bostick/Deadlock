@@ -254,25 +254,25 @@ public class PlatformImpl implements BypassPlatform {
 		
 	}
 	
-	public void setupDebuggerScreen(Object... args) {
-		
-	}
+//	public void setupDebuggerScreen(Object... args) {
+//		
+//	}
 	
 	public void showAppScreen() {
 		
 	}
 	
-	public void showDebuggerScreen() {
-		
-	}
+//	public void showDebuggerScreen() {
+//		
+//	}
 	
 	public void unshowAppScreen() {
 		
 	}
 
-	public void unshowDebuggerScreen() {
-		
-	}
+//	public void unshowDebuggerScreen() {
+//		
+//	}
 
 
 

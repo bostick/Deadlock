@@ -5,7 +5,6 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.gutabi.bypass.BypassControlPanel;
 import com.gutabi.capsloc.AppScreen;
 import com.gutabi.capsloc.Model;
 import com.gutabi.capsloc.SimulationRunnable;
@@ -72,9 +71,6 @@ public class BypassWorld extends World implements Model {
 		
 	}
 	
-//	AtomicBoolean uiThreadTrigger = new AtomicBoolean(true);
-//	Thread uiThread;
-	
 	public static void resume() {
 		
 		APP.model = BYPASSWORLD;
@@ -84,12 +80,12 @@ public class BypassWorld extends World implements Model {
 		
 		APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 		
-		if (APP.DEBUGGER_SCREEN) {
-			
-			AppScreen debuggerScreen = new AppScreen(new ContentPane(new BypassControlPanel()));
-			APP.debuggerScreen = debuggerScreen;
-			
-		}
+//		if (APP.DEBUGGER_SCREEN) {
+//			
+//			AppScreen debuggerScreen = new AppScreen(new ContentPane(new BypassControlPanel()));
+//			APP.debuggerScreen = debuggerScreen;
+//			
+//		}
 		
 		BYPASSWORLD.simThreadTrigger.set(true);
 		
@@ -111,14 +107,14 @@ public class BypassWorld extends World implements Model {
 		
 		BYPASSWORLD.render_worldPanel();
 		
-		if (APP.DEBUGGER_SCREEN) {
-			
-			APP.debuggerScreen.postDisplay(width, height);
-			
-			BYPASSWORLD.render_preview();
-			
-			APP.platform.showDebuggerScreen();
-		}
+//		if (APP.DEBUGGER_SCREEN) {
+//			
+//			APP.debuggerScreen.postDisplay(width, height);
+//			
+//			BYPASSWORLD.render_preview();
+//			
+//			APP.platform.showDebuggerScreen();
+//		}
 		
 		BYPASSWORLD.lock.unlock();
 		
@@ -127,9 +123,9 @@ public class BypassWorld extends World implements Model {
 	
 	public static void pause() {
 		
-		if (APP.DEBUGGER_SCREEN) {
-			APP.platform.unshowDebuggerScreen();
-		}
+//		if (APP.DEBUGGER_SCREEN) {
+//			APP.platform.unshowDebuggerScreen();
+//		}
 		
 //		BYPASSWORLD.uiThreadTrigger.set(false);
 		
@@ -252,7 +248,7 @@ public class BypassWorld extends World implements Model {
 			level.userMoves = 0;
 			level.userStartTime = System.currentTimeMillis();
 			
-			BypassBoard board = w.createBypassBoard(new Point(qm.worldWidth / 2, qm.worldHeight / 2), level.ini);
+			BypassBoard board = w.createBypassBoard(new Point(qm.worldAABB.width / 2, qm.worldAABB.height / 2), level.ini);
 			
 			w.addBypassCars(board);
 			

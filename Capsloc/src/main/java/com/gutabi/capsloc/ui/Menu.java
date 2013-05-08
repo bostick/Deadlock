@@ -31,8 +31,8 @@ public abstract class Menu {
 	public double[] columnWidth;
 	public double[] columnHeight;
 	
-	public AABB aabb = new AABB(0, 0, 0, 0);
-	public AABB marginAABB = new AABB(0, 0, 0, 0);
+	public AABB aabb = new AABB();
+	public AABB marginAABB = new AABB();
 	
 	int parWidth;
 	int parHeight;

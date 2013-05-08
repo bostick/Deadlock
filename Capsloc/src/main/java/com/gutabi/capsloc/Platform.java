@@ -36,15 +36,15 @@ public interface Platform {
 	
 	public abstract void setupAppScreen(Object... args);
 	
-	public abstract void setupDebuggerScreen(Object... args);
+//	public abstract void setupDebuggerScreen(Object... args);
 	
 	public abstract void showAppScreen();
 	
-	public abstract void showDebuggerScreen();
+//	public abstract void showDebuggerScreen();
 	
 	public abstract void unshowAppScreen();
 	
-	public abstract void unshowDebuggerScreen();
+//	public abstract void unshowDebuggerScreen();
 	
 	/*
 	 * resource engine

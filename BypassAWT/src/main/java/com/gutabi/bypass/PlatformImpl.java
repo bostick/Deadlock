@@ -112,31 +112,31 @@ public class PlatformImpl implements BypassPlatform {
 		
 	}
 	
-	public void setupDebuggerScreen(Object... args) {
-		
-		PlatformContentPaneImpl content = (PlatformContentPaneImpl)args[0];
-		
-		content.j.setLayout(null);
-		
-		content.j.setPreferredSize(new Dimension(PlatformImpl.CONTROLPANEL_WIDTH, PlatformImpl.CONTROLPANEL_HEIGHT));
-		
-		debuggerContainer.setContentPane(content.j);
-		content.j.setFocusable(true);
-		content.j.requestFocusInWindow();
-		
-		if (debuggerContainer instanceof JFrame) {
-			((JFrame)debuggerContainer).pack();
-		}
-		
-	}
+//	public void setupDebuggerScreen(Object... args) {
+//		
+//		PlatformContentPaneImpl content = (PlatformContentPaneImpl)args[0];
+//		
+//		content.j.setLayout(null);
+//		
+//		content.j.setPreferredSize(new Dimension(PlatformImpl.CONTROLPANEL_WIDTH, PlatformImpl.CONTROLPANEL_HEIGHT));
+//		
+//		debuggerContainer.setContentPane(content.j);
+//		content.j.setFocusable(true);
+//		content.j.requestFocusInWindow();
+//		
+//		if (debuggerContainer instanceof JFrame) {
+//			((JFrame)debuggerContainer).pack();
+//		}
+//		
+//	}
 	
-	public void showDebuggerScreen() {
-		
-		if (debuggerContainer instanceof JFrame) {
-			((JFrame)debuggerContainer).setVisible(true);
-		}
-		
-	}
+//	public void showDebuggerScreen() {
+//		
+//		if (debuggerContainer instanceof JFrame) {
+//			((JFrame)debuggerContainer).setVisible(true);
+//		}
+//		
+//	}
 	
 	public void unshowAppScreen() {
 		
@@ -146,13 +146,13 @@ public class PlatformImpl implements BypassPlatform {
 		
 	}
 
-	public void unshowDebuggerScreen() {
-		
-		if (debuggerContainer instanceof JFrame) {
-			((JFrame)debuggerContainer).setVisible(false);
-		}
-		
-	}
+//	public void unshowDebuggerScreen() {
+//		
+//		if (debuggerContainer instanceof JFrame) {
+//			((JFrame)debuggerContainer).setVisible(false);
+//		}
+//		
+//	}
 	
 	/*
 	 * font engine

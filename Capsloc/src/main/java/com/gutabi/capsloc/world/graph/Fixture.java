@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.Image;
@@ -16,7 +17,6 @@ import com.gutabi.capsloc.ui.paint.Cap;
 import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.Join;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
-import com.gutabi.capsloc.world.ProgressMeter;
 import com.gutabi.capsloc.world.World;
 import com.gutabi.capsloc.world.cars.AutonomousCar;
 import com.gutabi.capsloc.world.cars.AutonomousDriver;
@@ -40,9 +40,10 @@ public final class Fixture extends Vertex {
 	public GraphPositionPath shortestPathToMatch;
 	public double lastSpawnTime;
 	public int outstandingCars;
-	private ProgressMeter progress;
+//	private ProgressMeter progress;
 	
 	Image img;
+	AABB intersection;
 	
 	public Fixture(World w, Point p, Axis a) {
 		super(w, p);
@@ -57,11 +58,11 @@ public final class Fixture extends Vertex {
 	public void setType(FixtureType type) {
 		this.type = type;
 		
-		if (type == FixtureType.SOURCE) {
-			progress = new ProgressMeter(p.x - r - 1.5, p.y - r, 2.0, 0.5);
-		} else {
-			progress = null;
-		}
+//		if (type == FixtureType.SOURCE) {
+//			progress = new ProgressMeter(p.x - r - 1.5, p.y - r, 2.0, 0.5);
+//		} else {
+//			progress = null;
+//		}
 		
 	}
 	
@@ -110,7 +111,7 @@ public final class Fixture extends Vertex {
 				shortestPathToMatch.sharedEdgesMap.clear();
 			}
 			
-			progress.setProgress(0.0);
+//			progress.setProgress(0.0);
 			
 		}
 		
@@ -128,7 +129,7 @@ public final class Fixture extends Vertex {
 				shortestPathToMatch.precomputeHitTestData();
 			}
 			
-			progress.setProgress((t - lastSpawnTime) / SPAWN_FREQUENCY_SECONDS);
+//			progress.setProgress((t - lastSpawnTime) / SPAWN_FREQUENCY_SECONDS);
 			
 			if (active(t)) {
 				spawnNewCar(t);
@@ -383,7 +384,12 @@ public final class Fixture extends Vertex {
 		case RENDERED_ROADS_VERTICES:
 		case RENDERED_ROADS_VERTICES_BOARDS:
 			
-			img = APP.platform.createTransparentImage((int)(shape.aabb.width * world.worldCamera.pixelsPerMeter), (int)(shape.aabb.height * world.worldCamera.pixelsPerMeter));
+			intersection = AABB.intersection(world.quadrantMap.worldAABB, shape.aabb);
+			if (intersection == null) {
+				return;
+			}
+			
+			img = APP.platform.createTransparentImage((int)(intersection.width * world.worldCamera.pixelsPerMeter), (int)(intersection.height * world.worldCamera.pixelsPerMeter));
 			
 			RenderingContext ctxt = APP.platform.createRenderingContext();
 			APP.platform.setRenderingContextFields1(ctxt, img);
@@ -391,7 +397,7 @@ public final class Fixture extends Vertex {
 			ctxt.cam = world.worldCamera;
 			
 			ctxt.scale(world.worldCamera.pixelsPerMeter);
-			ctxt.translate(-shape.aabb.x, -shape.aabb.y);
+			ctxt.translate(-intersection.x, -intersection.y);
 			
 			ctxt.setColor(FIXTURECOLOR);
 			shape.paint(ctxt);
@@ -421,8 +427,11 @@ public final class Fixture extends Vertex {
 			break;
 		case RENDERED_ROADS_VERTICES:
 		case RENDERED_ROADS_VERTICES_BOARDS:
+			if (intersection == null) {
+				return;
+			}
 			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter,
-					shape.aabb.x, shape.aabb.y, shape.aabb.x+shape.aabb.width, shape.aabb.y+shape.aabb.height,
+					intersection.x, intersection.y, intersection.x+intersection.width, intersection.y+intersection.height,
 					0, 0, img.getWidth(), img.getHeight());
 			break;
 		
@@ -458,9 +467,9 @@ public final class Fixture extends Vertex {
 			return;
 		}
 		
-		if (type == FixtureType.SOURCE) {
-			progress.paint(ctxt);
-		}
+//		if (type == FixtureType.SOURCE) {
+//			progress.paint(ctxt);
+//		}
 		
 	}
 	

@@ -36,14 +36,22 @@ public class AABB implements Serializable {
 	
 	private int hash;
 	
+	public AABB() {
+		this(0, 0, Double.NaN, Double.NaN);
+	}
+	
 	public AABB(double x, double y, double width, double height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		
-		assert width >= 0;
-		assert height >= 0;
+		if (width <= 0) {
+			throw new IllegalArgumentException();
+		}
+		if (height <= 0) {
+			throw new IllegalArgumentException();
+		}
 		
 		dim = new Dim(width, height);
 		
@@ -289,6 +297,47 @@ public class AABB implements Serializable {
 		}
 		if (isB) {
 			return b;
+		}
+		
+		return new AABB(ulX, ulY, brX-ulX, brY-ulY);
+	}
+	
+	public static final AABB intersection(AABB a, AABB b) {
+		if (a == null) {
+			return null;
+		}
+		if (b == null) {
+			return null;
+		}
+		
+		double ulX = a.x;
+		double ulY = a.y;
+		double brX = a.brX;
+		double brY = a.brY;
+		
+		if (b.x > ulX) {
+			if (b.x > brX) {
+				return null;
+			}
+			ulX = b.x;
+		}
+		if (b.y > ulY) {
+			if (b.y > brY) {
+				return null;
+			}
+			ulY = b.y;
+		}
+		if (b.brX < brX) {
+			if (b.brX < ulX) {
+				return null;
+			}
+			brX = b.brX;
+		}
+		if (b.brY < brY) {
+			if (b.brY < ulY) {
+				return null;
+			}
+			brY = b.brY;
 		}
 		
 		return new AABB(ulX, ulY, brX-ulX, brY-ulY);

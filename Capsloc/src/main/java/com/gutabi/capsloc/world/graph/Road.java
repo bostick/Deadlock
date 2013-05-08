@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.gutabi.capsloc.Entity;
+import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Capsule;
 import com.gutabi.capsloc.geom.CapsuleSequence;
 import com.gutabi.capsloc.geom.CapsuleSequencePosition;
@@ -63,6 +64,7 @@ public class Road extends Edge {
 	public CapsuleSequence shape;
 	
 	public Image img;
+	AABB intersection;
 	
 	private GeometryPath arrowPointerPath = APP.platform.createGeometryPath();
 	
@@ -775,7 +777,10 @@ public class Road extends Edge {
 		case RENDERED_ROADS:
 		case RENDERED_ROADS_VERTICES:
 		case RENDERED_ROADS_VERTICES_BOARDS:
-			img = APP.platform.createTransparentImage((int)(shape.aabb.width * world.worldCamera.pixelsPerMeter), (int)(shape.aabb.height * world.worldCamera.pixelsPerMeter));
+			
+			intersection = AABB.intersection(world.quadrantMap.worldAABB, shape.aabb);
+			
+			img = APP.platform.createTransparentImage((int)(intersection.width * world.worldCamera.pixelsPerMeter), (int)(intersection.height * world.worldCamera.pixelsPerMeter));
 			
 			RenderingContext ctxt = APP.platform.createRenderingContext();
 			APP.platform.setRenderingContextFields1(ctxt, img);
@@ -783,7 +788,7 @@ public class Road extends Edge {
 			ctxt.cam = world.worldCamera;
 			
 			ctxt.scale(world.worldCamera.pixelsPerMeter);
-			ctxt.translate(-shape.aabb.x, -shape.aabb.y);
+			ctxt.translate(-intersection.x, -intersection.y);
 			
 			paintPath_panel(ctxt);
 			
@@ -809,7 +814,7 @@ public class Road extends Edge {
 		case RENDERED_ROADS_VERTICES:
 		case RENDERED_ROADS_VERTICES_BOARDS:
 			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter,
-					shape.aabb.x, shape.aabb.y, shape.aabb.x+shape.aabb.width, shape.aabb.y+shape.aabb.height,
+					intersection.x, intersection.y, intersection.x+intersection.width, intersection.y+intersection.height,
 					0, 0, img.getWidth(), img.getHeight());
 			break;
 		

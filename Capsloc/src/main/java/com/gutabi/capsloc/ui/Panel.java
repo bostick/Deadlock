@@ -8,7 +8,7 @@ import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public abstract class Panel {
 	
-	public AABB aabb = new AABB(0, 0, 0, 0);
+	public AABB aabb = new AABB();
 	
 	public void setLocation(double x, double y) {
 		aabb = new AABB(x, y, aabb.width, aabb.height);

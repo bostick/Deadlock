@@ -44,7 +44,7 @@ public class WorldBackground {
 		switch (method) {
 		case MONOLITHIC: {
 			
-			img = APP.platform.createImage((int)(world.quadrantMap.worldWidth * world.worldCamera.origPixelsPerMeter), (int)(world.quadrantMap.worldHeight * world.worldCamera.origPixelsPerMeter));
+			img = APP.platform.createImage((int)(world.quadrantMap.worldAABB.width * world.worldCamera.origPixelsPerMeter), (int)(world.quadrantMap.worldAABB.height * world.worldCamera.origPixelsPerMeter));
 			
 			RenderingContext ctxt = APP.platform.createRenderingContext();
 			APP.platform.setRenderingContextFields1(ctxt, img);

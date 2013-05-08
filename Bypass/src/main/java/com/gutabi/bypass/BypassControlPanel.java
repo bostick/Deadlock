@@ -34,8 +34,8 @@ public class BypassControlPanel extends Panel {
 		
 		aabb = new AABB(aabb.x, aabb.y, width, height);
 		
-		double pixelsPerMeterWidth = world.worldCamera.previewAABB.width / world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = world.worldCamera.previewAABB.height / world.quadrantMap.worldHeight;
+		double pixelsPerMeterWidth = world.worldCamera.previewAABB.width / world.quadrantMap.worldAABB.width;
+		double pixelsPerMeterHeight = world.worldCamera.previewAABB.height / world.quadrantMap.worldAABB.height;
 		world.worldCamera.previewPixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
 		world.previewPostDisplay();

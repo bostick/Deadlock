@@ -22,7 +22,7 @@ public abstract class MenuItem {
 	public boolean border = true;
 	
 	public AABB localAABB;
-	public AABB aabb = new AABB(0, 0, 0, 0);
+	public AABB aabb = new AABB();
 	
 	public boolean active = true;
 	

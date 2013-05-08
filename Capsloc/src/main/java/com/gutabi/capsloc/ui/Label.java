@@ -19,8 +19,8 @@ public class Label {
 	
 	public Color color = Color.BLACK;
 	
-	public AABB localAABB = new AABB(0, 0, 0, 0);
-	public AABB aabb = new AABB(0, 0, 0, 0);
+	public AABB localAABB = new AABB();
+	public AABB aabb = new AABB();
 	
 	public Label(String text) {
 		this.text = text;

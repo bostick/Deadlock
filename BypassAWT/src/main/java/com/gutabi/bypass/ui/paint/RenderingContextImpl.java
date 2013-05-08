@@ -203,10 +203,6 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.drawImage(bi, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 	}
 	
-//	public void fillRect(int x, int y, int width, int height) {
-//		g2.fillRect(x, y, width, height);
-//	}
-//	
 	public void drawAABB(AABB a) {
 		Rectangle2D rect = new Rectangle2D.Double(a.x, a.y, a.width, a.height);
 		g2.draw(rect);
