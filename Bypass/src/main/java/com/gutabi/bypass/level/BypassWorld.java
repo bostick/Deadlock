@@ -27,7 +27,6 @@ import com.gutabi.capsloc.world.graph.GraphPositionPath;
 import com.gutabi.capsloc.world.graph.GraphPositionPathPosition;
 import com.gutabi.capsloc.world.graph.RoadPosition;
 import com.gutabi.capsloc.world.graph.Side;
-import com.gutabi.capsloc.world.graph.Vertex;
 import com.gutabi.capsloc.world.graph.VertexPosition;
 import com.gutabi.capsloc.world.sprites.CarSheet;
 import com.gutabi.capsloc.world.sprites.CarSheet.CarType;
@@ -42,6 +41,9 @@ public class BypassWorld extends World implements Model {
 	public Level curLevel;
 	
 	public WinnerMenu winnerMenu;
+	
+	BypassBoard bypassBoard;
+	
 	
 	
 	public static void create(LevelDB levelDB, int index) {
@@ -92,11 +94,6 @@ public class BypassWorld extends World implements Model {
 		BYPASSWORLD.simThread = new Thread(new SimulationRunnable(BYPASSWORLD.simThreadTrigger));
 		BYPASSWORLD.simThread.start();
 		
-//		BYPASSWORLD.uiThreadTrigger.set(true);
-//		
-//		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.uiThreadTrigger));
-//		BYPASSWORLD.uiThread.start();
-		
 	}
 	
 	public static void surfaceChanged(int width, int height) {
@@ -127,12 +124,9 @@ public class BypassWorld extends World implements Model {
 //			APP.platform.unshowDebuggerScreen();
 //		}
 		
-//		BYPASSWORLD.uiThreadTrigger.set(false);
-		
 		BYPASSWORLD.simThreadTrigger.set(false);
 		
 		try {
-//			BYPASSWORLD.uiThread.join();
 			
 			BYPASSWORLD.simThread.join();
 			
@@ -149,12 +143,9 @@ public class BypassWorld extends World implements Model {
 			return;
 		}
 		
-//		BYPASSWORLD.uiThreadTrigger.set(false);
-		
 		BYPASSWORLD.simThreadTrigger.set(false);
 		
 		try {
-//			BYPASSWORLD.uiThread.join();
 			
 			BYPASSWORLD.simThread.join();
 			
@@ -209,11 +200,6 @@ public class BypassWorld extends World implements Model {
 		BYPASSWORLD.simThread = new Thread(new SimulationRunnable(BYPASSWORLD.simThreadTrigger));
 		BYPASSWORLD.simThread.start();
 		
-//		BYPASSWORLD.uiThreadTrigger.set(true);
-//		
-//		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.uiThreadTrigger));
-//		BYPASSWORLD.uiThread.start();
-		
 	}
 	
 	public static BypassWorld createBypassWorld(LevelDB levelDB, int index) {
@@ -249,6 +235,8 @@ public class BypassWorld extends World implements Model {
 			level.userStartTime = System.currentTimeMillis();
 			
 			BypassBoard board = w.createBypassBoard(new Point(qm.worldAABB.width / 2, qm.worldAABB.height / 2), level.ini);
+			
+			w.bypassBoard = board;
 			
 			w.addBypassCars(board);
 			
@@ -459,26 +447,18 @@ public class BypassWorld extends World implements Model {
 		return winnerMenu;
 	}
 	
-	public void handleZooming(Car car) {
+	public void handlePanning(Car car, Point center) {
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
 		
-		BypassBoard b;
 		if (gpos instanceof RoadPosition) {
-			
-			Vertex origExitingVertex = (Vertex)car.driver.toolOrigExitingVertexPos.gp.entity;
-			
-			b = origExitingVertex.s.board;
 			
 		} else if (gpos instanceof VertexPosition) {
 			
-			b = ((Vertex)gpos.entity).s.board;
-			
 		} else {
 			assert gpos instanceof BypassBoardPosition;
-			b = (BypassBoard)gpos.entity;
 			
-			if (b.withinGrid(car, car.angle, car.center)) {
+			if (bypassBoard.withinGrid(car, car.angle, car.center)) {
 				
 				double cameraX = worldCamera.origWorldViewport.x;
 				double cameraY = worldCamera.origWorldViewport.y;
@@ -488,17 +468,19 @@ public class BypassWorld extends World implements Model {
 			}
 		}
 		
-		Point aa = Point.worldToPanel(car.center, worldCamera);
-		Point bb = aa.plus(car.toolOrigPixelOffset);
+		Point aa = Point.worldToPanel(center, worldCamera);
+		Point bb = aa.minus(worldCamera.panelAABB.centerX, worldCamera.panelAABB.centerY);
 		Point cc = Point.panelToWorld(bb, worldCamera);
 		
-		double fraction = b.carInGridFraction(car);
+		double fraction = bypassBoard.carInGridFraction(car);
 		
-		double cameraX = cc.x + (1-(1-fraction)) * (worldCamera.origWorldViewport.x - cc.x);
-		double cameraY = cc.y + (1-(1-fraction)) * (worldCamera.origWorldViewport.y - cc.y);
+		double cameraX;
+		double cameraY;
+		
+		cameraX = cc.x + fraction * (worldCamera.origWorldViewport.x - cc.x);
+		cameraY = cc.y + fraction * (worldCamera.origWorldViewport.y - cc.y);
 		
 		worldCamera.panAbsolute(cameraX, cameraY);
-		
 	}
 	
 	public void winner() {

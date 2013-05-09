@@ -55,8 +55,6 @@ public class World extends PhysicsWorld {
 	
 	Shimmer shimmer;
 	
-//	AABB worldEdge;
-	
 	public World() {
 		
 		background = new WorldBackground(this);
@@ -128,7 +126,6 @@ public class World extends PhysicsWorld {
 	public boolean integrate(double t) {
 				
 		this.t = t;
-//		System.out.println(t);
 		
 		boolean res = false;
 		
@@ -371,6 +368,7 @@ public class World extends PhysicsWorld {
 	
 	public Point lastPressedWorldPoint;
 	public Point lastDraggedWorldPoint;
+	public Point penDraggedWorldPoint;
 	public boolean lastDraggedWorldPointWasNull;
 	public Point lastMovedWorldPoint;
 	public Point lastMovedOrDraggedWorldPoint;
@@ -389,6 +387,7 @@ public class World extends PhysicsWorld {
 	public void dragged(InputEvent ev) {
 		
 		lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
+		penDraggedWorldPoint = lastDraggedWorldPoint;
 		lastDraggedWorldPoint = ev.p;
 		lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
 		
@@ -421,11 +420,6 @@ public class World extends PhysicsWorld {
 		
 		boolean oldDebug = APP.DEBUG_DRAW;
 		APP.DEBUG_DRAW = false; 
-		
-		ctxt.setColor(Color.LIGHT_GRAY);
-//		ctxt.fillRect(
-//				0, 0,
-//				(int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height);
 		
 		ctxt.pushTransform();
 		

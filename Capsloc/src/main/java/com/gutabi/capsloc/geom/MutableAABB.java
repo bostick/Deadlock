@@ -160,9 +160,11 @@ public class MutableAABB implements Serializable {
 			
 			double innerLen = inner.y - y;
 			
-			return DMath.greaterThan(innerLen, (diff+height)) ?
-					0.0 :
-						1.0 - innerLen / (diff+height);
+			if (DMath.greaterThan(innerLen, (diff+height))) {
+				return 0.0;
+			} else {
+				return 1.0 - innerLen / (diff+height);
+			}
 		}
 		
 		if (DMath.greaterThan(y+height, inner.brY)) {

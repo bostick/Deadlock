@@ -1,73 +1,33 @@
 
-antialiasing?
-
-
-
-
-
-things from party:
-
-too easy to get an F
-think about keeping track of user moves, when user goes back, like an undo, decrement counter, stack of user moves
-
-on tab, episode 1, level 0, flick yellow truck up, hits other truck offscreen
-
-too easy to snag on a flick
-
-sometiems tunnels through
-
-
-
-
-
-episode 1, level 0
-flick yellow truck, sometimes get assert (when starting OBB is already overlapping another car)
-
-
-
-
-
-
-
-too easy to drag and overshoot on the grid, if within 25% just snap to it
-
-
-
-jiggle car a little to indicate hitting other car, or currently locked because another car is still coasting
-
-
-
 
 speed up level menu
-reading through leveldb
-
 
 speed up winner menu
 
-
-
-
 transforms for levels
-
-
-
-
-
-
-
-
-
 
 
 easter egg: click on a grass, do something
 something: cars are now intangible
 in board description, a missing - or | means to allow the car off of the board...
 
+grab red car as exiting, and drag to exit...
+
 allow custom boards? does bigger than 6x6 work?
 
 
 
 SOON:
+
+fix dragging problem
+episode 1, level 0
+yellow truck collides, drag to right, but will move to left a little
+
+
+
+jiggle car a little to indicate hitting other car, or currently locked because another car is still coasting
+
+think about keeping track of user moves, when user goes back, like an undo, decrement counter, stack of user moves
 
 
 only repaint dirty regions
@@ -102,6 +62,13 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+too easy to drag and overshoot on the grid, if within 15% just snap to it
+
+too easy to get an F, scores are now more spread out
+
+
+antialiasing?
 
 render graph as separate image (make sure to cut off exit)
 

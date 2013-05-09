@@ -38,7 +38,6 @@ public abstract class Car extends PhysicsBody {
 	
 	public Point toolOrigCenter;
 	public MutableOBB toolOrigShape = new MutableOBB();
-	public Point toolOrigPixelOffset;
 	
 	public boolean destroyed;
 	

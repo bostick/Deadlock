@@ -25,7 +25,7 @@ public class BypassCar extends Car {
 	public char boardLetter;
 	
 	/*
-	 * bypass the regular physics here.
+	 * bypass (har!) the regular physics here.
 	 * we just need the car to be constrained to the road, and accelerating
 	 * 
 	 * if the physics engine can ever nicely constraining motion to a track, then use it
@@ -91,9 +91,9 @@ public class BypassCar extends Car {
 		
 		assert vel >= 0.0;
 		
-//		if (vel > 4) {
-//			vel = 4;
-//		}
+		if (vel > 20) {
+			vel = 20;
+		}
 		
 		coastingVel = vel;
 	}
@@ -133,7 +133,7 @@ public class BypassCar extends Car {
 			
 			driver.setOverallPos(driver.toolCoastingGoal);
 			if (!driver.toolCoastingGoal.isEndOfPath()) {
-				((BypassWorld)world).handleZooming(this);
+				((BypassWorld)world).handlePanning(this, this.center);
 			}
 			
 			driver.toolOrigExitingVertexPos = null;

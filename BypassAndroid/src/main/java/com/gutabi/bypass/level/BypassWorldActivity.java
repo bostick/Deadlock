@@ -146,7 +146,6 @@ public class BypassWorldActivity extends BypassActivity {
 					
 					
 					c.coastingVel = savedInstanceState.getDouble("com.gutabi.bypass.level.Car"+id+".CoastingVel");
-					c.toolOrigPixelOffset = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.level.Car"+id+".OrigPixelOffset");
 				}
 				
 			}
@@ -220,16 +219,12 @@ public class BypassWorldActivity extends BypassActivity {
 		BypassWorld.pause();
 	}
 	
-	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		
-//		BypassWorld.BYPASSWORLD.uiThreadTrigger.set(false);
 		
 		BypassWorld.BYPASSWORLD.simThreadTrigger.set(false);
 		
 		try {
-//			BypassWorld.BYPASSWORLD.uiThread.join();
 			
 			BypassWorld.BYPASSWORLD.simThread.join();
 			
@@ -268,34 +263,22 @@ public class BypassWorldActivity extends BypassActivity {
 				outState.putSerializable("com.gutabi.bypass.level.Car"+id+".CoastingGoal", c.driver.toolCoastingGoal);
 				outState.putSerializable("com.gutabi.bypass.level.Car"+id+".OrigExitingVertexPos", c.driver.toolOrigExitingVertexPos);
 				outState.putDouble("com.gutabi.bypass.level.Car"+id+".CoastingVel", c.coastingVel);
-				outState.putSerializable("com.gutabi.bypass.level.Car"+id+".OrigPixelOffset", c.toolOrigPixelOffset);
 			}
 		}
-		
-		
-		
-		
 		
 		BypassWorld.BYPASSWORLD.simThreadTrigger.set(true);
 		
 		BypassWorld.BYPASSWORLD.simThread = new Thread(new SimulationRunnable(BypassWorld.BYPASSWORLD.simThreadTrigger));
 		BypassWorld.BYPASSWORLD.simThread.start();
 		
-//		BypassWorld.BYPASSWORLD.uiThreadTrigger.set(true);
-//		
-//		BypassWorld.BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BypassWorld.BYPASSWORLD.uiThreadTrigger));
-//		BypassWorld.BYPASSWORLD.uiThread.start();
-		
 	}
 	
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.world_context_menu, menu);
 	    return true;
 	}
 	
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.btn_reset_level:

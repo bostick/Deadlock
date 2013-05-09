@@ -52,6 +52,12 @@ public class BypassBoard extends Entity {
 	public Point ul;
 	public AABB allStudsAABB;
 	public AABB gridAABB;
+	/*
+	 * gridFudgeAABB is like gridAABB, but with fudge
+	 * when a car is leaving the board, when it starts to turn, its AABB slightly extends over gridAABB
+	 * gridFudgeAABB should contain a car as its exiting the board, and only have overlap on the side that the car is leaving
+	 */
+	public AABB gridFudgeAABB;
 	public AABB zoomingAABB;
 	
 	int jStudCount = 0;
@@ -147,6 +153,7 @@ public class BypassBoard extends Entity {
 		
 		ul = new Point(center.x - 0.5 * colCount * BypassStud.SIZE, center.y - 0.5 * rowCount * BypassStud.SIZE);
 		gridAABB = new AABB(ul.x, ul.y, colCount * BypassStud.SIZE, rowCount * BypassStud.SIZE);
+		gridFudgeAABB = new AABB(ul.x - 0.1, ul.y - 0.1, colCount * BypassStud.SIZE + 0.2, rowCount * BypassStud.SIZE + 0.2);
 		allStudsAABB = new AABB(ul.x - BypassStud.SIZE, ul.y - BypassStud.SIZE, (colCount + 2) * BypassStud.SIZE, (rowCount + 2) * BypassStud.SIZE);
 		double zoomingExtension = 5.0;
 		zoomingAABB = new AABB(ul.x - zoomingExtension, ul.y - zoomingExtension, gridAABB.width + 2 * zoomingExtension, gridAABB.height + 2 * zoomingExtension);
@@ -1292,8 +1299,7 @@ public class BypassBoard extends Entity {
 		
 		MutableAABB a = o.aabb;
 		
-		double frac = a.fractionWithin(gridAABB, gridAABB);
-//		double frac = a.fractionWithin(gridAABB, allStudsAABB);
+		double frac = a.fractionWithin(gridFudgeAABB, allStudsAABB);
 		
 		return frac;
 	}
