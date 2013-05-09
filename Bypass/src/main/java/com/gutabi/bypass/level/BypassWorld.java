@@ -225,7 +225,7 @@ public class BypassWorld extends World implements Model {
 		
 		try {
 			
-			Level level = levelDB.readLevel(index);
+			Level level = levelDB.getLevel(index);
 			
 			w.levelDB = levelDB;
 			w.curLevel = level;
@@ -531,13 +531,8 @@ public class BypassWorld extends World implements Model {
 		curLevel.isWon = true;
 		
 		for (int i = 0; i < levelDB.levelCount; i++) {
-			if (levelDB.levelMap.keySet().contains(i)) {
-				if (levelDB.levelMap.get(i).isWon) {
-					
-				} else {
-					levelDB.firstUnwon = i;
-					break;
-				}
+			if (levelDB.getLevel(i).isWon) {
+				
 			} else {
 				levelDB.firstUnwon = i;
 				break;

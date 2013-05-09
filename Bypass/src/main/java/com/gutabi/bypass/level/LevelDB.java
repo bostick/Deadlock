@@ -20,7 +20,7 @@ public class LevelDB {
 	public int firstUnwon = 0;
 	public Point loc;
 	
-	public Map<Integer, Level> levelMap = new HashMap<Integer, Level>();
+	private Map<Integer, Level> levelMap = new HashMap<Integer, Level>();
 	
 	Resource res;
 	public final int levelCount;
@@ -56,8 +56,79 @@ public class LevelDB {
 				is.close();
 				break;
 			}
+		}
+		
+		is = APP.platform.openResourceInputStream(res);
+		zis = new ZipInputStream(is);
+		
+		int count;
+		byte tmp[] = new byte[100];
+		
+		for (int index = 0; index < levelCount; index++) {
+			
+			ZipEntry entry = zis.getNextEntry();
+			if (entry.getName().equals("metadata.txt")) {
+				zis.getNextEntry();
+			}
+//			int curIndex = 0;
+//			while (curIndex != index) {
+//				entry = zis.getNextEntry();
+//				if (entry.getName().equals("metadata.txt")) {
+//					zis.getNextEntry();
+//				}
+//				curIndex++;
+//			}
+			
+			count = zis.read(tmp, 0, 100);
+			assert count != -1;
+			
+			byte[] data = new byte[count];
+			System.arraycopy(tmp, 0, data, 0, count);
+			
+			ByteArrayInputStream bais = new ByteArrayInputStream(data);
+			
+			Level level = new Level();
+			char[][] board;
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(bais));
+			
+			int rows = 0;
+			int cols = 0;
+			
+			StringBuilder builder = new StringBuilder();
+			String inputLine = in.readLine();
+			
+			if (inputLine.matches("moves: .*")) {
+				String rest = inputLine.substring(7);
+				level.requiredMoves = Integer.parseInt(rest);
+			} else {
+				assert false;
+			}
+			
+			while ((inputLine = in.readLine()) != null) {
+				builder.append(inputLine);
+				cols = inputLine.length();
+				rows++;
+			}
+			in.close();
+			String s = builder.toString();
+			
+			board = new char[rows][cols];
+			for (int i = 0; i < rows; i++) {
+				for (int j = 0; j < cols; j++) {
+					board[i][j] = s.charAt(i * cols + j);
+				}
+			}
+			
+			level.index = index;
+			level.ini = board;
+			
+			levelMap.put(index, level);
 			
 		}
+		zis.close();
+		is.close();
+		
 	}
 	
 	public void setFirstUnwon() {
@@ -78,85 +149,11 @@ public class LevelDB {
 		
 	}
 	
-	public Level readLevel(int index) throws Exception {
-		
-		Level l = levelMap.get(index);
-		if (l != null) {
-			return l;
-		}
-		
-		InputStream is = APP.platform.openResourceInputStream(res);
-		ZipInputStream zis = new ZipInputStream(is);
-		
-		ZipEntry entry = zis.getNextEntry();
-		if (entry.getName().equals("metadata.txt")) {
-			zis.getNextEntry();
-		}
-		int curIndex = 0;
-		while (curIndex != index) {
-			entry = zis.getNextEntry();
-			if (entry.getName().equals("metadata.txt")) {
-				zis.getNextEntry();
-			}
-			curIndex++;
-		}
-		
-		int count;
-		byte tmp[] = new byte[100];
-		
-		count = zis.read(tmp, 0, 100);
-		assert count != -1;
-		
-		byte[] data = new byte[count];
-		System.arraycopy(tmp, 0, data, 0, count);
-		
-		zis.close();
-		is.close();
-		
-		
-		ByteArrayInputStream bais = new ByteArrayInputStream(data);
-		
-		
-		Level level = new Level();
-		char[][] board;
-		
-		BufferedReader in = new BufferedReader(new InputStreamReader(bais));
-		
-		int rows = 0;
-		int cols = 0;
-		
-		StringBuilder builder = new StringBuilder();
-		String inputLine = in.readLine();
-		
-		if (inputLine.matches("moves: .*")) {
-			String rest = inputLine.substring(7);
-			level.requiredMoves = Integer.parseInt(rest);
-		} else {
-			assert false;
-		}
-		
-		while ((inputLine = in.readLine()) != null) {
-			builder.append(inputLine);
-			cols = inputLine.length();
-			rows++;
-		}
-		in.close();
-		String s = builder.toString();
-		
-		board = new char[rows][cols];
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				board[i][j] = s.charAt(i * cols + j);
-			}
-		}
-		
-		level.index = index;
-		level.ini = board;
-		
-		levelMap.put(index, level);
-		
-		return level;
-		
+	public Level getLevel(int i) {
+		return levelMap.get(i);
 	}
-
+	
+	public void clearLevels() {
+		levelMap.clear();
+	}
 }

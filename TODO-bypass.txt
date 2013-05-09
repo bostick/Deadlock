@@ -1,4 +1,11 @@
 
+speed up toggling info in level menu
+
+after toggling info, go back to scroll position
+
+
+
+
 
 speed up level menu
 

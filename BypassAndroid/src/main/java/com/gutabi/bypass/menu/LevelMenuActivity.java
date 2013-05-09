@@ -102,7 +102,6 @@ public class LevelMenuActivity extends BypassActivity {
 		LevelMenu.pause();
 	}
 	
-	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
@@ -110,14 +109,12 @@ public class LevelMenuActivity extends BypassActivity {
 		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuLoc", new Point(LevelMenu.LEVELMENU.aabb.x, LevelMenu.LEVELMENU.aabb.y));
 	}
 	
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.levelmenu_context_menu, menu);
 	    return true;
 	}
 	
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.btn_clear_scores:
@@ -126,10 +123,13 @@ public class LevelMenuActivity extends BypassActivity {
 	        case R.id.btn_toggle_info:
 	        	LevelMenu.showInfo = !LevelMenu.showInfo;
 	        	
+	        	Point loc = new Point(LevelMenu.LEVELMENU.aabb.x, LevelMenu.LEVELMENU.aabb.y);
+	        	
 	        	LevelMenu.LEVELMENU.lock.lock();
 	        	
 	        	LevelMenu.LEVELMENU.render();
-	    		
+	        	LevelMenu.LEVELMENU.setLocation(loc);
+	        	
 	        	LevelMenu.LEVELMENU.lock.unlock();
 	        	
 	        	return true;

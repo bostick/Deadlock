@@ -390,7 +390,7 @@ public class PlatformImpl implements BypassPlatform {
 			String grade = grades.getString(Integer.toString(i), null);
 			int moves = userMoves.getInt(Integer.toString(i), -1);
 			if (grade != null) {
-				Level l = levelDB.readLevel(i);
+				Level l = levelDB.getLevel(i);
 				l.isWon = true;
 				l.grade = grade;
 				l.userMoves = moves;
@@ -442,7 +442,7 @@ public class PlatformImpl implements BypassPlatform {
 		editor.clear();
 		editor.commit();
 		
-		levelDB.levelMap.clear();
+		levelDB.clearLevels();
 		
 		menu.shimmeringMenuItem = menu.tree.get(0).get(0);
 		
