@@ -51,7 +51,6 @@ public class LevelMenu extends Menu implements Model {
 	public static void resume() {
 		
 		LEVELMENU = new LevelMenu();
-		LEVELMENU.setLocation(levelDB.loc);
 		
 		APP.model = LEVELMENU;
 		
@@ -97,6 +96,9 @@ public class LevelMenu extends Menu implements Model {
 		APP.appScreen.postDisplay(width, height);
 		
 		LEVELMENU.render();
+		if (levelDB.loc != null) {
+			LEVELMENU.setLocation(levelDB.loc);
+		}
 		
 		LEVELMENU.lock.unlock();
 	}

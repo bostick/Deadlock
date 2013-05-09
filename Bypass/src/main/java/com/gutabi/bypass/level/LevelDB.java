@@ -18,7 +18,7 @@ public class LevelDB {
 	public final String name;
 	
 	public int firstUnwon = 0;
-	public Point loc = new Point(0, 0);
+	public Point loc;
 	
 	public Map<Integer, Level> levelMap = new HashMap<Integer, Level>();
 	
