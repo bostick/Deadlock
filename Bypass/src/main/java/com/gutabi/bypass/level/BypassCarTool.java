@@ -117,6 +117,13 @@ public class BypassCarTool extends WorldToolBase {
 			if (car.state != CarStateEnum.DRAGGING) {
 				return;
 			}
+			if (car.driver.prevOverallPos == null) {
+				/*
+				 * nothing dragged, so this is only press, release
+				 */
+				return;
+			}
+			
 			
 			if (world.curLevel.isWon) {
 				
