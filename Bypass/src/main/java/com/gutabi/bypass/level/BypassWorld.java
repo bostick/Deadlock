@@ -449,9 +449,18 @@ public class BypassWorld extends World implements Model {
 	
 	public void handlePanning(Car car, Point center) {
 		
+		if (car.driver.toolLastExitingVertexPos != null && car.driver.toolLastExitingVertexPos.gp.entity == bypassBoard.exitVertex) {
+			/*
+			 * no panning when exiting
+			 */
+			return;
+		}
+		
 		GraphPosition gpos = car.driver.overallPos.gp;
 		
 		if (gpos instanceof RoadPosition) {
+			
+			
 			
 		} else if (gpos instanceof VertexPosition) {
 			
@@ -534,6 +543,8 @@ public class BypassWorld extends World implements Model {
 				break;
 			}
 		}
+		
+		WinnerMenu.action();
 		
 	}
 	

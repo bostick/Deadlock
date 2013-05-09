@@ -178,8 +178,8 @@ public class BypassCar extends Car {
 						return;
 					} else if (type == CarType.RED && !ShapeUtils.intersectAA(world.worldCamera.worldViewport, this.shape.aabb)) {
 						
-						if (((BypassWorld)world).winnerMenu == null) {
-							WinnerMenu.action();
+						if (!((BypassWorld)world).curLevel.isWon) {
+							((BypassWorld)world).winner();
 						}
 						
 					}
