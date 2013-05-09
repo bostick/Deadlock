@@ -1,15 +1,4 @@
 
-speed up toggling info in level menu
-
-after toggling info, go back to scroll position
-
-
-
-
-
-speed up level menu
-
-speed up winner menu
 
 transforms for levels
 
@@ -69,6 +58,13 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+
+speed up toggling info in level menu
+
+after toggling info, go back to scroll position
+
+
 
 too easy to drag and overshoot on the grid, if within 15% just snap to it
 

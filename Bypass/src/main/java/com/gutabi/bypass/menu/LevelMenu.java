@@ -22,7 +22,7 @@ public class LevelMenu extends Menu implements Model {
 	
 	public static LevelDB levelDB;
 	
-	public static boolean showInfo = true;
+	public static boolean showInfo = false;
 	
 	public LevelMenu() {
 		

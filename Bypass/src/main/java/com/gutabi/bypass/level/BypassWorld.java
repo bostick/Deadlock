@@ -404,45 +404,6 @@ public class BypassWorld extends World implements Model {
 		carMap.addCar(c);
 	}
 	
-	public static char[][] cw90(char[][] ini) {
-		
-		char[][] newIni = new char[ini[0].length][ini.length];
-		
-		for (int i = 0; i < ini.length; i++) {
-			for (int j = 0; j < ini[i].length; j++) {
-				newIni[j][ini.length-1-i] = ini[i][j];
-			}
-		}
-		
-		return newIni;
-	}
-	
-	public static char[][] ccw90(char[][] ini) {
-		
-		char[][] newIni = new char[ini[0].length][ini.length];
-		
-		for (int i = 0; i < ini.length; i++) {
-			for (int j = 0; j < ini[i].length; j++) {
-				newIni[ini[i].length-1-j][i] = ini[i][j];
-			}
-		}
-		
-		return newIni;
-	}
-
-	public static char[][] transpose(char[][] ini) {
-		
-		char[][] newIni = new char[ini[0].length][ini.length];
-		
-		for (int i = 0; i < ini.length; i++) {
-			for (int j = 0; j < ini[i].length; j++) {
-				newIni[j][i] = ini[i][j];
-			}
-		}
-		
-		return newIni;
-	}
-	
 	public Menu getMenu() {
 		return winnerMenu;
 	}
