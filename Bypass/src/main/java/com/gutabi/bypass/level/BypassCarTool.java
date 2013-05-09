@@ -121,6 +121,9 @@ public class BypassCarTool extends WorldToolBase {
 				/*
 				 * nothing dragged, so this is only press, release
 				 */
+				
+				car.state = CarStateEnum.IDLE;
+				
 				return;
 			}
 			
