@@ -2,20 +2,23 @@ package com.gutabi.bypass.android.menu;
 
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
+
+import java.lang.reflect.Constructor;
+
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.gutabi.bypass.android.R;
-
 import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.android.ActivityState;
 import com.gutabi.bypass.android.BypassActivity;
+import com.gutabi.bypass.android.BypassAndroidPlatform;
 import com.gutabi.bypass.android.BypassView;
-import com.gutabi.bypass.android.PlatformImpl;
+import com.gutabi.bypass.android.R;
 import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.capsloc.math.Point;
@@ -34,12 +37,22 @@ public class LevelMenuActivity extends BypassActivity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		if (BYPASSAPP == null) {
-			PlatformImpl platform = new PlatformImpl(getResources());
 			try {
-				BypassApplication.create(platform);
+				
+				String platformImplName = (String)getIntent().getExtras().get("com.gutabi.bypass.android.PlatformImplClassName");
+				
+				Class<?> cArg = Class.forName(platformImplName);
+				Constructor<?> platformCtor = cArg.getConstructor(Resources.class);
+				
+				BypassAndroidPlatform platform = (BypassAndroidPlatform)platformCtor.newInstance(getResources());
+				try {
+					BypassApplication.create(platform);
+				} catch (Exception e) {
+					Log.e("bypass", e.getMessage(), e);
+				}
+				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.e("bypass", e.getMessage(), e);
 			}
 		}
 		

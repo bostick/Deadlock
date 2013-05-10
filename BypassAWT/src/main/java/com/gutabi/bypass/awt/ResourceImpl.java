@@ -1,4 +1,4 @@
-package com.gutabi.bypass;
+package com.gutabi.bypass.awt;
 
 import java.net.URL;
 

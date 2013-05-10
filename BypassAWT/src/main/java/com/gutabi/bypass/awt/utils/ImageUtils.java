@@ -1,4 +1,4 @@
-package com.gutabi.bypass.utils;
+package com.gutabi.bypass.awt.utils;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;

@@ -1,4 +1,4 @@
-package com.gutabi.bypass.ui.paint;
+package com.gutabi.bypass.awt.ui.paint;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
@@ -15,9 +15,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Stack;
 
-import com.gutabi.bypass.PlatformImpl;
-import com.gutabi.bypass.geom.GeometryPathImpl;
-import com.gutabi.bypass.ui.ImageImpl;
+import com.gutabi.bypass.awt.PlatformImpl;
+import com.gutabi.bypass.awt.geom.GeometryPathImpl;
+import com.gutabi.bypass.awt.ui.ImageImpl;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Circle;

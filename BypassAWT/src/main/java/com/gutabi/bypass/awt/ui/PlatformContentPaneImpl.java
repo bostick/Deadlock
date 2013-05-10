@@ -1,4 +1,4 @@
-package com.gutabi.bypass.ui;
+package com.gutabi.bypass.awt.ui;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import com.gutabi.bypass.ui.paint.RenderingContextImpl;
+import com.gutabi.bypass.awt.ui.paint.RenderingContextImpl;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.PlatformContentPane;
 import com.gutabi.capsloc.ui.paint.RenderingContext;

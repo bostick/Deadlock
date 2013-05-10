@@ -17,7 +17,7 @@ public abstract class BypassActivity extends Activity {
 		Log.d("bypassactivity", name + " create");
 		state = ActivityState.CREATE;
 		
-		PlatformImpl.CURRENTACTIVITY = this;
+		BypassAndroidPlatform.CURRENTACTIVITY = this;
 		
 	}
 	
@@ -35,7 +35,7 @@ public abstract class BypassActivity extends Activity {
 		Log.d("bypassactivity", name + " start");
 		state = ActivityState.START;
 		
-		PlatformImpl.CURRENTACTIVITY = this;
+		BypassAndroidPlatform.CURRENTACTIVITY = this;
 		
 	}
     
@@ -52,7 +52,6 @@ public abstract class BypassActivity extends Activity {
 		
 		Log.d("bypassactivity", name + " restart");
 		state = ActivityState.RESTART;
-		
 	}
 	
 	protected void onResume() {
@@ -61,8 +60,7 @@ public abstract class BypassActivity extends Activity {
 		Log.d("bypassactivity", name + " resume");
 		state = ActivityState.RESUME;
 		
-		PlatformImpl.CURRENTACTIVITY = this;
-		
+		BypassAndroidPlatform.CURRENTACTIVITY = this;
 	}
 	
 	protected void onPause() {
@@ -74,20 +72,16 @@ public abstract class BypassActivity extends Activity {
 	
 	protected abstract void onSurfaceChanged(int width, int height);
 	
-	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		Log.d("bypassactivity", name + " save instance state");
-		
+		Log.d("bypassactivity", name + " save instance state");	
 	}
 	
-	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		
-		Log.d("bypassactivity", name + " restore instance state");
-		
+		Log.d("bypassactivity", name + " restore instance state");	
 	}
 	
 }

@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -19,19 +18,13 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.gutabi.bypass.BypassPlatform;
-import com.gutabi.bypass.android.ResourceImpl.ResourceType;
 import com.gutabi.bypass.android.geom.GeometryPathImpl;
-import com.gutabi.bypass.android.level.BypassWorldActivity;
-import com.gutabi.bypass.android.menu.LevelMenuActivity;
-import com.gutabi.bypass.android.menu.MainMenuActivity;
 import com.gutabi.bypass.android.ui.ImageImpl;
 import com.gutabi.bypass.android.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.android.ui.paint.RenderingContextImpl;
-import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.Level;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.LevelMenu;
-import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.GeometryPath;
@@ -40,7 +33,7 @@ import com.gutabi.capsloc.ui.PlatformContentPane;
 import com.gutabi.capsloc.ui.paint.FontStyle;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
-public class PlatformImpl implements BypassPlatform {
+public abstract class BypassAndroidPlatform implements BypassPlatform {
 	
 	public static BypassActivity CURRENTACTIVITY;
 	
@@ -52,7 +45,7 @@ public class PlatformImpl implements BypassPlatform {
 	Paint visitorPlain48 = new Paint();
 	Paint visitorPlain72 = new Paint();
 	
-	public PlatformImpl(Resources resources) {
+	protected BypassAndroidPlatform(Resources resources) {
 		this.resources = resources;
 		
 		visitorFontResource = new ResourceImpl(Typeface.createFromAsset(resources.getAssets(), "fonts/" + "visitor1" + ".ttf"));
@@ -310,34 +303,6 @@ public class PlatformImpl implements BypassPlatform {
 		return null;
 	}
 	
-	public Resource levelDBResource(String name) {
-		
-		if (name.equals("tutorial")) {
-			return new ResourceImpl(R.raw.tutorial, ResourceType.RAW);
-		} else if (name.equals("episode1")) {
-			return new ResourceImpl(R.raw.episode1, ResourceType.RAW);
-		} else if (name.equals("episode2")) {
-			return new ResourceImpl(R.raw.episode2, ResourceType.RAW);
-		}
-		
-		throw new AssertionError();
-	}
-	
-	public String resourceName(Resource res) {
-		
-		ResourceImpl i = (ResourceImpl)res;
-		
-		if (i.resId == R.raw.tutorial) {
-			return "tutorial";
-		} else if (i.resId == R.raw.episode1) {
-			return "episode1";
-		} else if (i.resId == R.raw.episode2) {
-			return "episode2";
-		}
-		
-		throw new AssertionError();
-	}
-	
 	public InputStream openResourceInputStream(Resource res) {
 		
 		ResourceImpl impl = (ResourceImpl)res;
@@ -347,35 +312,6 @@ public class PlatformImpl implements BypassPlatform {
 		}
 		
 		return null;
-	}
-	
-	
-	
-	public void action(@SuppressWarnings("rawtypes") Class clazz, Object... args) {
-		
-		if (clazz == MainMenu.class) {
-			
-			Intent intent = new Intent(CURRENTACTIVITY, MainMenuActivity.class);
-			
-			CURRENTACTIVITY.startActivity(intent);
-			
-		} else if (clazz == LevelMenu.class) {
-			
-			Intent intent = new Intent(CURRENTACTIVITY, LevelMenuActivity.class);
-			CURRENTACTIVITY.startActivity(intent);
-			
-		} else if (clazz == BypassWorld.class) {
-			
-			int ii = (Integer)args[0];
-			
-			Intent intent = new Intent(CURRENTACTIVITY, BypassWorldActivity.class);
-			intent.putExtra("com.gutabi.bypass.level.Index", ii);
-			CURRENTACTIVITY.startActivity(intent);
-			
-		} else {
-			throw new AssertionError();
-		}
-		
 	}
 	
 	public void finishAction() {

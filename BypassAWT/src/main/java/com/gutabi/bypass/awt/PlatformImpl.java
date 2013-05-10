@@ -1,4 +1,4 @@
-package com.gutabi.bypass;
+package com.gutabi.bypass.awt;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
@@ -20,16 +20,17 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.RootPaneContainer;
 
-import com.gutabi.bypass.geom.GeometryPathImpl;
+import com.gutabi.bypass.BypassPlatform;
+import com.gutabi.bypass.awt.geom.GeometryPathImpl;
+import com.gutabi.bypass.awt.ui.ImageImpl;
+import com.gutabi.bypass.awt.ui.PlatformContentPaneImpl;
+import com.gutabi.bypass.awt.ui.paint.RenderingContextImpl;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.Level;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.bypass.menu.MainMenu;
-import com.gutabi.bypass.ui.ImageImpl;
-import com.gutabi.bypass.ui.PlatformContentPaneImpl;
-import com.gutabi.bypass.ui.paint.RenderingContextImpl;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.GeometryPath;

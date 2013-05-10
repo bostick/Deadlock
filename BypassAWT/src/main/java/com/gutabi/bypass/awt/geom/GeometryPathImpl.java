@@ -1,9 +1,9 @@
-package com.gutabi.bypass.geom;
+package com.gutabi.bypass.awt.geom;
 
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 
-import com.gutabi.bypass.ui.paint.RenderingContextImpl;
+import com.gutabi.bypass.awt.ui.paint.RenderingContextImpl;
 import com.gutabi.capsloc.geom.Circle;
 import com.gutabi.capsloc.geom.CubicCurve;
 import com.gutabi.capsloc.geom.Ellipse;

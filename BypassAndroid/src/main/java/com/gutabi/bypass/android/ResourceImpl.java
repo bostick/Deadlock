@@ -8,10 +8,6 @@ import com.gutabi.capsloc.Resource;
 
 public class ResourceImpl implements Resource {
 	
-	enum ResourceType {
-		DRAWABLE, RAW
-	}
-	
 	public int resId;
 	public ResourceType resType;
 	

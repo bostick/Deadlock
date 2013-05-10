@@ -1,4 +1,4 @@
-package com.gutabi.bypass.ui;
+package com.gutabi.bypass.awt.ui;
 
 import java.awt.image.BufferedImage;
 

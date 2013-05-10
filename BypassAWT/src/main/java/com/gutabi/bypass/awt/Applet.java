@@ -1,11 +1,13 @@
-package com.gutabi.bypass;
+package com.gutabi.bypass.awt;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
+
 import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import com.gutabi.bypass.ui.WindowInfo;
+import com.gutabi.bypass.BypassApplication;
+import com.gutabi.bypass.awt.ui.WindowInfo;
 
 @SuppressWarnings("serial")
 public class Applet extends JApplet {

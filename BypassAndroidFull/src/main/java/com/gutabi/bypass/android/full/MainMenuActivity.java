@@ -1,4 +1,4 @@
-package com.gutabi.bypass.android.full.menu;
+package com.gutabi.bypass.android.full;
 
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
@@ -9,9 +9,8 @@ import android.util.Log;
 import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.android.ActivityState;
 import com.gutabi.bypass.android.BypassActivity;
+import com.gutabi.bypass.android.BypassAndroidPlatform;
 import com.gutabi.bypass.android.BypassView;
-import com.gutabi.bypass.android.PlatformImpl;
-import com.gutabi.bypass.android.full.R;
 import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.MainMenu;
 
@@ -29,12 +28,17 @@ public class MainMenuActivity extends BypassActivity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		if (BYPASSAPP == null) {
-			PlatformImpl platform = new PlatformImpl(getResources());
 			try {
-				BypassApplication.create(platform);
+				
+				BypassAndroidPlatform platform = new BypassAndroidFullPlatform(getResources());
+				try {
+					BypassApplication.create(platform);
+				} catch (Exception e) {
+					Log.e("bypass", e.getMessage(), e);
+				}
+				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.e("bypass", e.getMessage(), e);
 			}
 		}
 		

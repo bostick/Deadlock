@@ -1,4 +1,4 @@
-package com.gutabi.bypass;
+package com.gutabi.bypass.awt;
 
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
@@ -12,8 +12,9 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
+import com.gutabi.bypass.BypassApplication;
+import com.gutabi.bypass.awt.ui.WindowInfo;
 import com.gutabi.bypass.menu.MainMenu;
-import com.gutabi.bypass.ui.WindowInfo;
 
 public class Main {
 	
