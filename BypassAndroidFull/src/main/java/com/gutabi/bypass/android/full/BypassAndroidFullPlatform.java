@@ -18,7 +18,22 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 	public BypassAndroidFullPlatform(Resources resources) {
 		super(resources);
 	}
-
+	
+	public Resource imageResource(String name) {
+		
+		if (name.equals("carsheet")) {
+			return new ResourceImpl(R.drawable.carsheet, ResourceType.DRAWABLE);
+		} else if (name.equals("spritesheet")) {
+			return new ResourceImpl(R.drawable.spritesheet, ResourceType.DRAWABLE);
+		} else if (name.equals("copyright")) {
+			return new ResourceImpl(R.drawable.copyright, ResourceType.DRAWABLE);
+		} else if (name.equals("logo")) {
+			return new ResourceImpl(R.drawable.logo, ResourceType.DRAWABLE);
+		}
+		
+		throw new AssertionError();
+	}
+	
 	public Resource levelDBResource(String name) {
 		
 		if (name.equals("tutorial")) {

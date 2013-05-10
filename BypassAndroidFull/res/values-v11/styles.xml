@@ -1,14 +1,6 @@
 <resources>
     
     <style name="Theme.BypassMainMenu" parent="android:Theme.Holo.NoActionBar.Fullscreen">
-    	<item name="android:windowBackground">@color/dark_gray</item>
-	</style>
-    
-    <style name="Theme.BypassLevelMenu" parent="android:Theme.Holo.NoActionBar.Fullscreen">
-    	<item name="android:windowBackground">@color/dark_gray</item>
-	</style>
-    
-    <style name="Theme.BypassWorld" parent="android:Theme.Holo.NoActionBar.Fullscreen">
     	<item name="android:windowBackground">@color/grass_green</item>
 	</style>
     

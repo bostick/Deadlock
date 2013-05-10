@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="BypassAndroid" default="build" basedir=".">
+<project name="BypassAndroidFull" default="build" basedir=".">
 	
 	<property name="bypassResDir" location="../../BypassResources/"/>
     
