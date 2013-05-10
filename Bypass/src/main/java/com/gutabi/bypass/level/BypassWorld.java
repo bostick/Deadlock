@@ -34,6 +34,7 @@ import com.gutabi.capsloc.world.sprites.CarSheet.CarType;
 public class BypassWorld extends World implements Model {
 	
 	public Lock lock = new ReentrantLock(true);
+	boolean rendered;
 	
 	public static BypassWorld BYPASSWORLD;
 	
@@ -529,19 +530,28 @@ public class BypassWorld extends World implements Model {
 			winnerMenu.render();
 			
 		}
+		
+		rendered = true;
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
 		BYPASSWORLD.lock.lock();
-		
-		super.paint_panel(ctxt);
-		
-		if (curLevel.isWon && winnerMenu != null && winnerMenu.ready) {
-			winnerMenu.paint_panel(ctxt);
+		try {
+			
+			if (!BYPASSWORLD.rendered) {
+				return;
+			}
+			
+			super.paint_panel(ctxt);
+			
+			if (curLevel.isWon && winnerMenu != null && winnerMenu.ready) {
+				winnerMenu.paint_panel(ctxt);
+			}
+			
+		} finally {
+			BYPASSWORLD.lock.unlock();
 		}
-		
-		BYPASSWORLD.lock.unlock();
 	}
 
 }
