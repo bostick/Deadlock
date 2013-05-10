@@ -1,5 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_name">Bypass</string>
-
+    
+    <string name="toggle_info">Toggle Info</string>
+    <string name="clear_scores">Clear Scores</string>
+    
+    <string name="reset_level">Reset Level</string>
+    
 </resources>

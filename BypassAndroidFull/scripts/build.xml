@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<project name="BypassAndroid" default="build" basedir=".">
+	
+	<property name="bypassResDir" location="../../BypassResources/"/>
+    
+	<property name="assetsDir" location="../assets"/>
+	<property name="resDir" location="../res/"/>
+	<property name="rawDir" location="../res/raw"/>
+	
+	<target name="build">
+		
+	    <copy tofile="${resDir}/drawable-hdpi/ic_launcher.png" file="${bypassResDir}/static/ic_launcher.png"/>
+	    
+		<copy tofile="${resDir}/drawable-nodpi/copyright.png" file="${bypassResDir}/static/copyright.png"/>
+		<copy tofile="${resDir}/drawable-nodpi/logo.png" file="${bypassResDir}/static/logo.png"/>
+		<copy tofile="${resDir}/drawable-nodpi/carsheet.png" file="${bypassResDir}/static/carsheet.png"/>
+		<copy tofile="${resDir}/drawable-nodpi/spritesheet.png" file="${bypassResDir}/static/spritesheet.png"/>
+		
+		<copy tofile="${assetsDir}/fonts/visitor1.ttf" file="${bypassResDir}/static/visitor1.ttf"/>
+		
+		<copy tofile="${rawDir}/tutorial.zip" file="${bypassResDir}/gen/tutorial.zip"/>
+		<copy tofile="${rawDir}/episode1.zip" file="${bypassResDir}/gen/episode1.zip"/>
+		<copy tofile="${rawDir}/episode2.zip" file="${bypassResDir}/gen/episode2.zip"/>
+		
+	</target>
+
+</project>
