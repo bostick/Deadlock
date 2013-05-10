@@ -13,6 +13,7 @@ public class WorldPanel extends Panel {
 	}
 	
 	public void postDisplay(int width, int height) {
+		
 		World world = (World)APP.model;
 		
 		aabb = new AABB(aabb.x, aabb.y, width, height);

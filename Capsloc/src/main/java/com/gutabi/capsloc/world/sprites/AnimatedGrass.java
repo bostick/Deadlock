@@ -5,6 +5,7 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.sprites.SpriteSheet.SpriteSheetSprite;
 
@@ -19,6 +20,8 @@ public class AnimatedGrass {
 	int startFrame;
 	
 	public AABB aabb;
+	
+	public boolean xor;
 	
 	public AnimatedGrass(Point p) {
 		this.p = p;
@@ -75,6 +78,10 @@ public class AnimatedGrass {
 			return;
 		}
 		
+		if (xor) {
+			ctxt.setXORMode(Color.BLACK);
+		}
+		
 		switch (lastFrame) {
 		case 0:
 			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
@@ -87,6 +94,11 @@ public class AnimatedGrass {
 			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS2, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
 			break;
 		}
+		
+		if (xor) {
+			ctxt.clearXORMode();
+		}
+		
 	}
 	
 }

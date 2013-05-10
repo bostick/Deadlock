@@ -30,17 +30,14 @@ public class BypassView extends SurfaceView implements SurfaceHolder.Callback {
 		holder.addCallback(this);
 	}
 	
-	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		
 	}
 	
-	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		surfaceValid = false;
 	}
 	
-	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		
 		surfaceValid = true;

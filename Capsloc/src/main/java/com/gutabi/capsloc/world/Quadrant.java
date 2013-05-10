@@ -31,6 +31,11 @@ public class Quadrant {
 	public final AABB aabb;
 	
 	public Quadrant(QuadrantMap map, int r, int c, boolean active) {
+		
+		if (map == null) {
+			throw new IllegalArgumentException();
+		}
+		
 		this.map = map;
 		this.r = r;
 		this.c = c;

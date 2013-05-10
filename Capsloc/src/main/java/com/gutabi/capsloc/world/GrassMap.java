@@ -12,7 +12,7 @@ import com.gutabi.capsloc.world.sprites.AnimatedGrass;
 
 public class GrassMap {
 	
-	List<AnimatedGrass> grass = new ArrayList<AnimatedGrass>();
+	public List<AnimatedGrass> grass = new ArrayList<AnimatedGrass>();
 	
 	public void addGrass(AnimatedGrass g) {
 		grass.add(g);

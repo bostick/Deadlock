@@ -73,7 +73,7 @@ public class World extends PhysicsWorld {
 	}
 	
 	public void panelPostDisplay(int width, int height) {
-				
+		
 		worldCamera.worldViewport.setShape(
 				-(width / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldAABB.width/2 ,
 				-(height / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldAABB.height/2,
@@ -368,6 +368,8 @@ public class World extends PhysicsWorld {
 	
 	public Point lastPressedWorldPoint;
 	public Point lastDraggedWorldPoint;
+	public Point lastReleasedWorldPoint;
+	
 	public Point penDraggedWorldPoint;
 	public boolean lastDraggedWorldPointWasNull;
 	public Point lastMovedWorldPoint;
@@ -381,6 +383,12 @@ public class World extends PhysicsWorld {
 		
 		lastPressedWorldPoint = ev.p;
 		lastDraggedWorldPoint = null;
+		
+	}
+	
+	public void released(InputEvent ev) {
+		
+		lastReleasedWorldPoint = ev.p;
 		
 	}
 	

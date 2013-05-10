@@ -82,9 +82,13 @@ public abstract class WorldToolBase extends Tool {
 	}
 	
 	public void released(InputEvent ev) {
+		World world = (World)APP.model;
 		
 		lastMotion = Motion.RELEASED;
 		
+		Point p = Point.panelToWorld(ev.p, world.worldCamera);
+		
+		world.released(new InputEvent(ev.panel, p));
 	}
 	
 	public void moved(InputEvent ev) {

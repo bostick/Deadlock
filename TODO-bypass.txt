@@ -1,8 +1,4 @@
 
-
-transforms for levels
-
-
 easter egg: click on a grass, do something
 something: cars are now intangible
 in board description, a missing - or | means to allow the car off of the board...
@@ -58,6 +54,8 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+transforms for levels
 
 
 speed up toggling info in level menu

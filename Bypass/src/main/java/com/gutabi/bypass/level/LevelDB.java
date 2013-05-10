@@ -1,6 +1,7 @@
 package com.gutabi.bypass.level;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

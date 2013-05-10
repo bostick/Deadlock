@@ -20,8 +20,6 @@ public class QuadrantMap {
 	public static final double QUADRANT_WIDTH = 16.0;
 	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
 	
-//	public final double worldWidth;
-//	public final double worldHeight;
 	public final AABB worldAABB;
 	
 	public final int quadrantCols;
@@ -41,9 +39,6 @@ public class QuadrantMap {
 		
 		quadrantCols = quadrants[0].length;
 		quadrantRows = quadrants.length;
-		
-//		worldWidth = quadrantCols * QuadrantMap.QUADRANT_WIDTH;
-//		worldHeight = quadrantRows * QuadrantMap.QUADRANT_HEIGHT;
 		
 		worldAABB = new AABB(0, 0, quadrantCols * QUADRANT_WIDTH, quadrantRows * QUADRANT_HEIGHT);
 	}
@@ -115,6 +110,8 @@ public class QuadrantMap {
 	RenderingContext ctxt = APP.platform.createRenderingContext();
 	
 	public void panelPostDisplay(WorldCamera cam) {
+		
+		System.out.println("quadrantMap panelPostDisplay");
 		
 		int quadrantWidthPixels = (int)Math.ceil(cam.origPixelsPerMeter * QUADRANT_WIDTH);
 		int quadrantHeightPixels = (int)Math.ceil(cam.origPixelsPerMeter * QUADRANT_HEIGHT);
