@@ -8,17 +8,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.capsloc.AppScreen;
-import com.gutabi.capsloc.Model;
 import com.gutabi.capsloc.SimulationRunnable;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.ContentPane;
-import com.gutabi.capsloc.ui.Menu;
 import com.gutabi.capsloc.ui.MenuItem;
 import com.gutabi.capsloc.ui.MenuTool;
 
-public class LevelMenu extends Menu implements Model {
-	
-	public static LevelMenu LEVELMENU;
+public class LevelMenu extends BypassMenu {
 	
 	public static LevelDB levelDB;
 	
@@ -28,31 +24,14 @@ public class LevelMenu extends Menu implements Model {
 		
 	}
 	
-	
-	public static void create() {
-		
-	}
-	
-	public static void destroy() {
-		
-	}
-	
-	public static void start() {
-		
-	}
-	
-	public static void stop() {
-		
-	}
-	
 	static AtomicBoolean simThreadTrigger = new AtomicBoolean();
 	static Thread simThread;
 	
 	public static void resume() {
 		
-		LEVELMENU = new LevelMenu();
+		BypassMenu.BYPASSMENU = new LevelMenu();
 		
-		APP.model = LEVELMENU;
+		APP.model = BypassMenu.BYPASSMENU;
 		
 		AppScreen s = new AppScreen(new ContentPane(new BypassMenuPanel()));
 		APP.appScreen = s;
@@ -70,13 +49,13 @@ public class LevelMenu extends Menu implements Model {
 	
 	public static void surfaceChanged(int width, int height) {
 		
-		LEVELMENU.lock.lock();
+		BypassMenu.BYPASSMENU.lock.lock();
 		
 		for (int i = 0; i < levelDB.levelCount; i++) {
 			int menuRow = i / 4;
 			int menuCol = i % 4;
 			final int ii = i;
-			LEVELMENU.add(new LevelMenuItem(LEVELMENU, i) {
+			BypassMenu.BYPASSMENU.add(new LevelMenuItem(BypassMenu.BYPASSMENU, i) {
 				
 				public void action() {
 					
@@ -88,19 +67,19 @@ public class LevelMenu extends Menu implements Model {
 		
 		int firstUnwonRow = levelDB.firstUnwon / 4;
 		int firstUnwonCol = levelDB.firstUnwon % 4;
-		List<MenuItem> col = LEVELMENU.tree.get(firstUnwonCol);
+		List<MenuItem> col = BypassMenu.BYPASSMENU.tree.get(firstUnwonCol);
 		MenuItem item = col.get(firstUnwonRow);
 		
-		LEVELMENU.shimmeringMenuItem = item;
+		BypassMenu.BYPASSMENU.shimmeringMenuItem = item;
 		
 		APP.appScreen.postDisplay(width, height);
 		
-		LEVELMENU.render();
+		BypassMenu.BYPASSMENU.render();
 		if (levelDB.loc != null) {
-			LEVELMENU.setLocation(levelDB.loc);
+			BypassMenu.BYPASSMENU.setLocation(levelDB.loc);
 		}
 		
-		LEVELMENU.lock.unlock();
+		BypassMenu.BYPASSMENU.lock.unlock();
 	}
 	
 	public static void pause() {
@@ -116,30 +95,9 @@ public class LevelMenu extends Menu implements Model {
 		
 		simThread = null;
 		
-		levelDB.loc = new Point(LEVELMENU.aabb.x, LEVELMENU.aabb.y);
-		LEVELMENU = null;
+		levelDB.loc = new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y);
+		BypassMenu.BYPASSMENU = null;
 		
-	}
-	
-	public Menu getMenu() {
-		return this;
-	}
-	
-	public double getTime() {
-		return 0.0;
-	}
-	
-	public boolean integrate(double t) {
-		
-		if (!rendered) {
-			return false;
-		}
-		
-		boolean res = false;
-		
-		res = res || shimmer.step();
-		
-		return res;
 	}
 	
 	public void escape() {

@@ -17,9 +17,6 @@ public abstract class Edge extends Entity {
 	public abstract void setDirection(Axis a, Direction dir);
 	
 	
-	public abstract Object getShape();
-	
-	
 	public abstract Vertex getReferenceVertex(Axis a);
 	
 	public abstract Vertex getOtherVertex(Axis a);

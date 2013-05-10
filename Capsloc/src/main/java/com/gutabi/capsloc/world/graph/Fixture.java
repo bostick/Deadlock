@@ -25,8 +25,6 @@ import com.gutabi.capsloc.world.sprites.CarSheet.CarType;
 
 public final class Fixture extends Vertex {
 	
-	public static final Color FIXTURECOLOR = new Color(0xE1, 0xE1, 0xE1, 255);
-	
 	public static double SPAWN_FREQUENCY_SECONDS = 1500.5;
 	
 	public final Axis a;
@@ -399,7 +397,7 @@ public final class Fixture extends Vertex {
 			ctxt.scale(world.worldCamera.pixelsPerMeter);
 			ctxt.translate(-intersection.x, -intersection.y);
 			
-			ctxt.setColor(FIXTURECOLOR);
+			ctxt.setColor(Color.FIXTURECOLOR);
 			shape.paint(ctxt);
 			
 			ctxt.dispose();
@@ -416,13 +414,13 @@ public final class Fixture extends Vertex {
 		case MONOLITHIC:
 			break;
 		case DYNAMIC:
-			ctxt.setColor(FIXTURECOLOR);
+			ctxt.setColor(Color.FIXTURECOLOR);
 			shape.paint(ctxt);
 			break;
 		case RENDERED_GRAPH:
 			break;
 		case RENDERED_ROADS:
-			ctxt.setColor(FIXTURECOLOR);
+			ctxt.setColor(Color.FIXTURECOLOR);
 			shape.paint(ctxt);
 			break;
 		case RENDERED_ROADS_VERTICES:
@@ -451,7 +449,7 @@ public final class Fixture extends Vertex {
 	
 	public void paint_preview(RenderingContext ctxt) {
 		
-		ctxt.setColor(FIXTURECOLOR);
+		ctxt.setColor(Color.FIXTURECOLOR);
 		shape.paint(ctxt);
 		
 	}

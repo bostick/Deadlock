@@ -31,8 +31,6 @@ import com.gutabi.capsloc.world.World;
 
 public class Road extends Edge {
 	
-	public static final Color ROADCOLOR = new Color(0xE1, 0xE1, 0xE1, 255);
-	
 	public static final double ROAD_RADIUS = 0.5;
 	
 	public static final double borderPointRadius = 0.2;
@@ -329,13 +327,13 @@ public class Road extends Edge {
 	public Entity decorationsIntersect(Object s) {
 		
 		if (startSign != null) {
-			if (ShapeUtils.intersect(startSign.getShape(), s)) {
+			if (ShapeUtils.intersect(startSign.shape, s)) {
 				return startSign;
 			}
 		}
 		
 		if (endSign != null) {
-			if (ShapeUtils.intersect(endSign.getShape(), s)) {
+			if (ShapeUtils.intersect(endSign.shape, s)) {
 				return endSign;
 			}
 		}
@@ -447,10 +445,6 @@ public class Road extends Edge {
 		
 		shape = seq;
 		
-	}
-	
-	public CapsuleSequence getShape() {
-		return shape;
 	}
 	
 	private static List<Point> removeDuplicates(List<Point> stroke) {
@@ -842,7 +836,7 @@ public class Road extends Edge {
 	
 	private void paintPath_panel(RenderingContext ctxt) {
 		
-		ctxt.setColor(ROADCOLOR);
+		ctxt.setColor(Color.ROADCOLOR);
 		
 		seq.paint(ctxt);
 		
@@ -861,7 +855,7 @@ public class Road extends Edge {
 	
 	private void paintPath_preview(RenderingContext ctxt) {
 		
-		ctxt.setColor(ROADCOLOR);
+		ctxt.setColor(Color.ROADCOLOR);
 		
 		seq.paint(ctxt);
 	}

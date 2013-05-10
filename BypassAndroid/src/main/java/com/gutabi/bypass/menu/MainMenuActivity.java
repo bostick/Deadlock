@@ -43,29 +43,25 @@ public class MainMenuActivity extends BypassActivity {
 		
 		APP.DEBUG_DRAW = false;
 		
-		MainMenu.create();
+		BypassMenu.create();
 	}
 	
 	protected void onStart() {
     	super.onStart();
     	
-    	MainMenu.start();
+    	BypassMenu.start();
     }
 	
 	protected void onStop() {
 		super.onStop();
 		
-		MainMenu.stop();
+		BypassMenu.stop();
 	}
 	
 	protected void onResume() {
     	super.onResume();
     	
-//    	Log.d("bypass", "resume 1");
-    	
     	MainMenu.resume();
-    	
-//    	Log.d("bypass", "resume 2");
     }
 	
 	protected void onSurfaceChanged(int width, int height) {
@@ -85,11 +81,7 @@ public class MainMenuActivity extends BypassActivity {
 	protected void onPause() {
 		super.onPause();
 		
-//		Log.d("bypass", "pause 1");
-		
 		MainMenu.pause();
-		
-//		Log.d("bypass", "pause 2");
 	}
 	
 }

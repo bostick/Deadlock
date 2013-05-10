@@ -249,7 +249,7 @@ public class AutonomousCar extends Car {
 				inMerger = false;
 			} else {
 				atleastPartiallyOnRoad = true;
-				if (hit instanceof Merger && ShapeUtils.containsAO(((Merger)hit).getShape(), shape)) {
+				if (hit instanceof Merger && ShapeUtils.containsAO(((Merger)hit).shape, shape)) {
 					inMerger = true;
 				} else {
 					inMerger = false;

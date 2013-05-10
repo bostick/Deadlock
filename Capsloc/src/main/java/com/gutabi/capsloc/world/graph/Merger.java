@@ -31,7 +31,7 @@ public class Merger extends Edge {
 	private double[] cumulativeLengthsFromTop;
 	private double[] cumulativeLengthsFromLeft;
 	
-	private AABB shape;
+	public AABB shape;
 	
 	private final Line debugSkeletonTopBottomLine;
 	private final Line debugSkeletonLeftRightLine;
@@ -159,10 +159,6 @@ public class Merger extends Edge {
 			assert b == top;
 			return topBottomDir != Direction.STARTTOEND;
 		}
-	}
-	
-	public AABB getShape() {
-		return shape;
 	}
 	
 	public final Entity hitTest(Point p) {

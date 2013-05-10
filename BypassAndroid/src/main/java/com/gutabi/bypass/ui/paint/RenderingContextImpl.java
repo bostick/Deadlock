@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -100,14 +102,14 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void setXORMode(Color c) {
 		
-//		int c2 = android.graphics.Color.argb(c.a, c.r, c.g, c.b);
-//		
-//		paint.setXfermode(new PixelXorXfermode(c2));
+		int c2 = android.graphics.Color.argb(c.a, c.r, c.g, c.b);
+		
+		paint.setColorFilter(new PorterDuffColorFilter(c2, PorterDuff.Mode.XOR));
 	}
 	
 	public void clearXORMode() {
 		
-//		paint.setXfermode(null);
+		paint.setColorFilter(null);
 	}
 	
 	

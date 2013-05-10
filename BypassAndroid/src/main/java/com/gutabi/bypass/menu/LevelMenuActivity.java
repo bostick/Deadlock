@@ -61,19 +61,19 @@ public class LevelMenuActivity extends BypassActivity {
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;
 		
-		LevelMenu.create();
+		BypassMenu.create();
 	}
 	
 	protected void onStart() {
     	super.onStart();
     	
-    	LevelMenu.start();
+    	BypassMenu.start();
     }
 	
 	protected void onStop() {
 		super.onStop();
 		
-		LevelMenu.stop();
+		BypassMenu.stop();
 	}
 	
 	protected void onResume() {
@@ -106,7 +106,7 @@ public class LevelMenuActivity extends BypassActivity {
 		super.onSaveInstanceState(outState);
 		
 		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.name);
-		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuLoc", new Point(LevelMenu.LEVELMENU.aabb.x, LevelMenu.LEVELMENU.aabb.y));
+		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuLoc", new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y));
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,14 +123,14 @@ public class LevelMenuActivity extends BypassActivity {
 	        case R.id.btn_toggle_info:
 	        	LevelMenu.showInfo = !LevelMenu.showInfo;
 	        	
-	        	Point loc = new Point(LevelMenu.LEVELMENU.aabb.x, LevelMenu.LEVELMENU.aabb.y);
+	        	Point loc = new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y);
 	        	
-	        	LevelMenu.LEVELMENU.lock.lock();
+	        	BypassMenu.BYPASSMENU.lock.lock();
 	        	
-	        	LevelMenu.LEVELMENU.render();
-	        	LevelMenu.LEVELMENU.setLocation(loc);
+	        	BypassMenu.BYPASSMENU.render();
+	        	BypassMenu.BYPASSMENU.setLocation(loc);
 	        	
-	        	LevelMenu.LEVELMENU.lock.unlock();
+	        	BypassMenu.BYPASSMENU.lock.unlock();
 	        	
 	        	return true;
 	        default:

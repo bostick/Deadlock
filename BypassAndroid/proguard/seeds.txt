@@ -73,7 +73,6 @@ com.gutabi.bypass.R$raw: int episode2
 com.gutabi.bypass.R$raw: int tutorial
 com.gutabi.bypass.R$string: int app_name
 com.gutabi.bypass.R$string: int clear_scores
-com.gutabi.bypass.R$string: int level_info
 com.gutabi.bypass.R$string: int reset_level
 com.gutabi.bypass.R$string: int toggle_info
 com.gutabi.bypass.R$style: int Theme_BypassLevelMenu

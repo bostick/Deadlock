@@ -969,7 +969,7 @@ com.gutabi.bypass.level.BypassCar -> com.gutabi.bypass.level.a:
     double coastingVel -> b
     double coastingAcceleration -> c
     boolean $assertionsDisabled -> d
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum -> N
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum -> M
     com.gutabi.bypass.level.BypassCar createCar(com.gutabi.capsloc.world.World,com.gutabi.capsloc.world.sprites.CarSheet$CarType,int,char) -> a
     boolean preStep(double) -> a
     void setCoastingVelFromDrag(com.gutabi.capsloc.math.Point,long,boolean) -> a
@@ -980,14 +980,18 @@ com.gutabi.bypass.level.BypassCar -> com.gutabi.bypass.level.a:
     int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum() -> b
 com.gutabi.bypass.level.BypassCarTool -> com.gutabi.bypass.level.b:
     com.gutabi.bypass.level.BypassCar car -> a
-    com.gutabi.capsloc.math.Point prevDragP -> b
-    com.gutabi.capsloc.math.Point curDragP -> c
-    com.gutabi.capsloc.math.Point dragVector -> d
-    long prevDragMillis -> e
-    long curDragMillis -> f
-    long dragTimeStepMillis -> g
-    boolean $assertionsDisabled -> h
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum -> j
+    com.gutabi.capsloc.math.Point lastPressP -> b
+    com.gutabi.capsloc.math.Point lastPanelPressP -> c
+    com.gutabi.capsloc.math.Point prevDragP -> d
+    com.gutabi.capsloc.math.Point curDragP -> e
+    com.gutabi.capsloc.math.Point dragVector -> f
+    long prevDragMillis -> g
+    long curDragMillis -> h
+    long dragTimeStepMillis -> i
+    com.gutabi.capsloc.math.Point lastPanelDragP -> j
+    com.gutabi.capsloc.math.Point penPanelDragP -> k
+    boolean $assertionsDisabled -> l
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum -> n
     void pressed(com.gutabi.capsloc.ui.InputEvent) -> a
     void released(com.gutabi.capsloc.ui.InputEvent) -> b
     void determineCoasting(com.gutabi.capsloc.world.graph.GraphPositionPathPosition,com.gutabi.capsloc.world.graph.GraphPositionPathPosition,boolean) -> a
@@ -1001,26 +1005,28 @@ com.gutabi.bypass.level.BypassDriver -> com.gutabi.bypass.level.c:
     int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum() -> a
 com.gutabi.bypass.level.BypassWorld -> com.gutabi.bypass.level.d:
     java.util.concurrent.locks.Lock lock -> a
-    com.gutabi.bypass.level.BypassWorld BYPASSWORLD -> b
-    com.gutabi.bypass.level.LevelDB levelDB -> c
-    com.gutabi.bypass.level.Level curLevel -> d
-    com.gutabi.bypass.level.WinnerMenu winnerMenu -> e
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Side -> y
-    boolean $assertionsDisabled -> f
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Axis -> z
+    boolean rendered -> b
+    com.gutabi.bypass.level.BypassWorld BYPASSWORLD -> c
+    com.gutabi.bypass.level.LevelDB levelDB -> d
+    com.gutabi.bypass.level.Level curLevel -> e
+    com.gutabi.bypass.level.WinnerMenu winnerMenu -> f
+    com.gutabi.capsloc.world.graph.BypassBoard bypassBoard -> g
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Side -> C
+    boolean $assertionsDisabled -> h
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Axis -> D
     void create(com.gutabi.bypass.level.LevelDB,int) -> a
     void start() -> a
     void stop() -> b
     void resume() -> c
     void surfaceChanged(int,int) -> a
-    void pause() -> d
+    void pause() -> a_
     void reset() -> e
     com.gutabi.bypass.level.BypassWorld createBypassWorld(com.gutabi.bypass.level.LevelDB,int) -> b
     void addBypassCars(com.gutabi.capsloc.world.graph.BypassBoard) -> a
     void addNewCar(com.gutabi.capsloc.world.graph.BypassBoard,int,int,com.gutabi.capsloc.world.graph.Axis,com.gutabi.capsloc.world.sprites.CarSheet$CarType,int,char) -> a
     com.gutabi.capsloc.ui.Menu getMenu() -> f
-    void handleZooming(com.gutabi.capsloc.world.cars.Car) -> a
-    void winner() -> a_
+    void handlePanning(com.gutabi.capsloc.world.cars.Car,com.gutabi.capsloc.math.Point) -> a
+    void winner() -> g
     void panelPostDisplay(int,int) -> b
     void render_worldPanel() -> h
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
@@ -1049,12 +1055,13 @@ com.gutabi.bypass.level.LevelDB -> com.gutabi.bypass.level.f:
     java.lang.String name -> a
     int firstUnwon -> b
     com.gutabi.capsloc.math.Point loc -> c
-    java.util.Map levelMap -> d
-    com.gutabi.capsloc.Resource res -> e
-    int levelCount -> f
-    boolean $assertionsDisabled -> g
+    java.util.Map levelMap -> g
+    com.gutabi.capsloc.Resource res -> d
+    int levelCount -> e
+    boolean $assertionsDisabled -> f
     void setFirstUnwon() -> a
-    com.gutabi.bypass.level.Level readLevel(int) -> a
+    com.gutabi.bypass.level.Level getLevel(int) -> a
+    void clearLevels() -> b
 com.gutabi.bypass.level.WinnerMenu -> com.gutabi.bypass.level.g:
     boolean ready -> a
     void action() -> a
@@ -1074,25 +1081,26 @@ com.gutabi.bypass.level.WinnerMenu$4 -> com.gutabi.bypass.level.k:
 com.gutabi.bypass.level.WinnerMenu$5 -> com.gutabi.bypass.level.l:
     com.gutabi.bypass.level.WinnerMenu this$0 -> a
     void action() -> a
-com.gutabi.bypass.menu.BypassMenuPanel -> com.gutabi.bypass.menu.a:
+com.gutabi.bypass.menu.BypassMenu -> com.gutabi.bypass.menu.a:
+    com.gutabi.bypass.menu.BypassMenu BYPASSMENU -> a
+    void create() -> a
+    void start() -> b
+    void stop() -> c
+    com.gutabi.capsloc.ui.Menu getMenu() -> f
+    double getTime() -> d
+    boolean integrate(double) -> a
+com.gutabi.bypass.menu.BypassMenuPanel -> com.gutabi.bypass.menu.b:
     void postDisplay(int,int) -> a
     void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
-com.gutabi.bypass.menu.LevelMenu -> com.gutabi.bypass.menu.b:
-    com.gutabi.bypass.menu.LevelMenu LEVELMENU -> a
+com.gutabi.bypass.menu.LevelMenu -> com.gutabi.bypass.menu.c:
     com.gutabi.bypass.level.LevelDB levelDB -> b
     boolean showInfo -> c
     java.util.concurrent.atomic.AtomicBoolean simThreadTrigger -> d
     java.lang.Thread simThread -> e
-    void create() -> a
-    void start() -> b
-    void stop() -> c
-    void resume() -> d
+    void resume() -> e
     void surfaceChanged(int,int) -> b
-    void pause() -> e
-    com.gutabi.capsloc.ui.Menu getMenu() -> f
-    double getTime() -> g
-    boolean integrate(double) -> a
-com.gutabi.bypass.menu.LevelMenu$1 -> com.gutabi.bypass.menu.c:
+    void pause() -> g
+com.gutabi.bypass.menu.LevelMenu$1 -> com.gutabi.bypass.menu.d:
     int val$ii -> n
     void action() -> a
 com.gutabi.bypass.menu.LevelMenuActivity -> com.gutabi.bypass.menu.LevelMenuActivity:
@@ -1105,29 +1113,22 @@ com.gutabi.bypass.menu.LevelMenuActivity -> com.gutabi.bypass.menu.LevelMenuActi
     void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-com.gutabi.bypass.menu.LevelMenuItem -> com.gutabi.bypass.menu.d:
+com.gutabi.bypass.menu.LevelMenuItem -> com.gutabi.bypass.menu.e:
     int index -> a
     void render() -> b
-com.gutabi.bypass.menu.MainMenu -> com.gutabi.bypass.menu.e:
-    com.gutabi.bypass.menu.MainMenu MAINMENU -> a
+com.gutabi.bypass.menu.MainMenu -> com.gutabi.bypass.menu.f:
     java.util.concurrent.atomic.AtomicBoolean simThreadTrigger -> b
     java.lang.Thread simThread -> c
-    void create() -> a
-    void start() -> b
-    void stop() -> c
-    void resume() -> d
+    void resume() -> e
     void surfaceChanged(int,int) -> b
-    void pause() -> e
-    com.gutabi.capsloc.ui.Menu getMenu() -> f
-    double getTime() -> g
-    boolean integrate(double) -> a
-com.gutabi.bypass.menu.MainMenu$1 -> com.gutabi.bypass.menu.f:
+    void pause() -> g
+com.gutabi.bypass.menu.MainMenu$1 -> com.gutabi.bypass.menu.g:
     com.gutabi.bypass.menu.MainMenu this$0 -> a
     void action() -> a
-com.gutabi.bypass.menu.MainMenu$2 -> com.gutabi.bypass.menu.g:
+com.gutabi.bypass.menu.MainMenu$2 -> com.gutabi.bypass.menu.h:
     com.gutabi.bypass.menu.MainMenu this$0 -> a
     void action() -> a
-com.gutabi.bypass.menu.MainMenu$3 -> com.gutabi.bypass.menu.h:
+com.gutabi.bypass.menu.MainMenu$3 -> com.gutabi.bypass.menu.i:
     com.gutabi.bypass.menu.MainMenu this$0 -> a
     void action() -> a
 com.gutabi.bypass.menu.MainMenuActivity -> com.gutabi.bypass.menu.MainMenuActivity:
@@ -1167,6 +1168,7 @@ com.gutabi.bypass.ui.paint.RenderingContextImpl -> com.gutabi.bypass.b.a.a:
     void drawAABB(com.gutabi.capsloc.geom.AABB) -> a
     void paintAABB(com.gutabi.capsloc.geom.AABB) -> b
     void drawAABB(com.gutabi.capsloc.geom.MutableAABB) -> a
+    void paintPath(com.gutabi.capsloc.geom.GeometryPath) -> a
     void drawLine(com.gutabi.capsloc.geom.Line) -> a
     void paintCircle(com.gutabi.capsloc.geom.Circle) -> a
     void scale(double) -> b
@@ -1207,7 +1209,7 @@ com.gutabi.capsloc.Entity -> com.gutabi.a.c:
     boolean postStep(double) -> c
 com.gutabi.capsloc.Integratable -> com.gutabi.a.d:
     boolean integrate(double) -> a
-    double getTime() -> g
+    double getTime() -> d
 com.gutabi.capsloc.Model -> com.gutabi.a.e:
     com.gutabi.capsloc.ui.Menu getMenu() -> f
 com.gutabi.capsloc.Platform -> com.gutabi.a.f:
@@ -1507,6 +1509,7 @@ com.gutabi.capsloc.geom.ShapeUtils -> com.gutabi.a.a.r:
     boolean intersectACap(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.Capsule) -> a
     boolean intersectAC(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.Circle) -> a
     boolean intersectAO(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.OBB) -> a
+    boolean intersectAO(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.MutableOBB) -> a
     boolean intersectCapCap(com.gutabi.capsloc.geom.Capsule,com.gutabi.capsloc.geom.Capsule) -> a
     boolean intersectCapC(com.gutabi.capsloc.geom.Capsule,com.gutabi.capsloc.geom.Circle) -> a
     boolean intersectCapO(com.gutabi.capsloc.geom.Capsule,com.gutabi.capsloc.geom.OBB) -> a
@@ -1514,7 +1517,6 @@ com.gutabi.capsloc.geom.ShapeUtils -> com.gutabi.a.a.r:
     boolean intersectCO(com.gutabi.capsloc.geom.Circle,com.gutabi.capsloc.geom.OBB) -> a
     boolean intersectCO(com.gutabi.capsloc.geom.Circle,com.gutabi.capsloc.geom.MutableOBB) -> a
     boolean intersectOO(com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.geom.OBB) -> a
-    boolean intersectOO(com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.geom.MutableOBB) -> a
     boolean intersectAreaAA(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.MutableAABB) -> b
     boolean intersectAreaAA(com.gutabi.capsloc.geom.MutableAABB,com.gutabi.capsloc.geom.MutableAABB) -> b
     boolean intersectAreaAL(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.Line) -> a
@@ -1522,7 +1524,7 @@ com.gutabi.capsloc.geom.ShapeUtils -> com.gutabi.a.a.r:
     boolean intersectAreaAO(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.OBB) -> b
     boolean intersectAreaLO(com.gutabi.capsloc.geom.Line,com.gutabi.capsloc.geom.OBB) -> a
     boolean containsAO(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.OBB) -> c
-    boolean containsAO(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.MutableOBB) -> a
+    boolean containsAO(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.MutableOBB) -> b
     boolean touchCapC(com.gutabi.capsloc.geom.Capsule,com.gutabi.capsloc.geom.Circle) -> b
     boolean touchCC(com.gutabi.capsloc.geom.Circle,com.gutabi.capsloc.geom.Circle) -> b
 com.gutabi.capsloc.geom.SweepEvent -> com.gutabi.a.a.s:
@@ -1666,6 +1668,7 @@ com.gutabi.capsloc.math.Point -> com.gutabi.a.b.f:
     com.gutabi.capsloc.math.Point multiply(double) -> a
     com.gutabi.capsloc.math.Point plus(com.gutabi.capsloc.math.Point) -> d
     com.gutabi.capsloc.math.Point minus(com.gutabi.capsloc.math.Point) -> e
+    com.gutabi.capsloc.math.Point minus(double,double) -> b
     com.gutabi.capsloc.math.Point minusAndNormalize(com.gutabi.capsloc.math.Point) -> f
     com.gutabi.capsloc.math.Point negate() -> d
     double lengthSquared() -> e
@@ -1808,27 +1811,29 @@ com.gutabi.capsloc.ui.paint.Cap -> com.gutabi.a.c.a.a:
     com.gutabi.capsloc.ui.paint.Cap[] values() -> values
     com.gutabi.capsloc.ui.paint.Cap valueOf(java.lang.String) -> valueOf
 com.gutabi.capsloc.ui.paint.Color -> com.gutabi.a.c.a.b:
-    com.gutabi.capsloc.ui.paint.Color RED -> a
-    com.gutabi.capsloc.ui.paint.Color ORANGE -> b
-    com.gutabi.capsloc.ui.paint.Color YELLOW -> c
-    com.gutabi.capsloc.ui.paint.Color GREEN -> d
-    com.gutabi.capsloc.ui.paint.Color LIGHTGREEN -> e
-    com.gutabi.capsloc.ui.paint.Color DARKGREEN -> f
-    com.gutabi.capsloc.ui.paint.Color BLUE -> g
-    com.gutabi.capsloc.ui.paint.Color WHITE -> h
-    com.gutabi.capsloc.ui.paint.Color GRAY -> i
-    com.gutabi.capsloc.ui.paint.Color LIGHT_GRAY -> j
-    com.gutabi.capsloc.ui.paint.Color DARK_GRAY -> k
-    com.gutabi.capsloc.ui.paint.Color BLACK -> l
-    com.gutabi.capsloc.ui.paint.Color menuBackground -> m
-    com.gutabi.capsloc.ui.paint.Color brown -> n
-    com.gutabi.capsloc.ui.paint.Color redOrange -> o
-    com.gutabi.capsloc.ui.paint.Color fixtureHiliteColor -> p
-    com.gutabi.capsloc.ui.paint.Color roadHiliteColor -> q
-    int r -> r
-    int g -> s
-    int b -> t
-    int a -> u
+    com.gutabi.capsloc.ui.paint.Color ROADCOLOR -> a
+    com.gutabi.capsloc.ui.paint.Color FIXTURECOLOR -> b
+    com.gutabi.capsloc.ui.paint.Color RED -> c
+    com.gutabi.capsloc.ui.paint.Color ORANGE -> d
+    com.gutabi.capsloc.ui.paint.Color YELLOW -> e
+    com.gutabi.capsloc.ui.paint.Color GREEN -> f
+    com.gutabi.capsloc.ui.paint.Color LIGHTGREEN -> g
+    com.gutabi.capsloc.ui.paint.Color DARKGREEN -> h
+    com.gutabi.capsloc.ui.paint.Color BLUE -> i
+    com.gutabi.capsloc.ui.paint.Color WHITE -> j
+    com.gutabi.capsloc.ui.paint.Color GRAY -> k
+    com.gutabi.capsloc.ui.paint.Color LIGHT_GRAY -> l
+    com.gutabi.capsloc.ui.paint.Color DARK_GRAY -> m
+    com.gutabi.capsloc.ui.paint.Color BLACK -> n
+    com.gutabi.capsloc.ui.paint.Color menuBackground -> o
+    com.gutabi.capsloc.ui.paint.Color brown -> p
+    com.gutabi.capsloc.ui.paint.Color redOrange -> q
+    com.gutabi.capsloc.ui.paint.Color fixtureHiliteColor -> r
+    com.gutabi.capsloc.ui.paint.Color roadHiliteColor -> s
+    int r -> t
+    int g -> u
+    int b -> v
+    int a -> w
 com.gutabi.capsloc.ui.paint.FontStyle -> com.gutabi.a.c.a.c:
     com.gutabi.capsloc.ui.paint.FontStyle PLAIN -> a
     com.gutabi.capsloc.ui.paint.FontStyle[] ENUM$VALUES -> b
@@ -1951,22 +1956,24 @@ com.gutabi.capsloc.world.Stroke -> com.gutabi.a.d.f:
     void computeAABB() -> d
     int[] $SWITCH_TABLE$com$gutabi$capsloc$geom$SweepEventType() -> c
 com.gutabi.capsloc.world.World -> com.gutabi.a.d.g:
-    com.gutabi.capsloc.world.WorldCamera worldCamera -> g
-    java.util.concurrent.atomic.AtomicBoolean simThreadTrigger -> h
-    java.lang.Thread simThread -> i
-    com.gutabi.capsloc.world.WorldBackground background -> j
-    com.gutabi.capsloc.world.QuadrantMap quadrantMap -> k
-    com.gutabi.capsloc.world.graph.Graph graph -> l
-    com.gutabi.capsloc.world.CarMap carMap -> m
-    com.gutabi.capsloc.world.Stats stats -> n
-    com.gutabi.capsloc.ui.Shimmer shimmer -> o
-    com.gutabi.capsloc.math.Point lastPressedWorldPoint -> p
-    com.gutabi.capsloc.math.Point lastDraggedWorldPoint -> q
-    boolean lastDraggedWorldPointWasNull -> r
-    com.gutabi.capsloc.math.Point lastMovedOrDraggedWorldPoint -> s
-    com.gutabi.capsloc.ui.paint.RenderingContext ctxt -> t
-    com.gutabi.capsloc.geom.MutableAABB shimmerTmp -> u
-    boolean $assertionsDisabled -> v
+    com.gutabi.capsloc.world.WorldCamera worldCamera -> i
+    java.util.concurrent.atomic.AtomicBoolean simThreadTrigger -> j
+    java.lang.Thread simThread -> k
+    com.gutabi.capsloc.world.WorldBackground background -> l
+    com.gutabi.capsloc.world.QuadrantMap quadrantMap -> m
+    com.gutabi.capsloc.world.graph.Graph graph -> n
+    com.gutabi.capsloc.world.CarMap carMap -> o
+    com.gutabi.capsloc.world.Stats stats -> p
+    com.gutabi.capsloc.ui.Shimmer shimmer -> q
+    com.gutabi.capsloc.math.Point lastPressedWorldPoint -> r
+    com.gutabi.capsloc.math.Point lastDraggedWorldPoint -> s
+    com.gutabi.capsloc.math.Point lastReleasedWorldPoint -> t
+    com.gutabi.capsloc.math.Point penDraggedWorldPoint -> u
+    boolean lastDraggedWorldPointWasNull -> v
+    com.gutabi.capsloc.math.Point lastMovedOrDraggedWorldPoint -> w
+    com.gutabi.capsloc.ui.paint.RenderingContext ctxt -> x
+    com.gutabi.capsloc.geom.MutableAABB shimmerTmp -> y
+    boolean $assertionsDisabled -> z
     void panelPostDisplay(int,int) -> b
     void preStart() -> k
     boolean integrate(double) -> a
@@ -1979,7 +1986,8 @@ com.gutabi.capsloc.world.World -> com.gutabi.a.d.g:
     java.util.Set createRoad(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex,java.util.List) -> a
     com.gutabi.capsloc.world.graph.BypassBoard createBypassBoard(com.gutabi.capsloc.math.Point,char[][]) -> a
     void pressed(com.gutabi.capsloc.ui.InputEvent) -> a
-    void dragged(com.gutabi.capsloc.ui.InputEvent) -> b
+    void released(com.gutabi.capsloc.ui.InputEvent) -> b
+    void dragged(com.gutabi.capsloc.ui.InputEvent) -> c
     void render_worldPanel() -> h
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
     void paintStats(com.gutabi.capsloc.ui.paint.RenderingContext) -> b
@@ -2068,19 +2076,18 @@ com.gutabi.capsloc.world.cars.Car -> com.gutabi.a.d.a.d:
     boolean inMerger -> l
     com.gutabi.capsloc.math.Point toolOrigCenter -> m
     com.gutabi.capsloc.geom.MutableOBB toolOrigShape -> n
-    com.gutabi.capsloc.math.Point toolOrigPixelOffset -> o
-    boolean destroyed -> p
-    com.gutabi.capsloc.world.sprites.CarSheet$CarSheetSprite sprite -> q
-    int sheetIndex -> r
-    com.gutabi.capsloc.geom.GeometryPath path -> s
-    int carIDCounter -> t
-    double BRAKE_SIZE -> u
-    double BRAKE_LOCALX -> v
-    double BRAKE_LOCALY -> w
-    double CAR_BRAKE1X -> x
-    double CAR_BRAKE1Y -> y
-    double CAR_BRAKE2X -> z
-    double CAR_BRAKE2Y -> A
+    boolean destroyed -> o
+    com.gutabi.capsloc.world.sprites.CarSheet$CarSheetSprite sprite -> p
+    int sheetIndex -> q
+    com.gutabi.capsloc.geom.GeometryPath path -> r
+    int carIDCounter -> s
+    double BRAKE_SIZE -> t
+    double BRAKE_LOCALX -> u
+    double BRAKE_LOCALY -> v
+    double CAR_BRAKE1X -> w
+    double CAR_BRAKE1Y -> x
+    double CAR_BRAKE2X -> y
+    double CAR_BRAKE2Y -> z
     int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum -> a
     void computeCtorProperties(int) -> a
     void setTransform(com.gutabi.capsloc.math.Point,double) -> a
@@ -2185,25 +2192,26 @@ com.gutabi.capsloc.world.graph.BypassBoard -> com.gutabi.a.d.b.c:
     com.gutabi.capsloc.math.Point ul -> l
     com.gutabi.capsloc.geom.AABB allStudsAABB -> m
     com.gutabi.capsloc.geom.AABB gridAABB -> n
-    com.gutabi.capsloc.geom.AABB zoomingAABB -> o
-    int jStudCount -> p
-    com.gutabi.capsloc.world.graph.BorderStud[] jStuds -> q
-    int kStudCount -> r
-    com.gutabi.capsloc.world.graph.BorderStud[] kStuds -> s
-    com.gutabi.capsloc.world.graph.BorderStud yStud -> t
-    com.gutabi.capsloc.world.graph.Vertex exitVertex -> u
-    java.util.Map rowTracks -> v
-    java.util.Map colTracks -> w
-    java.util.Map rowPaths -> C
-    java.util.Map colPaths -> D
-    com.gutabi.capsloc.ui.Image img -> x
-    com.gutabi.capsloc.geom.MutableAABB test -> y
-    com.gutabi.capsloc.geom.MutableAABB testFloor -> z
-    com.gutabi.capsloc.geom.MutableAABB testCeil -> A
-    boolean $assertionsDisabled -> B
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Side -> E
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Axis -> F
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod -> G
+    com.gutabi.capsloc.geom.AABB gridFudgeAABB -> o
+    com.gutabi.capsloc.geom.AABB zoomingAABB -> p
+    int jStudCount -> q
+    com.gutabi.capsloc.world.graph.BorderStud[] jStuds -> r
+    int kStudCount -> s
+    com.gutabi.capsloc.world.graph.BorderStud[] kStuds -> t
+    com.gutabi.capsloc.world.graph.BorderStud yStud -> u
+    com.gutabi.capsloc.world.graph.Vertex exitVertex -> v
+    java.util.Map rowTracks -> w
+    java.util.Map colTracks -> x
+    java.util.Map rowPaths -> D
+    java.util.Map colPaths -> E
+    com.gutabi.capsloc.ui.Image img -> y
+    com.gutabi.capsloc.geom.MutableAABB test -> z
+    com.gutabi.capsloc.geom.MutableAABB testFloor -> A
+    com.gutabi.capsloc.geom.MutableAABB testCeil -> B
+    boolean $assertionsDisabled -> C
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Side -> F
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Axis -> G
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod -> H
     void addExitRoad(com.gutabi.capsloc.world.graph.BorderStud) -> a
     void addExitRoadToTrack(java.util.List,com.gutabi.capsloc.world.graph.BorderStud) -> a
     void addJointRoad(com.gutabi.capsloc.world.graph.BorderStud[]) -> a
@@ -2265,7 +2273,6 @@ com.gutabi.capsloc.world.graph.Edge -> com.gutabi.a.d.b.g:
     int pointCount() -> a
     double getTotalLength(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex) -> a
     com.gutabi.capsloc.world.graph.Direction getDirection(com.gutabi.capsloc.world.graph.Axis) -> a
-    java.lang.Object getShape() -> b
     com.gutabi.capsloc.world.graph.Vertex getReferenceVertex(com.gutabi.capsloc.world.graph.Axis) -> b
     com.gutabi.capsloc.world.graph.Vertex getOtherVertex(com.gutabi.capsloc.world.graph.Axis) -> c
     com.gutabi.capsloc.world.graph.GraphPosition travelFromReferenceVertex(com.gutabi.capsloc.world.graph.Axis,double) -> a
@@ -2283,20 +2290,19 @@ com.gutabi.capsloc.world.graph.EdgePosition -> com.gutabi.a.d.b.h:
     com.gutabi.capsloc.world.graph.GraphPosition approachNeighbor(com.gutabi.capsloc.world.graph.GraphPosition,double) -> a
     double goalGPPPCombo(int,double,boolean,com.gutabi.capsloc.world.graph.GraphPosition,com.gutabi.capsloc.world.graph.GraphPositionPath,com.gutabi.capsloc.world.graph.GraphPositionPathPosition,double) -> a
 com.gutabi.capsloc.world.graph.Fixture -> com.gutabi.a.d.b.i:
-    com.gutabi.capsloc.ui.paint.Color FIXTURECOLOR -> a
-    double SPAWN_FREQUENCY_SECONDS -> b
-    com.gutabi.capsloc.world.graph.Axis a -> c
-    com.gutabi.capsloc.world.graph.Side facingSide -> w
-    com.gutabi.capsloc.world.graph.FixtureType type -> x
-    com.gutabi.capsloc.world.graph.Fixture match -> d
-    com.gutabi.capsloc.world.graph.GraphPositionPath shortestPathToMatch -> e
-    double lastSpawnTime -> f
-    int outstandingCars -> g
-    com.gutabi.capsloc.ui.Image img -> h
-    com.gutabi.capsloc.geom.AABB intersection -> i
-    com.gutabi.capsloc.world.cars.AutonomousCar waitingCar -> j
-    boolean $assertionsDisabled -> k
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod -> y
+    double SPAWN_FREQUENCY_SECONDS -> a
+    com.gutabi.capsloc.world.graph.Axis a -> b
+    com.gutabi.capsloc.world.graph.Side facingSide -> v
+    com.gutabi.capsloc.world.graph.FixtureType type -> w
+    com.gutabi.capsloc.world.graph.Fixture match -> c
+    com.gutabi.capsloc.world.graph.GraphPositionPath shortestPathToMatch -> d
+    double lastSpawnTime -> e
+    int outstandingCars -> f
+    com.gutabi.capsloc.ui.Image img -> g
+    com.gutabi.capsloc.geom.AABB intersection -> h
+    com.gutabi.capsloc.world.cars.AutonomousCar waitingCar -> i
+    boolean $assertionsDisabled -> j
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod -> x
     void setFacingSide(com.gutabi.capsloc.world.graph.Side) -> a
     com.gutabi.capsloc.world.graph.Side getFacingSide() -> a
     boolean supportsStopSigns() -> b
@@ -2307,7 +2313,7 @@ com.gutabi.capsloc.world.graph.Fixture -> com.gutabi.a.d.b.i:
     com.gutabi.capsloc.world.graph.GraphPositionPath getShortestPathToMatch() -> e
     void spawnNewCar(double) -> b
     boolean active(double) -> d
-    com.gutabi.capsloc.world.cars.AutonomousCar createNewCar() -> j
+    com.gutabi.capsloc.world.cars.AutonomousCar createNewCar() -> i
     void render() -> f
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
     void paintScene(com.gutabi.capsloc.ui.paint.RenderingContext) -> b
@@ -2486,21 +2492,20 @@ com.gutabi.capsloc.world.graph.Merger -> com.gutabi.a.d.b.r:
     com.gutabi.capsloc.world.graph.Fixture left -> d
     com.gutabi.capsloc.world.graph.Fixture right -> e
     com.gutabi.capsloc.world.graph.Fixture bottom -> f
-    com.gutabi.capsloc.world.graph.Direction leftRightDir -> h
-    com.gutabi.capsloc.world.graph.Direction topBottomDir -> i
-    double[] cumulativeLengthsFromTop -> j
-    double[] cumulativeLengthsFromLeft -> k
-    com.gutabi.capsloc.geom.AABB shape -> l
+    com.gutabi.capsloc.world.graph.Direction leftRightDir -> i
+    com.gutabi.capsloc.world.graph.Direction topBottomDir -> j
+    double[] cumulativeLengthsFromTop -> k
+    double[] cumulativeLengthsFromLeft -> l
+    com.gutabi.capsloc.geom.AABB shape -> g
     com.gutabi.capsloc.geom.Line debugSkeletonTopBottomLine -> m
     com.gutabi.capsloc.geom.Line debugSkeletonLeftRightLine -> n
-    boolean $assertionsDisabled -> g
+    boolean $assertionsDisabled -> h
     java.lang.String toString() -> toString
     int pointCount() -> a
     double getTotalLength(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex) -> a
     com.gutabi.capsloc.world.graph.Vertex getReferenceVertex(com.gutabi.capsloc.world.graph.Axis) -> b
     com.gutabi.capsloc.world.graph.Vertex getOtherVertex(com.gutabi.capsloc.world.graph.Axis) -> c
     com.gutabi.capsloc.world.graph.Direction getDirection(com.gutabi.capsloc.world.graph.Axis) -> a
-    com.gutabi.capsloc.geom.AABB getShape() -> e
     void enterDistancesMatrix(double[][]) -> a
     com.gutabi.capsloc.world.graph.GraphPosition travelFromReferenceVertex(com.gutabi.capsloc.world.graph.Axis,double) -> a
     com.gutabi.capsloc.world.graph.GraphPosition travelFromOtherVertex(com.gutabi.capsloc.world.graph.Axis,double) -> b
@@ -2513,7 +2518,6 @@ com.gutabi.capsloc.world.graph.Merger -> com.gutabi.a.d.b.r:
     double getLengthFromTop(int) -> b
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
     void paintSkeleton(com.gutabi.capsloc.ui.paint.RenderingContext) -> b
-    java.lang.Object getShape() -> b
 com.gutabi.capsloc.world.graph.MergerPosition -> com.gutabi.a.d.b.s:
     com.gutabi.capsloc.world.graph.Merger m -> c
     int index -> d
@@ -2555,42 +2559,41 @@ com.gutabi.capsloc.world.graph.MergerPosition -> com.gutabi.a.d.b.s:
     com.gutabi.capsloc.world.graph.GraphPosition travelToBottom(com.gutabi.capsloc.world.graph.Merger,int,double,double) -> d
 com.gutabi.capsloc.world.graph.RegularStud -> com.gutabi.a.d.b.t:
 com.gutabi.capsloc.world.graph.Road -> com.gutabi.a.d.b.u:
-    com.gutabi.capsloc.ui.paint.Color ROADCOLOR -> b
-    com.gutabi.capsloc.world.World world -> c
-    com.gutabi.capsloc.world.graph.Vertex start -> d
-    com.gutabi.capsloc.world.graph.Vertex end -> e
-    java.util.List raw -> f
-    com.gutabi.capsloc.world.graph.Direction direction -> m
-    com.gutabi.capsloc.geom.CapsuleSequence seq -> n
-    com.gutabi.capsloc.geom.Circle startBorderPoint -> o
-    com.gutabi.capsloc.geom.Circle endBorderPoint -> p
-    int startBorderIndex -> q
-    int endBorderIndex -> r
-    double[] cumulativeLengthsFromStart -> s
-    double totalLength -> t
-    boolean standalone -> u
-    boolean loop -> v
-    com.gutabi.capsloc.world.graph.StopSign startSign -> g
-    com.gutabi.capsloc.world.graph.StopSign endSign -> h
-    int hash -> w
-    com.gutabi.capsloc.geom.CapsuleSequence shape -> i
-    com.gutabi.capsloc.ui.Image img -> j
-    com.gutabi.capsloc.geom.AABB intersection -> k
-    com.gutabi.capsloc.geom.GeometryPath arrowPointerPath -> x
-    boolean $assertionsDisabled -> l
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Direction -> y
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod -> z
-    void destroy() -> e
+    com.gutabi.capsloc.world.World world -> b
+    com.gutabi.capsloc.world.graph.Vertex start -> c
+    com.gutabi.capsloc.world.graph.Vertex end -> d
+    java.util.List raw -> e
+    com.gutabi.capsloc.world.graph.Direction direction -> l
+    com.gutabi.capsloc.geom.CapsuleSequence seq -> m
+    com.gutabi.capsloc.geom.Circle startBorderPoint -> n
+    com.gutabi.capsloc.geom.Circle endBorderPoint -> o
+    int startBorderIndex -> p
+    int endBorderIndex -> q
+    double[] cumulativeLengthsFromStart -> r
+    double totalLength -> s
+    boolean standalone -> t
+    boolean loop -> u
+    com.gutabi.capsloc.world.graph.StopSign startSign -> f
+    com.gutabi.capsloc.world.graph.StopSign endSign -> g
+    int hash -> v
+    com.gutabi.capsloc.geom.CapsuleSequence shape -> h
+    com.gutabi.capsloc.ui.Image img -> i
+    com.gutabi.capsloc.geom.AABB intersection -> j
+    com.gutabi.capsloc.geom.GeometryPath arrowPointerPath -> w
+    boolean $assertionsDisabled -> k
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Direction -> x
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod -> y
+    void destroy() -> b
     int hashCode() -> hashCode
     java.lang.String toString() -> toString
-    boolean isStandAlone() -> f
+    boolean isStandAlone() -> e
     int pointCount() -> a
-    int capsuleCount() -> g
+    int capsuleCount() -> f
     double getTotalLength(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex) -> a
     com.gutabi.capsloc.math.Point getPoint(int) -> a
     com.gutabi.capsloc.math.Point getPoint(int,double) -> a
-    com.gutabi.capsloc.math.Point getStartBorderPoint() -> h
-    com.gutabi.capsloc.math.Point getEndBorderPoint() -> i
+    com.gutabi.capsloc.math.Point getStartBorderPoint() -> g
+    com.gutabi.capsloc.math.Point getEndBorderPoint() -> h
     void setDirection(com.gutabi.capsloc.world.graph.Axis,com.gutabi.capsloc.world.graph.Direction) -> a
     com.gutabi.capsloc.world.graph.Direction getDirection(com.gutabi.capsloc.world.graph.Axis) -> a
     com.gutabi.capsloc.world.graph.Vertex getReferenceVertex(com.gutabi.capsloc.world.graph.Axis) -> b
@@ -2605,25 +2608,23 @@ com.gutabi.capsloc.world.graph.Road -> com.gutabi.a.d.b.u:
     com.gutabi.capsloc.world.graph.RoadPosition findClosestRoadPosition(com.gutabi.capsloc.math.Point,double) -> a
     boolean isUserDeleteable() -> c
     double getLengthFromStart(int) -> b
-    void computeProperties() -> j
-    void computeCaps() -> o
-    com.gutabi.capsloc.geom.CapsuleSequence getShape() -> k
+    void computeProperties() -> i
+    void computeCaps() -> m
     java.util.List removeDuplicates(java.util.List) -> a
     java.util.List removeColinear(java.util.List) -> b
     void computeBorders(java.util.List) -> c
     java.util.List adjustToBorders(java.util.List) -> d
     double startBorderCombo(com.gutabi.capsloc.world.graph.Vertex,java.util.List) -> a
     double endBorderCombo(com.gutabi.capsloc.world.graph.Vertex,java.util.List) -> b
-    void computeLengths() -> p
-    void render() -> l
+    void computeLengths() -> n
+    void render() -> j
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
     void paintPath_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> d
     void paintSkeleton(com.gutabi.capsloc.ui.paint.RenderingContext) -> e
     void paintBorders(com.gutabi.capsloc.ui.paint.RenderingContext) -> b
     void paintDecorations(com.gutabi.capsloc.ui.paint.RenderingContext) -> c
-    java.lang.Object getShape() -> b
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Direction() -> m
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod() -> n
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Direction() -> k
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod() -> l
 com.gutabi.capsloc.world.graph.RoadPosition -> com.gutabi.a.d.b.v:
     com.gutabi.capsloc.world.graph.Road r -> c
     int index -> d
@@ -2675,8 +2676,8 @@ com.gutabi.capsloc.world.graph.StopSign -> com.gutabi.a.d.b.ab:
     int dir -> c
     com.gutabi.capsloc.math.Point p -> d
     double radius -> e
-    boolean enabled -> f
-    com.gutabi.capsloc.geom.Circle shape -> g
+    boolean enabled -> g
+    com.gutabi.capsloc.geom.Circle shape -> f
     boolean isUserDeleteable() -> c
     boolean isEnabled() -> a
     void setEnabled(boolean) -> a
@@ -2686,22 +2687,21 @@ com.gutabi.capsloc.world.graph.StopSign -> com.gutabi.a.d.b.ab:
     void computePoint() -> b
     void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
 com.gutabi.capsloc.world.graph.Vertex -> com.gutabi.a.d.b.ac:
-    double INIT_VERTEX_RADIUS -> l
-    com.gutabi.capsloc.world.World world -> m
-    com.gutabi.capsloc.math.Point p -> n
-    java.util.List roads -> o
-    com.gutabi.capsloc.world.graph.Merger m -> p
-    com.gutabi.capsloc.world.graph.BypassStud s -> q
-    int id -> r
-    double r -> s
-    java.util.List driverQueue -> t
-    com.gutabi.capsloc.geom.Circle shape -> u
+    double INIT_VERTEX_RADIUS -> k
+    com.gutabi.capsloc.world.World world -> l
+    com.gutabi.capsloc.math.Point p -> m
+    java.util.List roads -> n
+    com.gutabi.capsloc.world.graph.Merger m -> o
+    com.gutabi.capsloc.world.graph.BypassStud s -> p
+    int id -> q
+    double r -> r
+    java.util.List driverQueue -> s
+    com.gutabi.capsloc.geom.Circle shape -> t
     int hash -> a
-    boolean $assertionsDisabled -> v
+    boolean $assertionsDisabled -> u
     int hashCode() -> hashCode
     java.lang.String toString() -> toString
     double getRadius() -> h
-    com.gutabi.capsloc.geom.Circle getShape() -> i
     com.gutabi.capsloc.world.graph.Road bestMatchingRoad(com.gutabi.capsloc.world.graph.Road,com.gutabi.capsloc.world.graph.Road) -> a
     boolean supportsStopSigns() -> b
     java.util.List commonEdges(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex) -> a
@@ -2720,18 +2720,18 @@ com.gutabi.capsloc.world.graph.VertexPosition -> com.gutabi.a.d.b.ad:
     com.gutabi.capsloc.world.graph.GraphPosition approachNeighbor(com.gutabi.capsloc.world.graph.GraphPosition,double) -> a
     double goalGPPPCombo(int,double,boolean,com.gutabi.capsloc.world.graph.GraphPosition,com.gutabi.capsloc.world.graph.GraphPositionPath,com.gutabi.capsloc.world.graph.GraphPositionPathPosition,double) -> a
 com.gutabi.capsloc.world.physics.PhysicsBody -> com.gutabi.a.d.c.a:
-    com.gutabi.capsloc.world.World world -> B
-    double length -> C
-    double width -> D
-    double localULX -> E
-    double localULY -> F
-    com.gutabi.capsloc.math.Point center -> G
-    double angle -> H
-    com.gutabi.capsloc.geom.MutableOBB shape -> I
-    double forwardSpeed -> J
-    double angularVel -> K
-    com.gutabi.capsloc.geom.AABB localAABB -> L
-    com.gutabi.capsloc.math.Point vel -> M
+    com.gutabi.capsloc.world.World world -> A
+    double length -> B
+    double width -> C
+    double localULX -> D
+    double localULY -> E
+    com.gutabi.capsloc.math.Point center -> F
+    double angle -> G
+    com.gutabi.capsloc.geom.MutableOBB shape -> H
+    double forwardSpeed -> I
+    double angularVel -> J
+    com.gutabi.capsloc.geom.AABB localAABB -> K
+    com.gutabi.capsloc.math.Point vel -> L
     void physicsInit() -> h
     void computeDynamicPropertiesAlways() -> i
     void computeDynamicPropertiesMoving() -> j
@@ -2744,10 +2744,10 @@ com.gutabi.capsloc.world.physics.PhysicsBody -> com.gutabi.a.d.c.a:
     void applyCancelingLateralImpulse(double) -> e
     void applyCancelingAngularImpulse(double) -> f
 com.gutabi.capsloc.world.physics.PhysicsWorld -> com.gutabi.a.d.c.b:
-    double t -> w
-    boolean $assertionsDisabled -> x
+    double t -> A
+    boolean $assertionsDisabled -> B
     boolean step() -> l
-    double getTime() -> g
+    double getTime() -> d
     int getBodyCount() -> m
     void drawPhysicsDebug(com.gutabi.capsloc.ui.paint.RenderingContext) -> c
     boolean intersectsPhysicsBodies(com.gutabi.capsloc.geom.AABB) -> a
@@ -2760,6 +2760,7 @@ com.gutabi.capsloc.world.sprites.AnimatedGrass -> com.gutabi.a.d.d.a:
     double phase -> e
     int startFrame -> f
     com.gutabi.capsloc.geom.AABB aabb -> g
+    boolean xor -> h
     void preStart() -> a
     boolean step(double) -> a
     void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
@@ -3020,7 +3021,7 @@ com.gutabi.capsloc.world.tools.Motion -> com.gutabi.a.d.e.a:
     com.gutabi.capsloc.world.tools.Motion[] values() -> values
     com.gutabi.capsloc.world.tools.Motion valueOf(java.lang.String) -> valueOf
 com.gutabi.capsloc.world.tools.WorldToolBase -> com.gutabi.a.d.e.b:
-    com.gutabi.capsloc.world.tools.Motion lastMotion -> i
+    com.gutabi.capsloc.world.tools.Motion lastMotion -> m
     void pressed(com.gutabi.capsloc.ui.InputEvent) -> a
     void dragged(com.gutabi.capsloc.ui.InputEvent) -> c
     void released(com.gutabi.capsloc.ui.InputEvent) -> b

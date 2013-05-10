@@ -693,38 +693,34 @@ com.gutabi.bypass.ResourceImpl:
     public java.net.URL url
     30:32:public ResourceImpl(java.net.URL)
 com.gutabi.bypass.geom.GeometryPathImpl:
-    31:33:public void add(com.gutabi.capsloc.geom.QuadCurve)
-    36:38:public void add(com.gutabi.capsloc.geom.CubicCurve)
-    41:42:public void add(com.gutabi.capsloc.geom.Ellipse)
-    72:80:public void add(com.gutabi.capsloc.geom.Polygon)
-    94:102:public void add(com.gutabi.capsloc.geom.Polyline)
-    115:119:public void draw(com.gutabi.capsloc.ui.paint.RenderingContext)
+    30:32:public void add(com.gutabi.capsloc.geom.QuadCurve)
+    35:37:public void add(com.gutabi.capsloc.geom.CubicCurve)
+    40:41:public void add(com.gutabi.capsloc.geom.Ellipse)
+    71:79:public void add(com.gutabi.capsloc.geom.Polygon)
+    93:101:public void add(com.gutabi.capsloc.geom.Polyline)
+    113:116:public void draw(com.gutabi.capsloc.ui.paint.RenderingContext)
 com.gutabi.bypass.level.BypassCarTool:
-    32:32:public void setPoint(com.gutabi.capsloc.math.Point)
-    35:35:public java.lang.Object getShape()
-    40:41:public void escKey()
+    31:31:public void setPoint(com.gutabi.capsloc.math.Point)
+    34:34:public java.lang.Object getShape()
+    39:40:public void escKey()
 com.gutabi.bypass.level.BypassWorld:
-    61:64:public static void destroy()
-    421:429:public static char[][] cw90(char[][])
-    434:442:public static char[][] ccw90(char[][])
-    447:455:public static char[][] transpose(char[][])
+    64:67:public static void destroy()
 com.gutabi.bypass.level.WinnerMenu:
     127:128:public void escape()
+com.gutabi.bypass.menu.BypassMenu:
+    16:16:public static void destroy()
 com.gutabi.bypass.menu.LevelMenu:
-    38:38:public static void destroy()
-    154:155:public void escape()
+    105:106:public void escape()
 com.gutabi.bypass.menu.MainMenu:
-    62:62:public static void destroy()
-    153:153:public void escape()
+    101:101:public void escape()
 com.gutabi.bypass.ui.paint.RenderingContextImpl:
-    44:45:public void rotate(double,com.gutabi.capsloc.math.Point)
-    48:49:public void rotate(double,com.gutabi.capsloc.math.Dim)
-    162:164:public void paintAABB(com.gutabi.capsloc.geom.MutableAABB)
-    168:172:public void drawPath(com.gutabi.capsloc.geom.GeometryPath)
-    176:180:public void paintPath(com.gutabi.capsloc.geom.GeometryPath)
-    188:190:public void drawCircle(com.gutabi.capsloc.geom.Circle)
-    211:212:public void translate(com.gutabi.capsloc.math.Point)
-    267:274:public com.gutabi.capsloc.ui.paint.Color getColor()
+    46:47:public void rotate(double,com.gutabi.capsloc.math.Point)
+    50:51:public void rotate(double,com.gutabi.capsloc.math.Dim)
+    164:166:public void paintAABB(com.gutabi.capsloc.geom.MutableAABB)
+    170:179:public void drawPath(com.gutabi.capsloc.geom.GeometryPath)
+    201:209:public void drawCircle(com.gutabi.capsloc.geom.Circle)
+    236:237:public void translate(com.gutabi.capsloc.math.Point)
+    292:299:public com.gutabi.capsloc.ui.paint.Color getColor()
 com.gutabi.capsloc.CapslocApplication:
     public com.gutabi.capsloc.world.sprites.Sheet explosionSheet
     public com.gutabi.capsloc.AppScreen debuggerScreen
@@ -806,7 +802,7 @@ com.gutabi.capsloc.geom.MutableAABB:
     private static final long serialVersionUID
     39:44:public void setLocation(double,double)
     47:52:public void setDimension(double,double)
-    262:263:public void paint(com.gutabi.capsloc.ui.paint.RenderingContext)
+    264:265:public void paint(com.gutabi.capsloc.ui.paint.RenderingContext)
 com.gutabi.capsloc.geom.MutableOBB:
     131:131:public com.gutabi.capsloc.geom.OBB copy()
     207:207:public com.gutabi.capsloc.geom.OBB plus(com.gutabi.capsloc.math.Point)
@@ -831,7 +827,7 @@ com.gutabi.capsloc.geom.Polygon
 com.gutabi.capsloc.geom.Polyline
 com.gutabi.capsloc.geom.QuadCurve
 com.gutabi.capsloc.geom.ShapeUtils:
-    220:251:public static boolean intersectAO(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.MutableOBB)
+    394:425:public static boolean intersectOO(com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.geom.MutableOBB)
     435:435:public static boolean intersectAreaAA(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.AABB)
     539:570:public static boolean intersectAreaAO(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.MutableOBB)
     608:639:public static boolean intersectAreaOO(com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.geom.OBB)
@@ -854,7 +850,6 @@ com.gutabi.capsloc.math.Point:
     66:72:public static com.gutabi.capsloc.math.Point fromFileString(java.lang.String)
     476:478:public static boolean equalDistances(com.gutabi.capsloc.math.Point,com.gutabi.capsloc.math.Point,com.gutabi.capsloc.math.Point)
     633:633:public com.gutabi.capsloc.math.Point plus(double,double)
-    641:641:public com.gutabi.capsloc.math.Point minus(double,double)
     645:645:public com.gutabi.capsloc.math.Point minus(com.gutabi.capsloc.math.Dim)
     674:674:public static com.gutabi.capsloc.math.Point panelToWorld(double,double,com.gutabi.capsloc.world.WorldCamera)
     678:680:public static com.gutabi.capsloc.geom.AABB panelToWorld(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.world.WorldCamera)
@@ -911,26 +906,26 @@ com.gutabi.capsloc.world.ExplosionMap
 com.gutabi.capsloc.world.GrassMarkMap
 com.gutabi.capsloc.world.ProgressMeter
 com.gutabi.capsloc.world.Quadrant:
-    66:66:public com.gutabi.capsloc.math.Point center()
-    70:71:public void toggleGrid()
-    77:86:public void computeGridSpacing(com.gutabi.capsloc.world.WorldCamera)
-    89:103:public com.gutabi.capsloc.math.Point getPoint(com.gutabi.capsloc.math.Point)
-    108:111:public java.lang.String toFileString()
-    174:182:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
+    71:71:public com.gutabi.capsloc.math.Point center()
+    75:76:public void toggleGrid()
+    82:91:public void computeGridSpacing(com.gutabi.capsloc.world.WorldCamera)
+    94:108:public com.gutabi.capsloc.math.Point getPoint(com.gutabi.capsloc.math.Point)
+    113:116:public java.lang.String toFileString()
+    179:187:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
 com.gutabi.capsloc.world.QuadrantMap:
     public static final double QUADRANT_WIDTH
     public static final double QUADRANT_HEIGHT
-    139:150:public com.gutabi.capsloc.world.Quadrant findQuadrant(com.gutabi.capsloc.math.Point)
-    156:160:public com.gutabi.capsloc.math.Point getPoint(com.gutabi.capsloc.math.Point)
-    165:174:public com.gutabi.capsloc.world.Quadrant upFixPoint(com.gutabi.capsloc.world.Quadrant)
-    178:187:public com.gutabi.capsloc.world.Quadrant leftFixPoint(com.gutabi.capsloc.world.Quadrant)
-    191:200:public com.gutabi.capsloc.world.Quadrant rightFixPoint(com.gutabi.capsloc.world.Quadrant)
-    204:213:public com.gutabi.capsloc.world.Quadrant downFixPoint(com.gutabi.capsloc.world.Quadrant)
-    243:249:public void toggleGrid()
-    252:258:public void computeGridSpacing(com.gutabi.capsloc.world.WorldCamera)
-    269:286:public java.lang.String toFileString()
-    290:324:public static com.gutabi.capsloc.world.QuadrantMap fromFileString(java.lang.String)
-    337:343:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
+    134:145:public com.gutabi.capsloc.world.Quadrant findQuadrant(com.gutabi.capsloc.math.Point)
+    151:155:public com.gutabi.capsloc.math.Point getPoint(com.gutabi.capsloc.math.Point)
+    160:169:public com.gutabi.capsloc.world.Quadrant upFixPoint(com.gutabi.capsloc.world.Quadrant)
+    173:182:public com.gutabi.capsloc.world.Quadrant leftFixPoint(com.gutabi.capsloc.world.Quadrant)
+    186:195:public com.gutabi.capsloc.world.Quadrant rightFixPoint(com.gutabi.capsloc.world.Quadrant)
+    199:208:public com.gutabi.capsloc.world.Quadrant downFixPoint(com.gutabi.capsloc.world.Quadrant)
+    238:244:public void toggleGrid()
+    247:253:public void computeGridSpacing(com.gutabi.capsloc.world.WorldCamera)
+    264:281:public java.lang.String toFileString()
+    285:319:public static com.gutabi.capsloc.world.QuadrantMap fromFileString(java.lang.String)
+    332:338:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
 com.gutabi.capsloc.world.RoadMarkMap
 com.gutabi.capsloc.world.Stroke:
     56:56:public final com.gutabi.capsloc.geom.AABB getAABB()
@@ -942,22 +937,22 @@ com.gutabi.capsloc.world.World:
     public com.gutabi.capsloc.math.Point lastPressPreviewPoint
     public com.gutabi.capsloc.math.Point lastDragPreviewPoint
     public com.gutabi.capsloc.math.Point penDragPreviewPoint
-    95:99:public void previewPostDisplay()
-    117:126:public void postStop()
-    183:183:public void carCrash(com.gutabi.capsloc.math.Point)
-    187:197:public com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
-    234:242:public java.util.Set createMerger(com.gutabi.capsloc.math.Point)
-    260:267:public void startRunning()
-    271:282:public void stopRunning()
-    286:294:public void pauseRunning()
-    298:302:public void unpauseRunning()
-    305:316:public java.lang.String toFileString()
-    320:368:public static com.gutabi.capsloc.world.World fromFileString(java.lang.String)
-    399:402:public void moved(com.gutabi.capsloc.ui.InputEvent)
-    406:406:public void clicked(com.gutabi.capsloc.ui.InputEvent)
-    419:447:public void render_preview()
-    498:520:public void paintPreview_controlPanel(com.gutabi.capsloc.ui.paint.RenderingContext)
-    548:548:public boolean checkConsistency()
+    93:97:public void previewPostDisplay()
+    115:124:public void postStop()
+    180:180:public void carCrash(com.gutabi.capsloc.math.Point)
+    184:194:public com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
+    231:239:public java.util.Set createMerger(com.gutabi.capsloc.math.Point)
+    257:264:public void startRunning()
+    268:279:public void stopRunning()
+    283:291:public void pauseRunning()
+    295:299:public void unpauseRunning()
+    302:313:public java.lang.String toFileString()
+    317:365:public static com.gutabi.capsloc.world.World fromFileString(java.lang.String)
+    406:409:public void moved(com.gutabi.capsloc.ui.InputEvent)
+    413:413:public void clicked(com.gutabi.capsloc.ui.InputEvent)
+    426:449:public void render_preview()
+    500:522:public void paintPreview_controlPanel(com.gutabi.capsloc.ui.paint.RenderingContext)
+    550:550:public boolean checkConsistency()
 com.gutabi.capsloc.world.WorldCamera:
     private static final long serialVersionUID
     public double previewPixelsPerMeter
@@ -973,20 +968,20 @@ com.gutabi.capsloc.world.cars.AutonomousDriver:
 com.gutabi.capsloc.world.cars.Car:
     public static final double METERS_PER_CARLENGTH
     public double crashingTime
-    121:121:public java.lang.Object getShape()
-    134:134:public void postStop()
-    137:139:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
+    120:120:public java.lang.Object getShape()
+    133:133:public void postStop()
+    136:138:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
 com.gutabi.capsloc.world.graph.Axis:
     9:15:public static com.gutabi.capsloc.world.graph.Axis fromFileString(java.lang.String)
 com.gutabi.capsloc.world.graph.BypassBoard:
     public static final double STRAIGHTEXTENSION
     public static final double CONTROLEXTENSION
     public static final double EXITROADLENGTH
-    1173:1179:public com.gutabi.capsloc.world.graph.BypassStud stud(com.gutabi.capsloc.world.graph.BypassBoardPosition)
-    1188:1188:public void postStop()
-    1219:1224:public com.gutabi.capsloc.world.graph.BypassBoard hitTest(com.gutabi.capsloc.math.Point)
-    1395:1398:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    1402:1402:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
+    1180:1186:public com.gutabi.capsloc.world.graph.BypassStud stud(com.gutabi.capsloc.world.graph.BypassBoardPosition)
+    1195:1195:public void postStop()
+    1226:1231:public com.gutabi.capsloc.world.graph.BypassBoard hitTest(com.gutabi.capsloc.math.Point)
+    1401:1404:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
+    1408:1408:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
     1:1:public bridge synthetic com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
 com.gutabi.capsloc.world.graph.BypassStud:
     public static final double SIZE
@@ -1007,14 +1002,14 @@ com.gutabi.capsloc.world.graph.Edge:
     public abstract void paintDecorations(com.gutabi.capsloc.ui.paint.RenderingContext)
 com.gutabi.capsloc.world.graph.Fixture:
     public int matchID
-    59:67:public void setType(com.gutabi.capsloc.world.graph.FixtureType)
-    70:70:public com.gutabi.capsloc.world.graph.FixtureType getType()
-    105:118:public void postStop()
-    154:158:public com.gutabi.capsloc.world.graph.GraphPositionPath getRandomPathToMatch()
-    276:290:public java.lang.String toFileString()
-    294:370:public static com.gutabi.capsloc.world.graph.Fixture fromFileString(com.gutabi.capsloc.world.World,java.lang.String)
-    454:457:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    460:462:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
+    57:65:public void setType(com.gutabi.capsloc.world.graph.FixtureType)
+    68:68:public com.gutabi.capsloc.world.graph.FixtureType getType()
+    103:116:public void postStop()
+    152:156:public com.gutabi.capsloc.world.graph.GraphPositionPath getRandomPathToMatch()
+    274:288:public java.lang.String toFileString()
+    292:368:public static com.gutabi.capsloc.world.graph.Fixture fromFileString(com.gutabi.capsloc.world.World,java.lang.String)
+    452:455:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
+    458:460:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
 com.gutabi.capsloc.world.graph.FixtureType:
     private static synthetic int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$FixtureType
     9:15:public com.gutabi.capsloc.world.graph.FixtureType other()
@@ -1042,7 +1037,7 @@ com.gutabi.capsloc.world.graph.Graph:
     1367:1389:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
     1443:1527:public boolean checkConsistency()
 com.gutabi.capsloc.world.graph.GraphPositionPath:
-    502:524:public com.gutabi.capsloc.Entity pureGraphIntersectOBB(com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.world.graph.GraphPositionPathPosition)
+    501:523:public com.gutabi.capsloc.Entity pureGraphIntersectOBB(com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.world.graph.GraphPositionPathPosition)
 com.gutabi.capsloc.world.graph.GraphPositionPathFactory:
     42:59:public com.gutabi.capsloc.world.graph.GraphPositionPath createRandomVertexPath(java.util.List)
     147:225:private void calculateRandomVertexPath(java.util.List,com.gutabi.capsloc.world.graph.VertexPosition,com.gutabi.capsloc.world.graph.VertexPosition)
@@ -1066,37 +1061,37 @@ com.gutabi.capsloc.world.graph.Merger:
     87:91:public void destroy()
     128:135:public void setDirection(com.gutabi.capsloc.world.graph.Axis,com.gutabi.capsloc.world.graph.Direction)
     148:160:public boolean canTravelFromTo(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex)
-    169:172:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
-    202:202:public com.gutabi.capsloc.Entity decorationsHitTest(com.gutabi.capsloc.math.Point)
-    206:206:public com.gutabi.capsloc.Entity decorationsIntersect(java.lang.Object)
-    219:219:public void postStop()
-    260:278:private void computeLengths()
-    281:298:public java.lang.String toFileString()
-    302:302:public static com.gutabi.capsloc.world.graph.Merger fromFileString(java.lang.String)
-    323:326:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    329:332:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
-    346:346:public void paintBorders(com.gutabi.capsloc.ui.paint.RenderingContext)
-    350:350:public void paintDecorations(com.gutabi.capsloc.ui.paint.RenderingContext)
+    165:168:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
+    198:198:public com.gutabi.capsloc.Entity decorationsHitTest(com.gutabi.capsloc.math.Point)
+    202:202:public com.gutabi.capsloc.Entity decorationsIntersect(java.lang.Object)
+    215:215:public void postStop()
+    256:274:private void computeLengths()
+    277:294:public java.lang.String toFileString()
+    298:298:public static com.gutabi.capsloc.world.graph.Merger fromFileString(java.lang.String)
+    319:322:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
+    325:328:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
+    342:342:public void paintBorders(com.gutabi.capsloc.ui.paint.RenderingContext)
+    346:346:public void paintDecorations(com.gutabi.capsloc.ui.paint.RenderingContext)
 com.gutabi.capsloc.world.graph.MergerPosition:
     127:127:public com.gutabi.capsloc.Entity getEntity()
     131:141:public double distanceToConnectedVertex(com.gutabi.capsloc.world.graph.Vertex)
 com.gutabi.capsloc.world.graph.Road:
     public static final double ROAD_RADIUS
     public static final double borderPointRadius
-    132:132:public boolean isLoop()
-    156:156:public com.gutabi.capsloc.geom.Capsule getCapsule(int)
-    233:236:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
-    241:247:public boolean canTravelFromTo(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex)
-    259:259:public void postStop()
-    292:298:public void removeStopSignTop(com.gutabi.capsloc.world.graph.StopSign)
-    312:326:public com.gutabi.capsloc.Entity decorationsHitTest(com.gutabi.capsloc.math.Point)
-    331:343:public com.gutabi.capsloc.Entity decorationsIntersect(java.lang.Object)
-    640:661:public java.lang.String toFileString()
-    665:765:public static com.gutabi.capsloc.world.graph.Road fromFileString(com.gutabi.capsloc.world.World,com.gutabi.capsloc.world.graph.Vertex[],java.lang.String)
-    833:835:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    838:841:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
-    864:867:private void paintPath_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    870:871:private void drawPath(com.gutabi.capsloc.ui.paint.RenderingContext)
+    130:130:public boolean isLoop()
+    154:154:public com.gutabi.capsloc.geom.Capsule getCapsule(int)
+    231:234:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
+    239:245:public boolean canTravelFromTo(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex)
+    257:257:public void postStop()
+    290:296:public void removeStopSignTop(com.gutabi.capsloc.world.graph.StopSign)
+    310:324:public com.gutabi.capsloc.Entity decorationsHitTest(com.gutabi.capsloc.math.Point)
+    329:341:public com.gutabi.capsloc.Entity decorationsIntersect(java.lang.Object)
+    634:655:public java.lang.String toFileString()
+    659:759:public static com.gutabi.capsloc.world.graph.Road fromFileString(com.gutabi.capsloc.world.World,com.gutabi.capsloc.world.graph.Vertex[],java.lang.String)
+    827:829:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
+    832:835:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
+    858:861:private void paintPath_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
+    864:865:private void drawPath(com.gutabi.capsloc.ui.paint.RenderingContext)
 com.gutabi.capsloc.world.graph.RoadPosition:
     102:102:public com.gutabi.capsloc.Entity getEntity()
     130:130:public com.gutabi.capsloc.world.graph.GraphPosition nextBoundBackward()
@@ -1125,20 +1120,19 @@ com.gutabi.capsloc.world.graph.Side$4:
 com.gutabi.capsloc.world.graph.StopSign:
     public static final double STOPSIGN_SIZE
     46:46:public com.gutabi.capsloc.math.Point getPoint()
-    62:62:public com.gutabi.capsloc.geom.Circle getShape()
-    66:69:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
-    79:79:public void postStop()
-    101:111:public java.lang.String toFileString()
-    115:115:public static com.gutabi.capsloc.world.graph.StopSign fromFileString(java.lang.String)
-    143:152:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
+    62:65:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
+    75:75:public void postStop()
+    97:107:public java.lang.String toFileString()
+    111:111:public static com.gutabi.capsloc.world.graph.StopSign fromFileString(java.lang.String)
+    139:148:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
 com.gutabi.capsloc.world.graph.Vertex:
-    67:72:public java.util.List getEdges()
-    132:135:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
-    142:145:public com.gutabi.capsloc.world.graph.VertexPosition skeletonHitTest(com.gutabi.capsloc.math.Point)
-    150:236:public void computeRadius(double)
+    63:68:public java.util.List getEdges()
+    128:131:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
+    138:141:public com.gutabi.capsloc.world.graph.VertexPosition skeletonHitTest(com.gutabi.capsloc.math.Point)
+    146:232:public void computeRadius(double)
     public abstract java.lang.String toFileString()
     public abstract void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    293:317:public void check()
+    289:313:public void check()
 com.gutabi.capsloc.world.graph.VertexPosition:
     27:27:public com.gutabi.capsloc.Entity getEntity()
 com.gutabi.capsloc.world.physics.PhysicsBody:
@@ -1202,5 +1196,5 @@ com.gutabi.capsloc.world.tools.WorldToolBase:
     19:30:public void gKey()
     33:44:public void plusKey()
     47:58:public void minusKey()
-    91:97:public void moved(com.gutabi.capsloc.ui.InputEvent)
-    100:106:public void clicked(com.gutabi.capsloc.ui.InputEvent)
+    95:101:public void moved(com.gutabi.capsloc.ui.InputEvent)
+    104:110:public void clicked(com.gutabi.capsloc.ui.InputEvent)

@@ -226,11 +226,11 @@ public class PlatformImpl implements BypassPlatform {
 	
 	public Image readImage(Resource res) throws Exception {
 		
-		ResourceImpl impl = ((ResourceImpl)res);
+		ResourceImpl impl = (ResourceImpl)res;
 		
 		assert impl.resType == ResourceType.DRAWABLE;
 		
-		Integer id = ((ResourceImpl)res).resId;
+		Integer id = impl.resId;
 		
 		Bitmap b = BitmapFactory.decodeResource(resources, id);
 		

@@ -29,7 +29,7 @@ public abstract class Vertex extends Entity {
 	
 	public final List<AutonomousDriver> driverQueue = new ArrayList<AutonomousDriver>();
 	
-	protected Circle shape;
+	public Circle shape;
 	
 	private int hash;
 	
@@ -57,10 +57,6 @@ public abstract class Vertex extends Entity {
 	
 	public double getRadius() {
 		return r;
-	}
-	
-	public Circle getShape() {
-		return shape;
 	}
 	
 	public List<Edge> getEdges() {

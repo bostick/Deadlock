@@ -293,12 +293,6 @@ public abstract class Menu {
 		ctxt.translate(aabb.x, aabb.y);
 		ctxt.scale(scale);
 		
-		/*
-		 * for MenuItem borders
-		 */
-//		ctxt.setColor(Color.BLUE);
-//		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
-		
 		for (int i = 0; i < tree.size(); i++) {
 			List<MenuItem> col = tree.get(i);
 			for (int j = 0; j < col.size(); j++) {

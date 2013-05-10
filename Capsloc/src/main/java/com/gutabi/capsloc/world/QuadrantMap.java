@@ -111,8 +111,6 @@ public class QuadrantMap {
 	
 	public void panelPostDisplay(WorldCamera cam) {
 		
-		System.out.println("quadrantMap panelPostDisplay");
-		
 		int quadrantWidthPixels = (int)Math.ceil(cam.origPixelsPerMeter * QUADRANT_WIDTH);
 		int quadrantHeightPixels = (int)Math.ceil(cam.origPixelsPerMeter * QUADRANT_HEIGHT);
 		

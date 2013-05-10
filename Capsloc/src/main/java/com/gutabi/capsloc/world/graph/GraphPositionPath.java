@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.gutabi.capsloc.Entity;
-import com.gutabi.capsloc.geom.CapsuleSequence;
 import com.gutabi.capsloc.geom.MutableOBB;
 import com.gutabi.capsloc.geom.OBB;
 import com.gutabi.capsloc.geom.ShapeUtils;
@@ -497,12 +496,12 @@ public class GraphPositionPath {
 		return null;
 	}
 	
-	public Entity pureGraphIntersectOBB(OBB q, GraphPositionPathPosition min) {
+	public Entity pureGraphIntersectOBB(OBB o, GraphPositionPathPosition min) {
 		
 		for (Entry<Vertex, Integer> ent : verticesMap.entrySet()) {
 			int i = ent.getValue();
 			Vertex v = ent.getKey();
-			if (i >= min.combo && ShapeUtils.intersectCO(v.getShape(), q)) {
+			if (i >= min.combo && ShapeUtils.intersectCO(v.shape, o)) {
 				return v;
 			}
 		}
@@ -511,11 +510,11 @@ public class GraphPositionPath {
 			Edge e = ent.getKey();
 			if (i + e.pointCount() >= min.combo) {
 				if (e instanceof Road) {
-					if (((CapsuleSequence)e.getShape()).intersect(q)) {
+					if (((Road)e).shape.intersect(o)) {
 						return e;
 					}
 				} else {
-					if (ShapeUtils.intersectOO((OBB)e.getShape(), q)) {
+					if (ShapeUtils.intersectAO(((Merger)e).shape, o)) {
 						return e;
 					}
 				}
@@ -529,7 +528,7 @@ public class GraphPositionPath {
 		for (Entry<Vertex, Integer> ent : verticesMap.entrySet()) {
 			int i = ent.getValue();
 			Vertex v = ent.getKey();
-			if (i >= min.combo && ShapeUtils.intersectCO(v.getShape(), o)) {
+			if (i >= min.combo && ShapeUtils.intersectCO(v.shape, o)) {
 				return v;
 			}
 		}
@@ -538,11 +537,11 @@ public class GraphPositionPath {
 			Edge e = ent.getKey();
 			if (i + e.pointCount() >= min.combo) {
 				if (e instanceof Road) {
-					if (((CapsuleSequence)e.getShape()).intersect(o)) {
+					if (((Road)e).shape.intersect(o)) {
 						return e;
 					}
 				} else {
-					if (ShapeUtils.intersectOO((OBB)e.getShape(), o)) {
+					if (ShapeUtils.intersectAO(((Merger)e).shape, o)) {
 						return e;
 					}
 				}

@@ -24,6 +24,7 @@ import com.gutabi.bypass.geom.GeometryPathImpl;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.Level;
 import com.gutabi.bypass.level.LevelDB;
+import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.ui.ImageImpl;
@@ -373,8 +374,8 @@ public class PlatformImpl implements BypassPlatform {
 			
 			CURRENTACTIVITYCLASS = MainMenu.class;
 			
-			MainMenu.create();
-			MainMenu.start();
+			BypassMenu.create();
+			BypassMenu.start();
 			MainMenu.resume();
 			MainMenu.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
 			
@@ -382,8 +383,8 @@ public class PlatformImpl implements BypassPlatform {
 			
 			CURRENTACTIVITYCLASS = LevelMenu.class;
 			
-			LevelMenu.create();
-			LevelMenu.start();
+			BypassMenu.create();
+			BypassMenu.start();
 			LevelMenu.resume();
 			LevelMenu.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
 			
@@ -411,16 +412,16 @@ public class PlatformImpl implements BypassPlatform {
 		if (oldClazz == MainMenu.class) {
 			
 			MainMenu.pause();
-			MainMenu.stop();
-			MainMenu.destroy();
+			BypassMenu.stop();
+			BypassMenu.destroy();
 			
 			CURRENTACTIVITYCLASS = null;
 			
 		} else if (oldClazz == LevelMenu.class) {
 			
 			LevelMenu.pause();
-			LevelMenu.stop();
-			LevelMenu.destroy();
+			BypassMenu.stop();
+			BypassMenu.destroy();
 			
 			CURRENTACTIVITYCLASS = MainMenu.class;
 			

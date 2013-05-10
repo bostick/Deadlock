@@ -196,14 +196,14 @@ public class World extends PhysicsWorld {
 	
 	public Set<Vertex> addFixture(Fixture f) {
 		
-		quadrantMap.grassMap.mowGrass(f.getShape());
+		quadrantMap.grassMap.mowGrass(f.shape);
 		
 		return graph.addVertexTop(f);
 	}
 	
 	public Set<Vertex> addIntersection(Intersection i) {
 		
-		quadrantMap.grassMap.mowGrass(i.getShape());
+		quadrantMap.grassMap.mowGrass(i.shape);
 		
 		return graph.addVertexTop(i);
 	}
@@ -212,7 +212,7 @@ public class World extends PhysicsWorld {
 		
 		Intersection i = graph.split(pos);
 		
-		quadrantMap.grassMap.mowGrass(i.getShape());
+		quadrantMap.grassMap.mowGrass(i.shape);
 		
 		return i;
 	}
@@ -221,7 +221,7 @@ public class World extends PhysicsWorld {
 		
 		Road r = new Road(this, v0, v1, roadPts);
 		
-		quadrantMap.grassMap.mowGrass(r.getShape());
+		quadrantMap.grassMap.mowGrass(r.shape);
 		
 		return graph.createRoadTop(r);
 	}
@@ -230,11 +230,11 @@ public class World extends PhysicsWorld {
 		
 		Merger m = Merger.createMergerAndFixtures(this, p);
 		
-		quadrantMap.grassMap.mowGrass(m.getShape());
-		quadrantMap.grassMap.mowGrass(m.top.getShape());
-		quadrantMap.grassMap.mowGrass(m.left.getShape());
-		quadrantMap.grassMap.mowGrass(m.right.getShape());
-		quadrantMap.grassMap.mowGrass(m.bottom.getShape());
+		quadrantMap.grassMap.mowGrass(m.shape);
+		quadrantMap.grassMap.mowGrass(m.top.shape);
+		quadrantMap.grassMap.mowGrass(m.left.shape);
+		quadrantMap.grassMap.mowGrass(m.right.shape);
+		quadrantMap.grassMap.mowGrass(m.bottom.shape);
 		
 		return graph.insertMergerTop(m);
 	}

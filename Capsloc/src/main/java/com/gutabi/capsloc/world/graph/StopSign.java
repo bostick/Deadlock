@@ -24,7 +24,7 @@ public class StopSign extends Entity {
 	
 	private boolean enabled;
 	
-	private Circle shape;
+	public Circle shape;
 	
 	public StopSign(Road r, int dir) {
 		this.r = r;
@@ -56,10 +56,6 @@ public class StopSign extends Entity {
 	
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-	
-	public Circle getShape() {
-		return shape;
 	}
 	
 	public final Entity hitTest(Point p) {

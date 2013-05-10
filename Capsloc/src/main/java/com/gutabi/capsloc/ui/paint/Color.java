@@ -2,6 +2,9 @@ package com.gutabi.capsloc.ui.paint;
 
 public class Color {
 	
+	public static final Color ROADCOLOR = new Color(0xE1, 0xE1, 0xE1, 255);
+	public static final Color FIXTURECOLOR = new Color(0xE1, 0xE1, 0xE1, 255);
+	
 	public static final Color RED = new Color(255, 0, 0, 255);
 	public static final Color ORANGE = new Color(255, 127, 0, 255);
 	public static final Color YELLOW = new Color(255, 255, 0, 255);

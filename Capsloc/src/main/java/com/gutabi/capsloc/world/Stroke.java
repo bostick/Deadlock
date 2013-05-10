@@ -496,15 +496,15 @@ public class Stroke {
 		List<SweepEvent> startEvents = new ArrayList<SweepEvent>();
 		for (int i = 0; i < world.graph.vertices.size(); i++) {
 			Vertex v = world.graph.vertices.get(i);
-			startEvents.addAll(SweepUtils.sweepStartCSoverC(v, v.getShape(), seq, 0));
+			startEvents.addAll(SweepUtils.sweepStartCSoverC(v, v.shape, seq, 0));
 		}
 		for (int i = 0; i < world.graph.roads.size(); i++) {
 			Road r = world.graph.roads.get(i);
-			startEvents.addAll(SweepUtils.sweepStartCSoverCS(r, r.getShape(), seq, 0));
+			startEvents.addAll(SweepUtils.sweepStartCSoverCS(r, r.shape, seq, 0));
 		}
 		for (int i = 0; i < world.graph.mergers.size(); i++) {
 			Merger m = world.graph.mergers.get(i);
-			startEvents.addAll(SweepUtils.sweepStartCSoverA(m, m.getShape(), seq, 0));
+			startEvents.addAll(SweepUtils.sweepStartCSoverA(m, m.shape, seq, 0));
 		}
 		
 		Collections.sort(startEvents, SweepEvent.COMPARATOR);
@@ -548,7 +548,7 @@ public class Stroke {
 			for (int j = 0; j < world.graph.vertices.size(); j++) {
 				Vertex v = world.graph.vertices.get(j);
 				
-				List<SweepEvent> tmp = SweepUtils.sweepCSoverC(v, v.getShape(), capSeq, 0, i);
+				List<SweepEvent> tmp = SweepUtils.sweepCSoverC(v, v.shape, capSeq, 0, i);
 				for (int k = 0; k < tmp.size(); k++) {
 					SweepEvent evt = tmp.get(k);
 					capEvents.add(evt);
@@ -557,7 +557,7 @@ public class Stroke {
 			for (int j = 0; j < world.graph.roads.size(); j++) {
 				Road r = world.graph.roads.get(j);
 				
-				List<SweepEvent> tmp = SweepUtils.sweepCSoverCS(r, r.getShape(), capSeq, 0, i);
+				List<SweepEvent> tmp = SweepUtils.sweepCSoverCS(r, r.shape, capSeq, 0, i);
 				for (int k = 0; k < tmp.size(); k++) {
 					SweepEvent evt = tmp.get(k);
 					capEvents.add(evt);
@@ -566,7 +566,7 @@ public class Stroke {
 			for (int j = 0; j < world.graph.mergers.size(); j++) {
 				Merger m = world.graph.mergers.get(j);
 				
-				List<SweepEvent> tmp = SweepUtils.sweepCSoverA(m, m.getShape(), capSeq, 0, i);
+				List<SweepEvent> tmp = SweepUtils.sweepCSoverA(m, m.shape, capSeq, 0, i);
 				for (int k = 0; k < tmp.size(); k++) {
 					SweepEvent evt = tmp.get(k);
 					capEvents.add(evt);

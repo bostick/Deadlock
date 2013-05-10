@@ -377,15 +377,15 @@ public class Graph {
 		MutableAABB aabbTmp = new MutableAABB();
 		for (int i = 0; i < vertices.size(); i++) {
 			Vertex v = vertices.get(i);
-			aabbTmp.union(v.getShape().aabb);
+			aabbTmp.union(v.shape.aabb);
 		}
 		for (int i = 0; i < roads.size(); i++) {
 			Road r = roads.get(i);
-			aabbTmp.union(r.getShape().getAABB());
+			aabbTmp.union(r.shape.getAABB());
 		}
 		for (int i = 0; i < mergers.size(); i++) {
 			Merger m = mergers.get(i);
-			aabbTmp.union(m.getShape().getAABB());
+			aabbTmp.union(m.shape.getAABB());
 		}
 		for (int i = 0; i < boards.size(); i++) {
 			BypassBoard b = boards.get(i);
@@ -671,17 +671,17 @@ public class Graph {
 	
 	public Entity pureGraphIntersect(Object s) {
 		for (Vertex v : vertices) {
-			if (ShapeUtils.intersect(v.getShape(), s)) {
+			if (ShapeUtils.intersect(v.shape, s)) {
 				return v;
 			}
 		}
 		for (Road r : roads) {
-			if (ShapeUtils.intersect(r.getShape(), s)) {
+			if (ShapeUtils.intersect(r.shape, s)) {
 				return r;
 			}
 		}
 		for (Merger m : mergers) {
-			if (ShapeUtils.intersect(m.getShape(), s)) {
+			if (ShapeUtils.intersect(m.shape, s)) {
 				return m;
 			}
 		}
@@ -690,17 +690,17 @@ public class Graph {
 	
 	public Entity pureGraphIntersectOBB(OBB q) {
 		for (Vertex v : vertices) {
-			if (ShapeUtils.intersectCO(v.getShape(), q)) {
+			if (ShapeUtils.intersectCO(v.shape, q)) {
 				return v;
 			}
 		}
 		for (Road r : roads) {
-			if (r.getShape().intersect(q)) {
+			if (r.shape.intersect(q)) {
 				return r;
 			}
 		}
 		for (Merger m : mergers) {
-			if (ShapeUtils.intersectAO(m.getShape(), q)) {
+			if (ShapeUtils.intersectAO(m.shape, q)) {
 				return m;
 			}
 		}
@@ -709,17 +709,17 @@ public class Graph {
 	
 	public Entity pureGraphIntersectCircle(Circle c) {
 		for (Vertex v : vertices) {
-			if (ShapeUtils.intersectCC(v.getShape(), c)) {
+			if (ShapeUtils.intersectCC(v.shape, c)) {
 				return v;
 			}
 		}
 		for (Road r : roads) {
-			if (r.getShape().intersect(c)) {
+			if (r.shape.intersect(c)) {
 				return r;
 			}
 		}
 		for (Merger m : mergers) {
-			if (ShapeUtils.intersectAC(m.getShape(), c)) {
+			if (ShapeUtils.intersectAC(m.shape, c)) {
 				return m;
 			}
 		}
@@ -728,17 +728,17 @@ public class Graph {
 	
 	public Entity pureGraphIntersectCapsule(Capsule c) {
 		for (Vertex v : vertices) {
-			if (ShapeUtils.intersect(c, v.getShape())) {
+			if (ShapeUtils.intersect(c, v.shape)) {
 				return v;
 			}
 		}
 		for (Road r : roads) {
-			if (ShapeUtils.intersect(c, r.getShape())) {
+			if (ShapeUtils.intersect(c, r.shape)) {
 				return r;
 			}
 		}
 		for (Merger m : mergers) {
-			if (ShapeUtils.intersect(c, m.getShape())) {
+			if (ShapeUtils.intersect(c, m.shape)) {
 				return m;
 			}
 		}
