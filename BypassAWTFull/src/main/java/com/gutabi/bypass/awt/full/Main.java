@@ -1,4 +1,5 @@
-package com.gutabi.bypass.awt;
+package com.gutabi.bypass.awt.full;
+
 
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
@@ -12,9 +13,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
-import com.gutabi.bypass.BypassApplication;
+import com.gutabi.bypass.awt.BypassAWTPlatform;
 import com.gutabi.bypass.awt.ui.WindowInfo;
-import com.gutabi.bypass.menu.MainMenu;
 
 public class Main {
 	
@@ -28,19 +28,19 @@ public class Main {
 		    }
 		});
 		
-		mainFrame.setLocation((int)WindowInfo.windowDim().width/2 - PlatformImpl.MAINWINDOW_WIDTH/2, (int)WindowInfo.windowDim().height/2 - PlatformImpl.MAINWINDOW_HEIGHT/2);
+		mainFrame.setLocation((int)WindowInfo.windowDim().width/2 - BypassAWTPlatform.MAINWINDOW_WIDTH/2, (int)WindowInfo.windowDim().height/2 - BypassAWTPlatform.MAINWINDOW_HEIGHT/2);
 		
 		JFrame debuggerFrame = new JFrame("Debug Control Panel");
 		debuggerFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
-		debuggerFrame.setLocation((int)WindowInfo.windowDim().width/2 + PlatformImpl.MAINWINDOW_WIDTH/2 + 100, 0);
+		debuggerFrame.setLocation((int)WindowInfo.windowDim().width/2 + BypassAWTPlatform.MAINWINDOW_WIDTH/2 + 100, 0);
 		
 		if (BYPASSAPP == null) {
-			PlatformImpl platform = new PlatformImpl();
+			BypassAWTFullPlatform platform = new BypassAWTFullPlatform();
 			platform.appContainer = mainFrame;
 			platform.debuggerContainer = debuggerFrame;
 			try {
-				BypassApplication.create(platform);
+				platform.createApplication();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

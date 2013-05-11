@@ -7,6 +7,8 @@ import com.gutabi.capsloc.Resource;
 
 public interface BypassPlatform extends Platform {
 	
+	void createApplication() throws Exception;
+	
 	Resource levelDBResource(String name);
 	
 	LevelDB levelDB(String name);

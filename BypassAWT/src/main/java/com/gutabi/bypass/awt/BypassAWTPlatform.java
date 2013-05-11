@@ -25,12 +25,8 @@ import com.gutabi.bypass.awt.geom.GeometryPathImpl;
 import com.gutabi.bypass.awt.ui.ImageImpl;
 import com.gutabi.bypass.awt.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.awt.ui.paint.RenderingContextImpl;
-import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.Level;
 import com.gutabi.bypass.level.LevelDB;
-import com.gutabi.bypass.menu.BypassMenu;
-import com.gutabi.bypass.menu.LevelMenu;
-import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.GeometryPath;
@@ -39,7 +35,7 @@ import com.gutabi.capsloc.ui.PlatformContentPane;
 import com.gutabi.capsloc.ui.paint.FontStyle;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
-public class PlatformImpl implements BypassPlatform {
+public abstract class BypassAWTPlatform implements BypassPlatform {
 	
 	public static final int MAINWINDOW_WIDTH = 800;
 	public static final int MAINWINDOW_HEIGHT = 600;
@@ -94,7 +90,7 @@ public class PlatformImpl implements BypassPlatform {
 		
 		content.j.setLayout(null);
 		
-		content.j.setPreferredSize(new Dimension(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT));
+		content.j.setPreferredSize(new Dimension(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT));
 		
 		appContainer.setContentPane(content.j);
 		content.j.setFocusable(true);
@@ -348,103 +344,7 @@ public class PlatformImpl implements BypassPlatform {
 	@SuppressWarnings("rawtypes")
 	public static Class CURRENTACTIVITYCLASS;
 	
-	public void action(@SuppressWarnings("rawtypes")Class newClazz, Object... args) {
-		
-		@SuppressWarnings("rawtypes")
-		Class oldClazz = CURRENTACTIVITYCLASS;
-		if (oldClazz == null) {
-			
-		} else if (oldClazz == MainMenu.class) {
-			
-			MainMenu.pause();
-			
-		} else if (oldClazz == LevelMenu.class) {
-			
-			LevelMenu.pause();
-			
-		} else if (oldClazz == BypassWorld.class) {
-			
-			BypassWorld.pause();
-			
-		} else {
-			throw new AssertionError();
-		}
-		
-		
-		if (newClazz == MainMenu.class) {
-			
-			CURRENTACTIVITYCLASS = MainMenu.class;
-			
-			BypassMenu.create();
-			BypassMenu.start();
-			MainMenu.resume();
-			MainMenu.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
-			
-		} else if (newClazz == LevelMenu.class) {
-			
-			CURRENTACTIVITYCLASS = LevelMenu.class;
-			
-			BypassMenu.create();
-			BypassMenu.start();
-			LevelMenu.resume();
-			LevelMenu.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
-			
-		} else if (newClazz == BypassWorld.class) {
-			
-			CURRENTACTIVITYCLASS = BypassWorld.class;
-			
-			int ii = (Integer)args[0];
-			
-			BypassWorld.create(LevelMenu.levelDB, ii);
-			BypassWorld.start();
-			BypassWorld.resume();
-			BypassWorld.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
-			
-		} else {
-			throw new AssertionError();
-		}
-		
-	}
 	
-	public void finishAction() {
-		
-		@SuppressWarnings("rawtypes")
-		Class oldClazz = CURRENTACTIVITYCLASS;
-		if (oldClazz == MainMenu.class) {
-			
-			MainMenu.pause();
-			BypassMenu.stop();
-			BypassMenu.destroy();
-			
-			CURRENTACTIVITYCLASS = null;
-			
-		} else if (oldClazz == LevelMenu.class) {
-			
-			LevelMenu.pause();
-			BypassMenu.stop();
-			BypassMenu.destroy();
-			
-			CURRENTACTIVITYCLASS = MainMenu.class;
-			
-			MainMenu.resume();
-			MainMenu.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
-			
-		} else if (oldClazz == BypassWorld.class) {
-			
-			BypassWorld.pause();
-			BypassWorld.stop();
-			BypassWorld.destroy();
-			
-			CURRENTACTIVITYCLASS = LevelMenu.class;
-			
-			LevelMenu.resume();
-			LevelMenu.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
-			
-		} else {
-			throw new AssertionError();
-		} 
-		
-	}
 	
 	public void loadScores(LevelDB levelDB) throws Exception {
 		

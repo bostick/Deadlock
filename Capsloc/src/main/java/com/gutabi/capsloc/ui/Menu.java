@@ -84,6 +84,9 @@ public abstract class Menu {
 			col = tree.get(c);
 		}
 		
+		if (col.size() > r) {
+			throw new IllegalArgumentException();
+		}
 		col.add(r, item);
 		
 		if (r == rows) {

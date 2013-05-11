@@ -15,7 +15,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Stack;
 
-import com.gutabi.bypass.awt.PlatformImpl;
+import com.gutabi.bypass.awt.BypassAWTPlatform;
 import com.gutabi.bypass.awt.geom.GeometryPathImpl;
 import com.gutabi.bypass.awt.ui.ImageImpl;
 import com.gutabi.capsloc.Resource;
@@ -102,7 +102,7 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void setFont(Resource file, FontStyle style, int size) {
 		
-		Font ttfReal = ((PlatformImpl)APP.platform).getRealFont(file, style, size);
+		Font ttfReal = ((BypassAWTPlatform)APP.platform).getRealFont(file, style, size);
 		
 		g2.setFont(ttfReal);
 		
