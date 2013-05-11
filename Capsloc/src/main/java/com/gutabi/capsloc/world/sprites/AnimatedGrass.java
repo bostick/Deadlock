@@ -3,7 +3,6 @@ package com.gutabi.capsloc.world.sprites;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import com.gutabi.capsloc.geom.AABB;
-import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.sprites.SpriteSheet.SpriteSheetSprite;
@@ -73,9 +72,9 @@ public class AnimatedGrass {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
-			return;
-		}
+//		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
+//			return;
+//		}
 		
 		switch (lastFrame) {
 		case 0:

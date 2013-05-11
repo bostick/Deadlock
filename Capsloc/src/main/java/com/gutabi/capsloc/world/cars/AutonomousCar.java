@@ -154,7 +154,7 @@ public class AutonomousCar extends Car {
 					
 				}
 				
-				world.quadrantMap.grassMap.mowGrass(shape);
+				world.quadrantMap.mowGrass(shape);
 				
 				computeDynamicPropertiesMovingAndMore(t);
 				
@@ -188,7 +188,7 @@ public class AutonomousCar extends Car {
 					
 				}
 				
-				world.quadrantMap.grassMap.mowGrass(shape);
+				world.quadrantMap.mowGrass(shape);
 				
 				synchronized (APP) {
 //					world.grassMarkMap.addGrassMark(prevWorldPoint0, shape.p0);

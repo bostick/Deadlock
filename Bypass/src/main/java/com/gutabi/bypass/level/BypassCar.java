@@ -222,9 +222,9 @@ public class BypassCar extends Car {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.aabb)) {
-			return;
-		}
+//		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.aabb)) {
+//			return;
+//		}
 		
 		if (APP.CARTEXTURE_DRAW) {
 			paintImage(ctxt);

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.gutabi.capsloc.geom.AABB;
-import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.Image;
 import com.gutabi.capsloc.ui.paint.Cap;
@@ -447,12 +446,12 @@ public final class Fixture extends Vertex {
 		
 	}
 	
-	public void paint_preview(RenderingContext ctxt) {
-		
-		ctxt.setColor(Color.FIXTURECOLOR);
-		shape.paint(ctxt);
-		
-	}
+//	public void paint_preview(RenderingContext ctxt) {
+//		
+//		ctxt.setColor(Color.FIXTURECOLOR);
+//		shape.paint(ctxt);
+//		
+//	}
 	
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(Color.fixtureHiliteColor);
@@ -461,9 +460,9 @@ public final class Fixture extends Vertex {
 	
 	public void paintScene(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(shape.aabb, ctxt.cam.worldViewport)) {
-			return;
-		}
+//		if (!ShapeUtils.intersectAA(shape.aabb, ctxt.cam.worldViewport)) {
+//			return;
+//		}
 		
 //		if (type == FixtureType.SOURCE) {
 //			progress.paint(ctxt);

@@ -15,8 +15,8 @@ public class WorldCamera implements Serializable {
 	public MutableAABB worldViewport = new MutableAABB();
 	public AABB origWorldViewport;
 	
-	public AABB previewAABB = new AABB(5, 400, 100, 100);
-	public double previewPixelsPerMeter;
+//	public AABB previewAABB = new AABB(5, 400, 100, 100);
+//	public double previewPixelsPerMeter;
 	
 	public AABB panelAABB;
 	

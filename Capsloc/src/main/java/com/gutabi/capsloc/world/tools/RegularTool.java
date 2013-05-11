@@ -249,9 +249,9 @@ public class RegularTool extends WorldToolBase {
 		
 		world.render_worldPanel();
 		
-		if (world.previewImage != null) {
-			world.render_preview();
-		}
+//		if (world.previewImage != null) {
+//			world.render_preview();
+//		}
 	}
 	
 	public void moved(InputEvent ignore) {
@@ -315,9 +315,9 @@ public class RegularTool extends WorldToolBase {
 			draftEnd();
 			
 			world.render_worldPanel();
-			if (world.previewImage != null) {
-				world.render_preview();
-			}
+//			if (world.previewImage != null) {
+//				world.render_preview();
+//			}
 			break;
 		}
 	}
@@ -347,7 +347,7 @@ public class RegularTool extends WorldToolBase {
 		Set<Vertex> affected = stroke.processNewStroke(true);
 		world.graph.computeVertexRadii(affected);
 		
-		assert world.checkConsistency();
+//		assert world.checkConsistency();
 		
 		debugStroke2 = debugStroke;
 		debugStroke = stroke;

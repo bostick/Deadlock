@@ -882,9 +882,9 @@ public class Road extends Edge {
 	
 	public void paintDecorations(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
-			return;
-		}
+//		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
+//			return;
+//		}
 		
 		if (startSign != null) {
 			startSign.paint(ctxt);

@@ -10,7 +10,7 @@
     <messageSet />
     @VERSIONINFO@
   </executable>
-  <java mainClass="com.gutabi.bypass.Main" vmParameters="" arguments="@ARGUMENTS@" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="1.6" maxVersion="" allowBetaVM="false" jdkOnly="false">
+  <java mainClass="com.gutabi.bypass.awt.lite.Main" vmParameters="" arguments="@ARGUMENTS@" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="1.6" maxVersion="" allowBetaVM="false" jdkOnly="false">
     <searchSequence>
       <registry />
       <envVar name="JAVA_HOME" />

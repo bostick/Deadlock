@@ -95,7 +95,9 @@ public class GrassMap {
 	public void paintScene(RenderingContext ctxt) {
 		for (int i = 0; i < grass.size(); i++) {
 			AnimatedGrass g = grass.get(i);
-			g.paint(ctxt);
+			if (ShapeUtils.intersectAA(g.aabb, ctxt.cam.worldViewport)) {
+				g.paint(ctxt);
+			}
 		}
 	}
 	

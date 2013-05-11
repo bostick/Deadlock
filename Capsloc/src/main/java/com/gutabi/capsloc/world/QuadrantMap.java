@@ -8,6 +8,8 @@ import java.io.StringReader;
 import java.util.Scanner;
 
 import com.gutabi.capsloc.geom.AABB;
+import com.gutabi.capsloc.geom.CapsuleSequence;
+import com.gutabi.capsloc.geom.Circle;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
@@ -29,8 +31,6 @@ public class QuadrantMap {
 	private Quadrant[][] quadrants;
 	
 	public Image quadrantGrass;
-	
-	public GrassMap grassMap = new GrassMap();
 
 	public QuadrantMap(int[][] ini) {
 		this.ini = ini;
@@ -252,12 +252,65 @@ public class QuadrantMap {
 		}
 	}
 	
+	public void mowGrass(Object s) {
+		for (int i = 0; i < quadrantRows; i++) {
+			for (int j = 0; j < quadrantCols; j++) {
+				Quadrant q = quadrants[i][j];
+				
+				if (s instanceof CapsuleSequence) {
+					
+					CapsuleSequence cs = (CapsuleSequence)s;
+					
+					if (cs.intersectA(q.aabb)) {
+						q.grassMap.mowGrass(cs);
+					}
+					
+				} else if (s instanceof Circle) {
+					
+					Circle c = (Circle)s;
+					
+					if (ShapeUtils.intersectAC(q.aabb, c)) {
+						q.grassMap.mowGrass(c);
+					}
+					
+				} else if (s instanceof AABB) {
+					
+					AABB a = (AABB)s;
+					
+					if (ShapeUtils.intersectAA(q.aabb, a)) {
+						q.grassMap.mowGrass(a);
+					}
+					
+				} else {
+					
+					if (ShapeUtils.intersect(q.aabb, s)) {
+						q.grassMap.mowGrass(s);
+					}
+					
+				}
+				
+			}
+		}
+	}
+	
 	public void preStart() {
-		grassMap.preStart();
+		for (int i = 0; i < quadrantRows; i++) {
+			for (int j = 0; j < quadrantCols; j++) {
+				Quadrant q = quadrants[i][j];
+				q.preStart();
+			}
+		}
 	}
 	
 	public boolean step(double t) {
-		return grassMap.step(t);
+		boolean res = false;
+		for (int i = 0; i < quadrantRows; i++) {
+			for (int j = 0; j < quadrantCols; j++) {
+				Quadrant q = quadrants[i][j];
+				res = res | q.step(t);
+			}
+		}
+		return res;
 	}
 	
 	public String toFileString() {
@@ -328,17 +381,24 @@ public class QuadrantMap {
 		}
 	}
 	
-	public void paint_preview(RenderingContext ctxt) {
+//	public void paint_preview(RenderingContext ctxt) {
+//		for (int i = 0; i < quadrantRows; i++) {
+//			for (int j = 0; j < quadrantCols; j++) {
+//				Quadrant q = quadrants[i][j];
+//				q.paint_preview(ctxt);
+//			}
+//		}
+//	}
+	
+	public void paintScene(RenderingContext ctxt) {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];
-				q.paint_preview(ctxt);
+				if (ShapeUtils.intersectAA(q.aabb, ctxt.cam.worldViewport)) {
+					q.paintScene(ctxt);
+				}
 			}
 		}
-	}
-	
-	public void paintScene(RenderingContext ctxt) {
-		grassMap.paintScene(ctxt);
 	}
 	
 }

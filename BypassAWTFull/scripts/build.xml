@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+
+<project name="BypassAWTFull" default="build" basedir=".">
+	
+	<property name="version.major" value="0"/>
+	<property name="version.minor" value="1"/>
+	<property name="version.revision" value="0"/>
+	
+	<tstamp>
+		<format property="DATE" pattern="yyyyMMdd" locale="en"/>
+	</tstamp>
+	
+	<property name="debug" value="true"/>
+	<property name="javaSrcVersion" value="1.7"/>
+	<property name="javaTgtVersion" value="1.7"/>
+	
+	<property name="srcDir" location="../src/main/java"/>
+	<property name="bypassResDir" location="../../BypassResources"/>
+	<property name="buildDir" location="../build"/>
+	<property name="distDir" location="${buildDir}/dist/Bypass"/>
+	
+	<property name="bypassJar" value="bypass-${version.major}.${version.minor}.${version.revision}.${DATE}.jar" />
+	
+	<target name="build">
+	    
+		<delete dir="${buildDir}" />
+		<mkdir dir="${buildDir}" />
+		<mkdir dir="${buildDir}/bin" />
+		<mkdir dir="${buildDir}/jar" />
+		<mkdir dir="${buildDir}/copied" />
+		<mkdir dir="${buildDir}/copied/src" />
+		<mkdir dir="${buildDir}/copied/lib" />
+		<mkdir dir="${buildDir}/copied/classes" />
+		<mkdir dir="${buildDir}/dist" />
+		
+		<copy todir="${buildDir}/copied/src">
+			<fileset dir="../../Capsloc/src/main/java"/>
+			<fileset dir="../../Bypass/src/main/java"/>
+			<fileset dir="../../BypassAWT/src/main/java"/>
+			<fileset dir="../../BypassAWTFull/src/main/java"/>
+			<filterset>
+				<filter token="MAJOR" value="${version.major}" />
+				<filter token="MINOR" value="${version.minor}" />
+		    </filterset>
+		</copy>
+		
+		<copy tofile="${buildDir}/bin/copyright.png" file="${bypassResDir}/static/copyright.png"/>
+		<copy tofile="${buildDir}/bin/carsheet.png" file="${bypassResDir}/static/carsheet.png"/>
+		<copy tofile="${buildDir}/bin/spritesheet.png" file="${bypassResDir}/static/spritesheet.png"/>
+		<copy tofile="${buildDir}/bin/visitor1.ttf" file="${bypassResDir}/static/visitor1.ttf"/>
+		<copy tofile="${buildDir}/bin/logo.png" file="${bypassResDir}/static/logo.png"/>
+		<copy tofile="${buildDir}/bin/icon256x256.ico" file="${bypassResDir}/static/icon256x256.ico"/>
+		
+		<copy tofile="${buildDir}/bin/tutorial.zip" file="${bypassResDir}/gen/tutorial.zip"/>
+		<copy tofile="${buildDir}/bin/episode1.zip" file="${bypassResDir}/gen/episode1.zip"/>
+		<copy tofile="${buildDir}/bin/episode2.zip" file="${bypassResDir}/gen/episode2.zip"/>
+		
+		<javac srcdir="${buildDir}/copied/src"
+			destdir="${buildDir}/bin"
+			includes="**"
+			debug="${debug}"
+			source="${javaSrcVersion}"
+			target="${javaTgtVersion}"
+			includeantruntime="false">
+			<compilerarg value="-Xlint"/>
+			<classpath>  
+            	<fileset dir="${buildDir}/copied/lib">  
+                    <include name="**/*.jar" />  
+                </fileset>  
+            </classpath> 
+		</javac>
+		
+		<jar jarfile="${buildDir}/jar/${bypassJar}">
+			<fileset dir="${buildDir}/bin">
+				<include name="**" />
+			</fileset>
+		</jar>
+		
+		<copy tofile="${buildDir}/copied/lib/${bypassJar}" file="${buildDir}/jar/${bypassJar}"/>
+		
+		
+		
+		<mkdir dir="${distDir}" />
+		<mkdir dir="${distDir}/lib" />
+		<mkdir dir="${distDir}/classes" />
+		
+		<copy todir="${distDir}/lib">
+			<fileset dir="${buildDir}/copied/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+
+		<copy tofile="${buildDir}/copied/BypassAWTFull.exe4j" file="BypassAWTFull.exe4j">
+			<filterset>
+				<filter token="VERSIONINFO" value="&lt;versionInfo include=&quot;true&quot; fileVersion=&quot;${version.major} ${version.minor} ${version.revision} ${DATE}&quot; fileDescription=&quot;Gutabi Studios Bypass&quot; legalCopyright=&quot;Copyright 2013 Gutabi Studios&quot; internalName=&quot;Bypass&quot; productName=&quot;Bypass&quot; companyName=&quot;Gutabi Studios&quot; productVersion=&quot;${version.major} ${version.minor} ${version.revision} ${DATE}&quot; /&gt;"/>
+				
+				<filter token="BYPASSJAR" value="${bypassJar}" />
+				
+				<filter token="AMD64" value="true" />
+				<filter token="APPLICATIONNAME" value="Bypass" />
+				<filter token="DISTRIBUTIONSOURCEDIR" value="${distDir}" />
+				<filter token="EXECUTABLENAME" value="Bypass" />
+				<filter token="ARGUMENTS" value="" />
+				<filter token="ICONFILE" value="${buildDir}/bin/icon256x256.ico" />
+		    </filterset>
+		</copy>
+		
+		<taskdef name="exe4j" classname="com.exe4j.Exe4JTask" classpath="C:\Program Files\exe4j\bin\ant.jar"/>
+		<exe4j projectfile="${buildDir}/copied/BypassAWTFull.exe4j" verbose="true"/>
+		
+	</target>
+
+</project>

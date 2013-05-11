@@ -25,11 +25,18 @@ public class CarMap {
 	
 	public List<Car> cars = new ArrayList<Car>();
 	
+	public Car redCar;
+	
 	public CarMap(World world) {
 		this.world = world;
 	}
 	
 	public void addCar(Car c) {
+		
+		if (c.type == CarType.RED) {
+			redCar = c;
+		}
+		
 		cars.add(c);
 	}
 	
@@ -42,17 +49,6 @@ public class CarMap {
 	
 	public int size() {
 		return cars.size();
-	}
-	
-	public Car findRedCar() {
-		for (Car c : cars) {
-			if (c.type == CarType.RED) {
-				return c;
-			}
-		}
-		
-		assert false;
-		return null;
 	}
 	
 	public Car carHitTest(Point p) {

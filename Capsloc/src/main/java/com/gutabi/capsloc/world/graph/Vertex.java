@@ -270,7 +270,7 @@ public abstract class Vertex extends Entity {
 	
 	public abstract void paint_panel(RenderingContext ctxt);
 	
-	public abstract void paint_preview(RenderingContext ctxt);
+//	public abstract void paint_preview(RenderingContext ctxt);
 	
 	public abstract void paintScene(RenderingContext ctxt);
 	
@@ -285,31 +285,31 @@ public abstract class Vertex extends Entity {
 		ctxt.paintString(p.x-r, p.y, 1.0/ctxt.cam.pixelsPerMeter, id + " " + driverQueue.size());
 	}
 	
-	public void check() {
-		assert p != null;
-		
-		int count;
-		for (Road e : roads) {
-			
-			count = 0;
-			for (Road f : roads) {
-				if (e == f) {
-					count++;
-				}
-			}
-			if (e.start == this && e.end == this) {
-				/*
-				 * loop with one intersection, so count of roads is 2 for this road
-				 */
-				assert count == 2;
-			} else {
-				/*
-				 * otherwise, all roads in v should be unique
-				 */
-				assert count == 1;
-			}
-		}
-		
-	}
+//	public void check() {
+//		assert p != null;
+//		
+//		int count;
+//		for (Road e : roads) {
+//			
+//			count = 0;
+//			for (Road f : roads) {
+//				if (e == f) {
+//					count++;
+//				}
+//			}
+//			if (e.start == this && e.end == this) {
+//				/*
+//				 * loop with one intersection, so count of roads is 2 for this road
+//				 */
+//				assert count == 2;
+//			} else {
+//				/*
+//				 * otherwise, all roads in v should be unique
+//				 */
+//				assert count == 1;
+//			}
+//		}
+//		
+//	}
 	
 }

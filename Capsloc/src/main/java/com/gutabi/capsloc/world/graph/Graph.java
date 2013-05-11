@@ -1358,52 +1358,52 @@ public class Graph {
 		
 	}
 	
-	public void paint_preview(RenderingContext ctxt) {
-		
-		List<Road> roadsCopy;
-		List<Merger> mergersCopy;
-		List<BypassBoard> boardsCopy;
-		List<Vertex> verticesCopy;
-		synchronized (APP) {
-			roadsCopy = new ArrayList<Road>(roads);
-			mergersCopy = new ArrayList<Merger>(mergers);
-			boardsCopy = new ArrayList<BypassBoard>(boards);
-			verticesCopy = new ArrayList<Vertex>(vertices);
-		}
-		
-		for (Road r : roadsCopy) {
-			r.paint_preview(ctxt);
-		}
-		for (Merger m : mergersCopy) {
-			m.paint_preview(ctxt);
-		}
-		
-		for (BypassBoard b : boardsCopy) {
-			b.paint_preview(ctxt);
-		}
-		
-		for (Vertex v : verticesCopy) {
-			v.paint_preview(ctxt);
-		}
-		
-	}
+//	public void paint_preview(RenderingContext ctxt) {
+//		
+//		List<Road> roadsCopy;
+//		List<Merger> mergersCopy;
+//		List<BypassBoard> boardsCopy;
+//		List<Vertex> verticesCopy;
+//		synchronized (APP) {
+//			roadsCopy = new ArrayList<Road>(roads);
+//			mergersCopy = new ArrayList<Merger>(mergers);
+//			boardsCopy = new ArrayList<BypassBoard>(boards);
+//			verticesCopy = new ArrayList<Vertex>(vertices);
+//		}
+//		
+//		for (Road r : roadsCopy) {
+//			r.paint_preview(ctxt);
+//		}
+//		for (Merger m : mergersCopy) {
+//			m.paint_preview(ctxt);
+//		}
+//		
+//		for (BypassBoard b : boardsCopy) {
+//			b.paint_preview(ctxt);
+//		}
+//		
+//		for (Vertex v : verticesCopy) {
+//			v.paint_preview(ctxt);
+//		}
+//		
+//	}
 	
-	public void paintStats(RenderingContext ctxt) {
-		
-		ctxt.pushTransform();
-		
-		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "vertex count: " + vertices.size());
-		
-		ctxt.translate(0, 1);
-		
-		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "road count: " + roads.size());
-		
-		ctxt.translate(0, 1);
-		
-		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "merger count: " + mergers.size());
-		
-		ctxt.popTransform();
-	}
+//	public void paintStats(RenderingContext ctxt) {
+//		
+//		ctxt.pushTransform();
+//		
+//		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "vertex count: " + vertices.size());
+//		
+//		ctxt.translate(0, 1);
+//		
+//		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "road count: " + roads.size());
+//		
+//		ctxt.translate(0, 1);
+//		
+//		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "merger count: " + mergers.size());
+//		
+//		ctxt.popTransform();
+//	}
 	
 	public void paintScene(RenderingContext ctxt) {
 		

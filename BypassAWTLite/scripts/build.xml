@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="BypassAWT" default="build" basedir=".">
+<project name="BypassAWTLite" default="build" basedir=".">
 	
 	<property name="version.major" value="0"/>
 	<property name="version.minor" value="1"/>
@@ -34,9 +34,10 @@
 		<mkdir dir="${buildDir}/dist" />
 		
 		<copy todir="${buildDir}/copied/src">
-			<fileset dir="../src/main/java"/>
-			<fileset dir="../../Bypass/src/main/java"/>
 			<fileset dir="../../Capsloc/src/main/java"/>
+			<fileset dir="../../Bypass/src/main/java"/>
+			<fileset dir="../../BypassAWT/src/main/java"/>
+			<fileset dir="../../BypassAWTLite/src/main/java"/>
 			<filterset>
 				<filter token="MAJOR" value="${version.major}" />
 				<filter token="MINOR" value="${version.minor}" />
@@ -47,7 +48,7 @@
 		<copy tofile="${buildDir}/bin/carsheet.png" file="${bypassResDir}/static/carsheet.png"/>
 		<copy tofile="${buildDir}/bin/spritesheet.png" file="${bypassResDir}/static/spritesheet.png"/>
 		<copy tofile="${buildDir}/bin/visitor1.ttf" file="${bypassResDir}/static/visitor1.ttf"/>
-		<copy tofile="${buildDir}/bin/logo605x132.png" file="${bypassResDir}/static/logo605x132.png"/>
+		<copy tofile="${buildDir}/bin/logo.png" file="${bypassResDir}/static/logo.png"/>
 		<copy tofile="${buildDir}/bin/icon256x256.ico" file="${bypassResDir}/static/icon256x256.ico"/>
 		
 		<copy tofile="${buildDir}/bin/tutorial.zip" file="${bypassResDir}/gen/tutorial.zip"/>
@@ -88,23 +89,23 @@
 			</fileset>
 		</copy>
 
-		<copy tofile="${buildDir}/copied/Bypass.exe4j" file="Bypass.exe4j">
+		<copy tofile="${buildDir}/copied/BypassAWTLite.exe4j" file="BypassAWTLite.exe4j">
 			<filterset>
 				<filter token="VERSIONINFO" value="&lt;versionInfo include=&quot;true&quot; fileVersion=&quot;${version.major} ${version.minor} ${version.revision} ${DATE}&quot; fileDescription=&quot;Gutabi Studios Bypass&quot; legalCopyright=&quot;Copyright 2013 Gutabi Studios&quot; internalName=&quot;Bypass&quot; productName=&quot;Bypass&quot; companyName=&quot;Gutabi Studios&quot; productVersion=&quot;${version.major} ${version.minor} ${version.revision} ${DATE}&quot; /&gt;"/>
 				
 				<filter token="BYPASSJAR" value="${bypassJar}" />
 				
 				<filter token="AMD64" value="true" />
-				<filter token="APPLICATIONNAME" value="Bypass" />
+				<filter token="APPLICATIONNAME" value="Bypass Lite" />
 				<filter token="DISTRIBUTIONSOURCEDIR" value="${distDir}" />
-				<filter token="EXECUTABLENAME" value="Bypass" />
+				<filter token="EXECUTABLENAME" value="BypassLite" />
 				<filter token="ARGUMENTS" value="" />
 				<filter token="ICONFILE" value="${buildDir}/bin/icon256x256.ico" />
 		    </filterset>
 		</copy>
 		
 		<taskdef name="exe4j" classname="com.exe4j.Exe4JTask" classpath="C:\Program Files\exe4j\bin\ant.jar"/>
-		<exe4j projectfile="${buildDir}/copied/Bypass.exe4j" verbose="true"/>
+		<exe4j projectfile="${buildDir}/copied/BypassAWTLite.exe4j" verbose="true"/>
 		
 	</target>
 

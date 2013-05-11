@@ -145,7 +145,7 @@ public class CircleTool extends WorldToolBase {
 			APP.tool.setPoint(world.lastMovedWorldPoint);
 			
 			world.render_worldPanel();
-			world.render_preview();
+//			world.render_preview();
 			break;
 		case KNOB:
 			break;

@@ -202,7 +202,7 @@ public class CubicTool extends WorldToolBase {
 			APP.tool.setPoint(world.lastMovedOrDraggedWorldPoint);
 			
 			world.render_worldPanel();
-			world.render_preview();
+//			world.render_preview();
 			break;
 		case KNOB:
 			assert false;

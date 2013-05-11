@@ -15,7 +15,6 @@ import com.gutabi.capsloc.world.graph.GraphPosition;
 import com.gutabi.capsloc.world.graph.GraphPositionPathPosition;
 import com.gutabi.capsloc.world.graph.RoadPosition;
 import com.gutabi.capsloc.world.graph.VertexPosition;
-import com.gutabi.capsloc.world.sprites.AnimatedGrass;
 import com.gutabi.capsloc.world.tools.WorldToolBase;
 
 public class BypassCarTool extends WorldToolBase {
@@ -106,19 +105,19 @@ public class BypassCarTool extends WorldToolBase {
 		BypassWorld world = (BypassWorld)APP.model;
 		BypassBoard b = world.bypassBoard;
 		
-		for (int i = 0; i < world.quadrantMap.grassMap.grass.size(); i++) {
-			AnimatedGrass g = world.quadrantMap.grassMap.grass.get(i);
-			if (g.aabb.hitTest(world.lastPressedWorldPoint)) {
-				
-				if (g.aabb.hitTest(world.lastReleasedWorldPoint)) {
-					
-					g.xor = !g.xor;
-					
-				}
-				
-				return;
-			}
-		}
+//		for (int i = 0; i < world.quadrantMap.grassMap.grass.size(); i++) {
+//			AnimatedGrass g = world.quadrantMap.grassMap.grass.get(i);
+//			if (g.aabb.hitTest(world.lastPressedWorldPoint)) {
+//				
+//				if (g.aabb.hitTest(world.lastReleasedWorldPoint)) {
+//					
+//					g.xor = !g.xor;
+//					
+//				}
+//				
+//				return;
+//			}
+//		}
 		
 		try {
 			

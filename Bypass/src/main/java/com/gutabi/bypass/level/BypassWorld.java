@@ -195,6 +195,7 @@ public class BypassWorld extends World implements Model {
 		double cameraY = worldCamera.origWorldViewport.y;
 		
 		worldCamera.panAbsolute(cameraX, cameraY);
+		worldCamera.zoomAbsolute(1.0);
 		
 		BYPASSWORLD.simThreadTrigger.set(true);
 		
@@ -435,6 +436,7 @@ public class BypassWorld extends World implements Model {
 				double cameraY = worldCamera.origWorldViewport.y;
 				
 				worldCamera.panAbsolute(cameraX, cameraY);
+				worldCamera.zoomAbsolute(1.0);
 				return;
 			}
 		}
@@ -452,6 +454,7 @@ public class BypassWorld extends World implements Model {
 		cameraY = cc.y + fraction * (worldCamera.origWorldViewport.y - cc.y);
 		
 		worldCamera.panAbsolute(cameraX, cameraY);
+		worldCamera.zoomAbsolute(1.0);
 	}
 	
 	public void winner() {

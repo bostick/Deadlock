@@ -714,21 +714,21 @@ public class Point implements Serializable {
 		return new Point((p.x - menu.aabb.x) / menu.scale, (p.y - menu.aabb.y) / menu.scale);
 	}
 	
-	public static Point previewToWorld(Point p, WorldCamera cam) {
-		return new Point((1/cam.previewPixelsPerMeter) * p.x, (1/cam.previewPixelsPerMeter) * p.y);
-	}
+//	public static Point previewToWorld(Point p, WorldCamera cam) {
+//		return new Point((1/cam.previewPixelsPerMeter) * p.x, (1/cam.previewPixelsPerMeter) * p.y);
+//	}
 	
-	public static Point worldToPreview(Point p, WorldCamera cam) {
-		return new Point((cam.previewPixelsPerMeter) * p.x, (cam.previewPixelsPerMeter) * p.y);
-	}
+//	public static Point worldToPreview(Point p, WorldCamera cam) {
+//		return new Point((cam.previewPixelsPerMeter) * p.x, (cam.previewPixelsPerMeter) * p.y);
+//	}
 	
-	public static Point worldToPreview(double x, double y, WorldCamera cam) {
-		return new Point((cam.previewPixelsPerMeter) * x, (cam.previewPixelsPerMeter) * y);
-	}
+//	public static Point worldToPreview(double x, double y, WorldCamera cam) {
+//		return new Point((cam.previewPixelsPerMeter) * x, (cam.previewPixelsPerMeter) * y);
+//	}
 	
-	public static Point controlPanelToPreview(Point p, WorldCamera cam) {
-		return new Point(p.x - cam.previewAABB.x, p.y - cam.previewAABB.y);
-	}
+//	public static Point controlPanelToPreview(Point p, WorldCamera cam) {
+//		return new Point(p.x - cam.previewAABB.x, p.y - cam.previewAABB.y);
+//	}
 	
 	public static Point contentPaneToPanel(Point p, Panel child) {
 		return new Point(p.x - child.aabb.x, p.y - child.aabb.y);

@@ -4,7 +4,6 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Line;
-import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.Cap;
@@ -26,6 +25,8 @@ public class Quadrant {
 	public Quadrant down;
 	public Quadrant rightDown;
 	
+	public GrassMap grassMap = new GrassMap();
+	
 	public boolean grid;
 	
 	public final AABB aabb;
@@ -46,24 +47,31 @@ public class Quadrant {
 	
 	public void init() {
 		if (active) {
-			for (int i = 0; i < 16; i+=4) {
-				for (int j = 0; j < 16; j+=4) {
-					map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + i, r * QuadrantMap.QUADRANT_HEIGHT + j)));
-				}
+//			for (int i = 0; i < 16; i+=4) {
+//				for (int j = 0; j < 16; j+=4) {
+//					map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + i, r * QuadrantMap.QUADRANT_HEIGHT + j)));
+//				}
+//			}
+//			if (right == null || !right.active) {
+//				for (int i = 0; i < 16; i+=4) {
+//					map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + i)));
+//				}
+//			}
+//			if (down == null || !down.active) {
+//				for (int i = 0; i < 16; i+=4) {
+//					map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + i, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
+//				}
+//			}
+//			if (rightDown == null || !rightDown.active) {
+//				map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
+//			}
+			
+			for (int i = 0; i < 75; i++) {
+				double x = APP.RANDOM.nextDouble();
+				double y = APP.RANDOM.nextDouble();
+				grassMap.addGrass(new AnimatedGrass(new Point((c + x) * QuadrantMap.QUADRANT_WIDTH, (r + y) * QuadrantMap.QUADRANT_HEIGHT)));
 			}
-			if (right == null || !right.active) {
-				for (int i = 0; i < 16; i+=4) {
-					map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + i)));
-				}
-			}
-			if (down == null || !down.active) {
-				for (int i = 0; i < 16; i+=4) {
-					map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + i, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
-				}
-			}
-			if (rightDown == null || !rightDown.active) {
-				map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
-			}
+			
 		}
 	}
 	
@@ -109,6 +117,14 @@ public class Quadrant {
 		}
 	}
 	
+	public void preStart() {
+		grassMap.preStart();
+	}
+	
+	public boolean step(double t) {
+		return grassMap.step(t);
+	}
+	
 	public String toFileString() {
 		if (active) {
 			return "1";
@@ -119,9 +135,9 @@ public class Quadrant {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
-			return;
-		}
+//		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
+//			return;
+//		}
 		
 		if (!active) {
 			ctxt.setColor(Color.DARK_GRAY);
@@ -174,15 +190,20 @@ public class Quadrant {
 		
 	}
 	
-	public void paint_preview(RenderingContext ctxt) {
-		
-		if (active) {
-			ctxt.setColor(Color.DARKGREEN);
-			aabb.paint(ctxt);
-		} else {
-			ctxt.setColor(Color.DARK_GRAY);
-			aabb.paint(ctxt);
-		}
-		
+//	public void paint_preview(RenderingContext ctxt) {
+//		
+//		if (active) {
+//			ctxt.setColor(Color.DARKGREEN);
+//			aabb.paint(ctxt);
+//		} else {
+//			ctxt.setColor(Color.DARK_GRAY);
+//			aabb.paint(ctxt);
+//		}
+//		
+//	}
+	
+	public void paintScene(RenderingContext ctxt) {
+		grassMap.paintScene(ctxt);
 	}
+	
 }

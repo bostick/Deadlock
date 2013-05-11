@@ -2,22 +2,16 @@ package com.gutabi.capsloc.world;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gutabi.capsloc.Entity;
 import com.gutabi.capsloc.SimulationRunnable;
-import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.MutableAABB;
 import com.gutabi.capsloc.math.Point;
-import com.gutabi.capsloc.ui.Image;
 import com.gutabi.capsloc.ui.InputEvent;
 import com.gutabi.capsloc.ui.Shimmer;
-import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.cars.Car;
 import com.gutabi.capsloc.world.graph.BypassBoard;
@@ -39,7 +33,7 @@ public class World extends PhysicsWorld {
 	public Thread simThread;
 	
 	public WorldBackground background;
-	public Image previewImage;
+//	public Image previewImage;
 	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
@@ -88,13 +82,13 @@ public class World extends PhysicsWorld {
 		
 	}
 	
-	public void previewPostDisplay() {
-		
-		previewImage = APP.platform.createImage(
-				(int)worldCamera.previewAABB.width,
-				(int)worldCamera.previewAABB.height);
-		
-	}
+//	public void previewPostDisplay() {
+//		
+//		previewImage = APP.platform.createImage(
+//				(int)worldCamera.previewAABB.width,
+//				(int)worldCamera.previewAABB.height);
+//		
+//	}
 	
 	public void preStart() {
 		
@@ -196,14 +190,14 @@ public class World extends PhysicsWorld {
 	
 	public Set<Vertex> addFixture(Fixture f) {
 		
-		quadrantMap.grassMap.mowGrass(f.shape);
+		quadrantMap.mowGrass(f.shape);
 		
 		return graph.addVertexTop(f);
 	}
 	
 	public Set<Vertex> addIntersection(Intersection i) {
 		
-		quadrantMap.grassMap.mowGrass(i.shape);
+		quadrantMap.mowGrass(i.shape);
 		
 		return graph.addVertexTop(i);
 	}
@@ -212,7 +206,7 @@ public class World extends PhysicsWorld {
 		
 		Intersection i = graph.split(pos);
 		
-		quadrantMap.grassMap.mowGrass(i.shape);
+		quadrantMap.mowGrass(i.shape);
 		
 		return i;
 	}
@@ -221,7 +215,7 @@ public class World extends PhysicsWorld {
 		
 		Road r = new Road(this, v0, v1, roadPts);
 		
-		quadrantMap.grassMap.mowGrass(r.shape);
+		quadrantMap.mowGrass(r.shape);
 		
 		return graph.createRoadTop(r);
 	}
@@ -230,11 +224,11 @@ public class World extends PhysicsWorld {
 		
 		Merger m = Merger.createMergerAndFixtures(this, p);
 		
-		quadrantMap.grassMap.mowGrass(m.shape);
-		quadrantMap.grassMap.mowGrass(m.top.shape);
-		quadrantMap.grassMap.mowGrass(m.left.shape);
-		quadrantMap.grassMap.mowGrass(m.right.shape);
-		quadrantMap.grassMap.mowGrass(m.bottom.shape);
+		quadrantMap.mowGrass(m.shape);
+		quadrantMap.mowGrass(m.top.shape);
+		quadrantMap.mowGrass(m.left.shape);
+		quadrantMap.mowGrass(m.right.shape);
+		quadrantMap.mowGrass(m.bottom.shape);
 		
 		return graph.insertMergerTop(m);
 	}
@@ -244,7 +238,7 @@ public class World extends PhysicsWorld {
 		BypassBoard b = new BypassBoard(this, p, boardIni);
 		
 		for (BypassStud stud : b.studs) {
-			quadrantMap.grassMap.mowGrass(stud.aabb);
+			quadrantMap.mowGrass(stud.aabb);
 		}
 		
 		graph.insertBypassBoardTop(b);
@@ -298,72 +292,72 @@ public class World extends PhysicsWorld {
 		simThread.start();
 	}
 	
-	public String toFileString() {
-		StringBuilder s = new StringBuilder();
-		
-		s.append("version 1\n");
-		
-		s.append("start world\n");
-		
-		s.append(quadrantMap.toFileString());
-		s.append(graph.toFileString());
-		
-		s.append("end world\n");
-		
-		return s.toString();
-	}
+//	public String toFileString() {
+//		StringBuilder s = new StringBuilder();
+//		
+//		s.append("version 1\n");
+//		
+//		s.append("start world\n");
+//		
+//		s.append(quadrantMap.toFileString());
+//		s.append(graph.toFileString());
+//		
+//		s.append("end world\n");
+//		
+//		return s.toString();
+//	}
 	
-	public static World fromFileString(String s) {
-		BufferedReader r = new BufferedReader(new StringReader(s));
-		
-		StringBuilder quadrantMapStringBuilder = null;
-		StringBuilder graphStringBuilder = null;
-		
-		try {
-			String l = r.readLine();
-			assert l.equals("version 1");
-			
-			l = r.readLine();
-			assert l.equals("start world");
-			
-			quadrantMapStringBuilder = new StringBuilder();
-			
-			while (true) {
-				l = r.readLine();
-				quadrantMapStringBuilder.append(l+"\n");
-				if (l.equals("end quadrantMap")) {
-					break;
-				}
-			}
-			
-			graphStringBuilder = new StringBuilder();
-			
-			while (true) {
-				l = r.readLine();
-				graphStringBuilder.append(l+"\n");
-				if (l.equals("end graph")) {
-					break;
-				}
-			}
-			
-			l = r.readLine();
-			assert l.equals("end world");
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		World w = new World();
-		
-		QuadrantMap qm = QuadrantMap.fromFileString(quadrantMapStringBuilder.toString());
-		Graph g = Graph.fromFileString(w, graphStringBuilder.toString());
-		
-		w.quadrantMap = qm;
-		w.graph = g;
-		
-		return w;
-	}
+//	public static World fromFileString(String s) {
+//		BufferedReader r = new BufferedReader(new StringReader(s));
+//		
+//		StringBuilder quadrantMapStringBuilder = null;
+//		StringBuilder graphStringBuilder = null;
+//		
+//		try {
+//			String l = r.readLine();
+//			assert l.equals("version 1");
+//			
+//			l = r.readLine();
+//			assert l.equals("start world");
+//			
+//			quadrantMapStringBuilder = new StringBuilder();
+//			
+//			while (true) {
+//				l = r.readLine();
+//				quadrantMapStringBuilder.append(l+"\n");
+//				if (l.equals("end quadrantMap")) {
+//					break;
+//				}
+//			}
+//			
+//			graphStringBuilder = new StringBuilder();
+//			
+//			while (true) {
+//				l = r.readLine();
+//				graphStringBuilder.append(l+"\n");
+//				if (l.equals("end graph")) {
+//					break;
+//				}
+//			}
+//			
+//			l = r.readLine();
+//			assert l.equals("end world");
+//			
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		World w = new World();
+//		
+//		QuadrantMap qm = QuadrantMap.fromFileString(quadrantMapStringBuilder.toString());
+//		Graph g = Graph.fromFileString(w, graphStringBuilder.toString());
+//		
+//		w.quadrantMap = qm;
+//		w.graph = g;
+//		
+//		return w;
+//	}
 	
 	
 	public Point lastPressedWorldPoint;
@@ -419,34 +413,34 @@ public class World extends PhysicsWorld {
 	}
 	
 	
-	RenderingContext ctxt = APP.platform.createRenderingContext();
-	
-	public void render_preview() {
-		
-		APP.platform.setRenderingContextFields1(ctxt, previewImage);
-		ctxt.cam = worldCamera;
-		
-		boolean oldDebug = APP.DEBUG_DRAW;
-		APP.DEBUG_DRAW = false; 
-		
-		ctxt.pushTransform();
-		
-		ctxt.translate(
-				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.width / 2),
-				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.height / 2));
-		
-		ctxt.scale(worldCamera.previewPixelsPerMeter);
-		
-		quadrantMap.paint_preview(ctxt);
-		
-		graph.paint_preview(ctxt);
-		
-		ctxt.popTransform();
-		
-		APP.DEBUG_DRAW = oldDebug;
-		
-		ctxt.dispose();
-	}
+//	RenderingContext ctxt = APP.platform.createRenderingContext();
+//	
+//	public void render_preview() {
+//		
+//		APP.platform.setRenderingContextFields1(ctxt, previewImage);
+//		ctxt.cam = worldCamera;
+//		
+//		boolean oldDebug = APP.DEBUG_DRAW;
+//		APP.DEBUG_DRAW = false; 
+//		
+//		ctxt.pushTransform();
+//		
+//		ctxt.translate(
+//				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.width / 2),
+//				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.height / 2));
+//		
+//		ctxt.scale(worldCamera.previewPixelsPerMeter);
+//		
+//		quadrantMap.paint_preview(ctxt);
+//		
+//		graph.paint_preview(ctxt);
+//		
+//		ctxt.popTransform();
+//		
+//		APP.DEBUG_DRAW = oldDebug;
+//		
+//		ctxt.dispose();
+//	}
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
@@ -473,14 +467,14 @@ public class World extends PhysicsWorld {
 			graph.paintIDs(ctxt);
 		}
 		
-		if (APP.FPS_DRAW) {
-			
-			stats.paint(ctxt);
-		}
+//		if (APP.FPS_DRAW) {
+//			
+//			stats.paint(ctxt);
+//		}
 		
 		ctxt.popTransform();
 		
-		Car c = carMap.findRedCar();
+		Car c = carMap.redCar;
 		if (c != null) {
 			
 			Point.worldToPanel(c.shape.aabb, worldCamera, shimmerTmp);
@@ -495,59 +489,59 @@ public class World extends PhysicsWorld {
 	MutableAABB shimmerTmp = new MutableAABB();
 	
 	
-	public void paintPreview_controlPanel(RenderingContext ctxt) {
-		
-		ctxt.pushTransform();
-		
-		ctxt.translate(worldCamera.previewAABB.x, worldCamera.previewAABB.y);
-		
-		ctxt.paintImage(previewImage,
-				0, 0, (int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height,
-				0, 0, (int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height);
-		
-		Point prevLoc = Point.worldToPreview(worldCamera.worldViewport.x, worldCamera.worldViewport.y, worldCamera);
-		
-		Point prevDim = Point.worldToPreview(new Point(worldCamera.worldViewport.width, worldCamera.worldViewport.height), worldCamera);
-		
-		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
-		
-		ctxt.translate(
-				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.width / 2),
-				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.height / 2));
-		
-		ctxt.setColor(Color.BLUE);
-		prev.draw(ctxt);
-		
-		ctxt.popTransform();
-	}
+//	public void paintPreview_controlPanel(RenderingContext ctxt) {
+//		
+//		ctxt.pushTransform();
+//		
+//		ctxt.translate(worldCamera.previewAABB.x, worldCamera.previewAABB.y);
+//		
+//		ctxt.paintImage(previewImage,
+//				0, 0, (int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height,
+//				0, 0, (int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height);
+//		
+//		Point prevLoc = Point.worldToPreview(worldCamera.worldViewport.x, worldCamera.worldViewport.y, worldCamera);
+//		
+//		Point prevDim = Point.worldToPreview(new Point(worldCamera.worldViewport.width, worldCamera.worldViewport.height), worldCamera);
+//		
+//		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
+//		
+//		ctxt.translate(
+//				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.width / 2),
+//				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldAABB.height / 2));
+//		
+//		ctxt.setColor(Color.BLUE);
+//		prev.draw(ctxt);
+//		
+//		ctxt.popTransform();
+//	}
 	
-	public void paintStats(RenderingContext ctxt) {
-		
-		ctxt.pushTransform();
-		
-		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "time: " + t);
-		
-		ctxt.translate(0, 1);
-		
-		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "body count: " + getBodyCount());
-		
-		ctxt.translate(0, 1);
-		
-		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "car count: " + carMap.size());
-		
+//	public void paintStats(RenderingContext ctxt) {
+//		
+//		ctxt.pushTransform();
+//		
+//		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "time: " + t);
+//		
 //		ctxt.translate(0, 1);
-		
-//		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "splosions count: " + explosionMap.size());
-		
-		ctxt.translate(0, 1);
-		
-		graph.paintStats(ctxt);
-		
-		ctxt.popTransform();
-	}
+//		
+//		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "body count: " + getBodyCount());
+//		
+//		ctxt.translate(0, 1);
+//		
+//		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "car count: " + carMap.size());
+//		
+////		ctxt.translate(0, 1);
+//		
+////		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "splosions count: " + explosionMap.size());
+//		
+//		ctxt.translate(0, 1);
+//		
+//		graph.paintStats(ctxt);
+//		
+//		ctxt.popTransform();
+//	}
 	
-	public boolean checkConsistency() {
-		return graph.checkConsistency();
-	}
+//	public boolean checkConsistency() {
+//		return graph.checkConsistency();
+//	}
 	
 }
