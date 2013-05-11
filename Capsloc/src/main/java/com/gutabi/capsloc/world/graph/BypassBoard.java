@@ -58,6 +58,7 @@ public class BypassBoard extends Entity {
 	 * gridFudgeAABB should contain a car as its exiting the board, and only have overlap on the side that the car is leaving
 	 */
 	public AABB gridFudgeAABB;
+	public AABB backAABB;
 	public AABB zoomingAABB;
 	
 	int jStudCount = 0;
@@ -154,6 +155,7 @@ public class BypassBoard extends Entity {
 		ul = new Point(center.x - 0.5 * colCount * BypassStud.SIZE, center.y - 0.5 * rowCount * BypassStud.SIZE);
 		gridAABB = new AABB(ul.x, ul.y, colCount * BypassStud.SIZE, rowCount * BypassStud.SIZE);
 		gridFudgeAABB = new AABB(ul.x - 0.1, ul.y - 0.1, colCount * BypassStud.SIZE + 0.2, rowCount * BypassStud.SIZE + 0.2);
+		backAABB = new AABB(ul.x + 0.5 * BypassStud.SIZE, ul.y + 0.5 * BypassStud.SIZE, (colCount - 1) * BypassStud.SIZE, (rowCount - 1) * BypassStud.SIZE);
 		allStudsAABB = new AABB(ul.x - BypassStud.SIZE, ul.y - BypassStud.SIZE, (colCount + 2) * BypassStud.SIZE, (rowCount + 2) * BypassStud.SIZE);
 		double zoomingExtension = 5.0;
 		zoomingAABB = new AABB(ul.x - zoomingExtension, ul.y - zoomingExtension, gridAABB.width + 2 * zoomingExtension, gridAABB.height + 2 * zoomingExtension);
@@ -1388,6 +1390,9 @@ public class BypassBoard extends Entity {
 	}
 	
 	public void paintStuds(RenderingContext ctxt) {
+		
+		ctxt.setColor(Color.ROADCOLOR);
+		backAABB.paint(ctxt);
 		
 		for (int i = 0; i < studs.size(); i++) {
 			BypassStud s = studs.get(i);

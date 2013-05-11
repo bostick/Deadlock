@@ -1,0 +1,143 @@
+android.support.v4.app.BackStackState
+android.support.v4.app.BackStackState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.Fragment$SavedState
+android.support.v4.app.Fragment$SavedState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentManagerState
+android.support.v4.app.FragmentManagerState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentState
+android.support.v4.app.FragmentState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentTabHost: void setOnTabChangedListener(android.widget.TabHost$OnTabChangeListener)
+android.support.v4.app.FragmentTabHost$SavedState
+android.support.v4.app.FragmentTabHost$SavedState: android.os.Parcelable$Creator CREATOR
+android.support.v4.content.ModernAsyncTask$Status: android.support.v4.content.ModernAsyncTask$Status[] values()
+android.support.v4.content.ModernAsyncTask$Status: android.support.v4.content.ModernAsyncTask$Status valueOf(java.lang.String)
+android.support.v4.view.PagerTabStrip: void setTabIndicatorColor(int)
+android.support.v4.view.PagerTabStrip: void setTabIndicatorColorResource(int)
+android.support.v4.view.PagerTabStrip: int getTabIndicatorColor()
+android.support.v4.view.PagerTabStrip: void setTextSpacing(int)
+android.support.v4.view.PagerTabStrip: void setBackgroundDrawable(android.graphics.drawable.Drawable)
+android.support.v4.view.PagerTabStrip: void setBackgroundColor(int)
+android.support.v4.view.PagerTabStrip: void setBackgroundResource(int)
+android.support.v4.view.PagerTabStrip: void setDrawFullUnderline(boolean)
+android.support.v4.view.PagerTabStrip: boolean getDrawFullUnderline()
+android.support.v4.view.PagerTabStrip: int getMinHeight()
+android.support.v4.view.PagerTitleStrip: void setSingleLineAllCaps(android.widget.TextView)
+android.support.v4.view.PagerTitleStrip: void setTextSpacing(int)
+android.support.v4.view.PagerTitleStrip: int getTextSpacing()
+android.support.v4.view.PagerTitleStrip: void setNonPrimaryAlpha(float)
+android.support.v4.view.PagerTitleStrip: void setTextColor(int)
+android.support.v4.view.PagerTitleStrip: void setGravity(int)
+android.support.v4.view.PagerTitleStrip: int getMinHeight()
+android.support.v4.view.ViewPager: void setScrollState(int)
+android.support.v4.view.ViewPager: void setAdapter(android.support.v4.view.PagerAdapter)
+android.support.v4.view.ViewPager: android.support.v4.view.PagerAdapter getAdapter()
+android.support.v4.view.ViewPager: void setOnAdapterChangeListener(android.support.v4.view.ViewPager$OnAdapterChangeListener)
+android.support.v4.view.ViewPager: void setCurrentItem(int)
+android.support.v4.view.ViewPager: int getCurrentItem()
+android.support.v4.view.ViewPager: void setOnPageChangeListener(android.support.v4.view.ViewPager$OnPageChangeListener)
+android.support.v4.view.ViewPager: void setChildrenDrawingOrderEnabledCompat(boolean)
+android.support.v4.view.ViewPager: int getOffscreenPageLimit()
+android.support.v4.view.ViewPager: void setOffscreenPageLimit(int)
+android.support.v4.view.ViewPager: void setPageMargin(int)
+android.support.v4.view.ViewPager: int getPageMargin()
+android.support.v4.view.ViewPager: void setPageMarginDrawable(android.graphics.drawable.Drawable)
+android.support.v4.view.ViewPager: void setPageMarginDrawable(int)
+android.support.v4.view.ViewPager: void setScrollingCacheEnabled(boolean)
+android.support.v4.view.ViewPager$SavedState
+android.support.v4.view.ViewPager$SavedState: android.os.Parcelable$Creator CREATOR
+com.gutabi.bypass.android.ActivityState: com.gutabi.bypass.android.ActivityState[] values()
+com.gutabi.bypass.android.ActivityState: com.gutabi.bypass.android.ActivityState valueOf(java.lang.String)
+com.gutabi.bypass.android.BypassActivity: BypassActivity()
+com.gutabi.bypass.android.BypassView
+com.gutabi.bypass.android.BypassView: BypassView(android.content.Context,android.util.AttributeSet)
+com.gutabi.bypass.android.R$color: int grass_green
+com.gutabi.bypass.android.R$color: int dark_gray
+com.gutabi.bypass.android.R$id: int view_levelmenu
+com.gutabi.bypass.android.R$id: int view_bypassworld
+com.gutabi.bypass.android.R$id: int btn_clear_scores
+com.gutabi.bypass.android.R$id: int btn_reset_level
+com.gutabi.bypass.android.R$id: int btn_toggle_info
+com.gutabi.bypass.android.R$layout: int activity_bypassworld
+com.gutabi.bypass.android.R$layout: int activity_levelmenu
+com.gutabi.bypass.android.R$menu: int world_context_menu
+com.gutabi.bypass.android.R$menu: int levelmenu_context_menu
+com.gutabi.bypass.android.R$string: int reset_level
+com.gutabi.bypass.android.R$string: int clear_scores
+com.gutabi.bypass.android.R$string: int toggle_info
+com.gutabi.bypass.android.R$style: int Theme_BypassWorld
+com.gutabi.bypass.android.R$style: int Theme_BypassLevelMenu
+com.gutabi.bypass.android.ResourceType: com.gutabi.bypass.android.ResourceType[] values()
+com.gutabi.bypass.android.ResourceType: com.gutabi.bypass.android.ResourceType valueOf(java.lang.String)
+com.gutabi.bypass.android.level.BypassWorldActivity
+com.gutabi.bypass.android.level.BypassWorldActivity: BypassWorldActivity()
+com.gutabi.bypass.android.lite.MainMenuActivity
+com.gutabi.bypass.android.lite.MainMenuActivity: MainMenuActivity()
+com.gutabi.bypass.android.lite.R$color: int dark_gray
+com.gutabi.bypass.android.lite.R$color: int grass_green
+com.gutabi.bypass.android.lite.R$drawable: int carsheet
+com.gutabi.bypass.android.lite.R$drawable: int copyright
+com.gutabi.bypass.android.lite.R$drawable: int ic_launcher
+com.gutabi.bypass.android.lite.R$drawable: int logo
+com.gutabi.bypass.android.lite.R$drawable: int spritesheet
+com.gutabi.bypass.android.lite.R$id: int btn_clear_scores
+com.gutabi.bypass.android.lite.R$id: int btn_reset_level
+com.gutabi.bypass.android.lite.R$id: int btn_toggle_info
+com.gutabi.bypass.android.lite.R$id: int view_bypassworld
+com.gutabi.bypass.android.lite.R$id: int view_levelmenu
+com.gutabi.bypass.android.lite.R$id: int view_mainmenu
+com.gutabi.bypass.android.lite.R$layout: int activity_bypassworld
+com.gutabi.bypass.android.lite.R$layout: int activity_levelmenu
+com.gutabi.bypass.android.lite.R$layout: int activity_mainmenu
+com.gutabi.bypass.android.lite.R$menu: int levelmenu_context_menu
+com.gutabi.bypass.android.lite.R$menu: int world_context_menu
+com.gutabi.bypass.android.lite.R$raw: int episode1
+com.gutabi.bypass.android.lite.R$raw: int tutorial
+com.gutabi.bypass.android.lite.R$string: int app_name
+com.gutabi.bypass.android.lite.R$string: int clear_scores
+com.gutabi.bypass.android.lite.R$string: int reset_level
+com.gutabi.bypass.android.lite.R$string: int toggle_info
+com.gutabi.bypass.android.lite.R$style: int Theme_BypassLevelMenu
+com.gutabi.bypass.android.lite.R$style: int Theme_BypassMainMenu
+com.gutabi.bypass.android.lite.R$style: int Theme_BypassWorld
+com.gutabi.bypass.android.menu.LevelMenuActivity
+com.gutabi.bypass.android.menu.LevelMenuActivity: LevelMenuActivity()
+com.gutabi.capsloc.geom.SweepEventType: com.gutabi.capsloc.geom.SweepEventType[] values()
+com.gutabi.capsloc.geom.SweepEventType: com.gutabi.capsloc.geom.SweepEventType valueOf(java.lang.String)
+com.gutabi.capsloc.ui.paint.Cap: com.gutabi.capsloc.ui.paint.Cap[] values()
+com.gutabi.capsloc.ui.paint.Cap: com.gutabi.capsloc.ui.paint.Cap valueOf(java.lang.String)
+com.gutabi.capsloc.ui.paint.FontStyle: com.gutabi.capsloc.ui.paint.FontStyle[] values()
+com.gutabi.capsloc.ui.paint.FontStyle: com.gutabi.capsloc.ui.paint.FontStyle valueOf(java.lang.String)
+com.gutabi.capsloc.ui.paint.Join: com.gutabi.capsloc.ui.paint.Join[] values()
+com.gutabi.capsloc.ui.paint.Join: com.gutabi.capsloc.ui.paint.Join valueOf(java.lang.String)
+com.gutabi.capsloc.world.WorldBackground$RenderMethod: com.gutabi.capsloc.world.WorldBackground$RenderMethod[] values()
+com.gutabi.capsloc.world.WorldBackground$RenderMethod: com.gutabi.capsloc.world.WorldBackground$RenderMethod valueOf(java.lang.String)
+com.gutabi.capsloc.world.cars.CarStateEnum: com.gutabi.capsloc.world.cars.CarStateEnum[] values()
+com.gutabi.capsloc.world.cars.CarStateEnum: com.gutabi.capsloc.world.cars.CarStateEnum valueOf(java.lang.String)
+com.gutabi.capsloc.world.graph.Axis: com.gutabi.capsloc.world.graph.Axis[] values()
+com.gutabi.capsloc.world.graph.Axis: com.gutabi.capsloc.world.graph.Axis valueOf(java.lang.String)
+com.gutabi.capsloc.world.graph.Direction: com.gutabi.capsloc.world.graph.Direction[] values()
+com.gutabi.capsloc.world.graph.Direction: com.gutabi.capsloc.world.graph.Direction valueOf(java.lang.String)
+com.gutabi.capsloc.world.graph.FixtureType: com.gutabi.capsloc.world.graph.FixtureType[] values()
+com.gutabi.capsloc.world.graph.FixtureType: com.gutabi.capsloc.world.graph.FixtureType valueOf(java.lang.String)
+com.gutabi.capsloc.world.graph.Side: com.gutabi.capsloc.world.graph.Side[] values()
+com.gutabi.capsloc.world.graph.Side: com.gutabi.capsloc.world.graph.Side valueOf(java.lang.String)
+com.gutabi.capsloc.world.sprites.CarSheet$CarSheetSprite: com.gutabi.capsloc.world.sprites.CarSheet$CarSheetSprite[] values()
+com.gutabi.capsloc.world.sprites.CarSheet$CarSheetSprite: com.gutabi.capsloc.world.sprites.CarSheet$CarSheetSprite valueOf(java.lang.String)
+com.gutabi.capsloc.world.sprites.CarSheet$CarType: com.gutabi.capsloc.world.sprites.CarSheet$CarType[] values()
+com.gutabi.capsloc.world.sprites.CarSheet$CarType: com.gutabi.capsloc.world.sprites.CarSheet$CarType valueOf(java.lang.String)
+com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite: com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite[] values()
+com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite: com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite valueOf(java.lang.String)
+com.gutabi.capsloc.world.sprites.SpriteSheet$SpriteSheetSprite: com.gutabi.capsloc.world.sprites.SpriteSheet$SpriteSheetSprite[] values()
+com.gutabi.capsloc.world.sprites.SpriteSheet$SpriteSheetSprite: com.gutabi.capsloc.world.sprites.SpriteSheet$SpriteSheetSprite valueOf(java.lang.String)
+com.gutabi.capsloc.world.tools.CircleTool$CircleToolMode: com.gutabi.capsloc.world.tools.CircleTool$CircleToolMode[] values()
+com.gutabi.capsloc.world.tools.CircleTool$CircleToolMode: com.gutabi.capsloc.world.tools.CircleTool$CircleToolMode valueOf(java.lang.String)
+com.gutabi.capsloc.world.tools.CubicTool$CubicToolMode: com.gutabi.capsloc.world.tools.CubicTool$CubicToolMode[] values()
+com.gutabi.capsloc.world.tools.CubicTool$CubicToolMode: com.gutabi.capsloc.world.tools.CubicTool$CubicToolMode valueOf(java.lang.String)
+com.gutabi.capsloc.world.tools.Motion: com.gutabi.capsloc.world.tools.Motion[] values()
+com.gutabi.capsloc.world.tools.Motion: com.gutabi.capsloc.world.tools.Motion valueOf(java.lang.String)
+com.gutabi.capsloc.world.tools.QuadTool$QuadToolMode: com.gutabi.capsloc.world.tools.QuadTool$QuadToolMode[] values()
+com.gutabi.capsloc.world.tools.QuadTool$QuadToolMode: com.gutabi.capsloc.world.tools.QuadTool$QuadToolMode valueOf(java.lang.String)
+com.gutabi.capsloc.world.tools.RegularTool$RegularToolMode: com.gutabi.capsloc.world.tools.RegularTool$RegularToolMode[] values()
+com.gutabi.capsloc.world.tools.RegularTool$RegularToolMode: com.gutabi.capsloc.world.tools.RegularTool$RegularToolMode valueOf(java.lang.String)
+com.gutabi.capsloc.world.tools.StraightEdgeTool$StraightEdgeToolMode: com.gutabi.capsloc.world.tools.StraightEdgeTool$StraightEdgeToolMode[] values()
+com.gutabi.capsloc.world.tools.StraightEdgeTool$StraightEdgeToolMode: com.gutabi.capsloc.world.tools.StraightEdgeTool$StraightEdgeToolMode valueOf(java.lang.String)

@@ -180,6 +180,7 @@ public class BypassCar extends Car {
 						
 						if (!((BypassWorld)world).curLevel.isWon) {
 							((BypassWorld)world).winner();
+							return;
 						}
 						
 					}
