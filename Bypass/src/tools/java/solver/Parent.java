@@ -50,6 +50,17 @@ public class Parent {
 	
 	public Board emptyBoard;
 	
+	public static Parent parent(int[][] boardIni) {
+		
+		byte[][] converted = new byte[boardIni.length][boardIni[0].length];
+		for (int i = 0; i < boardIni.length; i++) {
+			for (int j = 0; j < boardIni[i].length; j++) {
+				converted[i][j] = (byte)boardIni[i][j];
+			}
+		}
+		return new Parent(converted);
+	}
+	
 	public Parent(byte[][] boardIni) {
 		
 		this.ini = boardIni;

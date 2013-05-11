@@ -1,0 +1,270 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      9454,        260]
+NotebookOptionsPosition[      8755,        234]
+NotebookOutlinePosition[      9100,        249]
+CellTagsIndexPosition[      9057,        246]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"Quit", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.57729413122333*^9, 3.5772941325342836`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"<<", "JLink`"}]], "Input",
+ CellChangeTimes->{{3.5772939938194237`*^9, 3.5772939951203527`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ReinstallJava", "[", 
+   RowBox[{
+   "CommandLine", "->", 
+    "\"\<C:\\\\Program Files\\\\Java\\\\jdk1.7.0_21\\\\bin\\\\javaw.exe \
+-XX:-UseSplitVerifier\>\""}], "]"}], ";"}]], "Input",
+ CellChangeTimes->{{3.577293989637356*^9, 3.577294000658369*^9}, {
+  3.577294107496105*^9, 3.5772941435783157`*^9}, {3.5772956990096254`*^9, 
+  3.577295699771181*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+  "AddToClassPath", "[", 
+   "\"\<C:\\\\Users\\\\brenton\\\\Documents\\\\GitHub\\\\Deadlock\\\\Bypass\\\
+\\bin\\\\\>\"", "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+  "AddToClassPath", "[", 
+   "\"\<C:\\\\Users\\\\brenton\\\\Documents\\\\GitHub\\\\Deadlock\\\\Bypass\\\
+\\lib\\\\trove-3.0.3.jar\>\"", "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.5772940166369905`*^9, 3.577294038941242*^9}, {
+  3.577297650901219*^9, 3.577297672143671*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"LoadJavaClass", "[", "\"\<solver.Solver\>\"", "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"LoadJavaClass", "[", "\"\<solver.Board\>\"", "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"LoadJavaClass", "[", "\"\<solver.Parent\>\"", "]"}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.5772962632459984`*^9, 3.5772962728799734`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"parIni", "=", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "\"\</\>\"", ",", "\"\<-\>\"", ",", "\"\<Y\>\"", ",", "\"\<-\>\"", ",", 
+       "\"\<-\>\"", ",", "\"\<-\>\"", ",", "\"\<-\>\"", ",", "\"\<\\\\\>\""}],
+       "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<|\>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\<|\>\""}], 
+      "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<|\>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\<|\>\""}], 
+      "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<|\>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\<|\>\""}], 
+      "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<|\>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\<|\>\""}], 
+      "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<|\>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\<|\>\""}], 
+      "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<|\>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\<|\>\""}], 
+      "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<\\\\\>\"", ",", "\"\<-\>\"", ",", "\"\<-\>\"", ",", "\"\<-\>\"", 
+       ",", "\"\<-\>\"", ",", "\"\<-\>\"", ",", "\"\<-\>\"", ",", 
+       "\"\</\>\""}], "}"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"bytes", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"ToCharacterCode", "[", "#", "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}], "&"}], "/@", "#"}], ")"}], "&"}], "/@",
+     "parIni"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"array", "=", 
+   RowBox[{"MakeJavaObject", "[", "bytes", "]"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.577296275830119*^9, 3.57729631677195*^9}, {
+  3.5772963533434954`*^9, 3.577296566925885*^9}, {3.5772967965108147`*^9, 
+  3.5772968920122757`*^9}, {3.5772972353479843`*^9, 3.57729725717089*^9}, {
+  3.577297320719075*^9, 3.577297352065906*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Board`par", "=", 
+   RowBox[{"Parent`parent", "[", "array", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Board`par", "@", 
+   RowBox[{"addCar", "[", 
+    RowBox[{
+     RowBox[{"ToCharacterCode", "[", "\"\<R\>\"", "]"}], "[", 
+     RowBox[{"[", "1", "]"}], "]"}], "]"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.577296275830119*^9, 3.57729631677195*^9}, {
+  3.5772963533434954`*^9, 3.577296502288824*^9}, {3.5772973600377045`*^9, 
+  3.5772973610554123`*^9}, {3.5772976033446307`*^9, 3.5772976103417196`*^9}, {
+  3.5772979302203703`*^9, 3.577297961253949*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"b", "=", 
+   RowBox[{"JavaNew", "[", 
+    RowBox[{"\"\<solver.Board\>\"", ",", "6", ",", "6"}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.5772940437037306`*^9, 3.5772940531045485`*^9}, 
+   3.577297964467307*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ini", "=", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\""}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\""}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\""}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\""}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\< \>\"", ",", "\"\<R\>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\""}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\< \>\"", ",", "\"\<R\>\"", ",", "\"\< \>\"", ",", "\"\< \>\"", ",", 
+       "\"\< \>\"", ",", "\"\< \>\""}], "}"}]}], "}"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.5772958408147345`*^9, 3.577295913743771*^9}, {
+  3.5772976342921658`*^9, 3.577297634472308*^9}}],
+
+Cell[BoxData[
+ RowBox[{"For", "[", 
+  RowBox[{
+   RowBox[{"i", "=", "1"}], ",", 
+   RowBox[{"i", "\[LessEqual]", "6"}], ",", 
+   RowBox[{"i", "++"}], ",", 
+   RowBox[{"For", "[", 
+    RowBox[{
+     RowBox[{"j", "=", "1"}], ",", 
+     RowBox[{"j", "\[LessEqual]", "6"}], ",", 
+     RowBox[{"j", "++"}], ",", 
+     RowBox[{"b", "@", 
+      RowBox[{"boardSet", "[", 
+       RowBox[{
+        RowBox[{"i", "-", "1"}], ",", 
+        RowBox[{"j", "-", "1"}], ",", 
+        RowBox[{
+         RowBox[{"ToCharacterCode", "[", 
+          RowBox[{"ini", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "j"}], "]"}], "]"}], "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}], "]"}]}]}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5772959158242846`*^9, 3.5772959468728657`*^9}, {
+  3.577296028288082*^9, 3.5772960889792213`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"JavaObjectToExpression", "[", 
+  RowBox[{"Solver`solve", "[", "b", "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.577295747327738*^9, 3.577295754484977*^9}, {
+  3.5772979811884394`*^9, 3.5772980034986987`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"/-Y----\\\\\\n|      |\\n|      |\\n|      |\\n|      |\\n| R  \
+  |\\n| R    |\\n\\\\------/\\n\"\>", 
+   ",", "\<\"/-Y----\\\\\\n|      |\\n|      |\\n|      |\\n| R    |\\n| R    \
+|\\n|      |\\n\\\\------/\\n\"\>", 
+   ",", "\<\"/-Y----\\\\\\n|      |\\n|      |\\n| R    |\\n| R    |\\n|      \
+|\\n|      |\\n\\\\------/\\n\"\>", 
+   ",", "\<\"/-Y----\\\\\\n|      |\\n| R    |\\n| R    |\\n|      |\\n|      \
+|\\n|      |\\n\\\\------/\\n\"\>"}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.577297641985736*^9, 3.577297684780861*^9, 3.577297886635723*^9, {
+   3.577297967825721*^9, 3.577298004034055*^9}}]
+}, Open  ]]
+},
+WindowSize->{707, 636},
+WindowMargins->{{Automatic, 110}, {Automatic, 41}},
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (January 25, 2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 119, 2, 31, "Input"],
+Cell[679, 24, 120, 2, 31, "Input"],
+Cell[802, 28, 389, 9, 92, "Input"],
+Cell[1194, 39, 493, 12, 112, "Input"],
+Cell[1690, 53, 394, 10, 72, "Input"],
+Cell[2087, 65, 2666, 62, 232, "Input"],
+Cell[4756, 129, 614, 14, 52, "Input"],
+Cell[5373, 145, 255, 7, 31, "Input"],
+Cell[5631, 154, 1351, 30, 152, "Input"],
+Cell[6985, 186, 837, 23, 72, "Input"],
+Cell[CellGroupData[{
+Cell[7847, 213, 233, 4, 31, "Input"],
+Cell[8083, 219, 656, 12, 672, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

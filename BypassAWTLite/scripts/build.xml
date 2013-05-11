@@ -19,7 +19,7 @@
 	<property name="buildDir" location="../build"/>
 	<property name="distDir" location="${buildDir}/dist/Bypass"/>
 	
-	<property name="bypassJar" value="bypass-${version.major}.${version.minor}.${version.revision}.${DATE}.jar" />
+	<property name="bypassJar" value="bypass-lite-${version.major}.${version.minor}.${version.revision}.${DATE}.jar" />
 	
 	<target name="build">
 	    

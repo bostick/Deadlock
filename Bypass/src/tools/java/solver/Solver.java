@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Solver {
 	
-	static List<String> solve(Board start) {
+	public static List<String> solve(Board start) {
 		
 		StateSpace space = new StateSpace();
 		space.putSolving(start, null);

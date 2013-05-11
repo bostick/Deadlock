@@ -138,7 +138,7 @@ public class Board {
 		
 	}
 	
-	void boardSet(int r, int c, byte b) {
+	public void boardSet(int r, int c, byte b) {
 		boardSet(r, c, b, par.colCount);
 	}
 	
