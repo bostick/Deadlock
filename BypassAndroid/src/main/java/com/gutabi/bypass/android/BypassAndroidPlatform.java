@@ -61,6 +61,8 @@ public abstract class BypassAndroidPlatform implements BypassPlatform {
 		
 	}
 	
+	public abstract void createApplication() throws Exception;
+	
 	public RenderingContext createRenderingContext() {
 		return new RenderingContextImpl();
 	}

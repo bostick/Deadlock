@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.android.ActivityState;
 import com.gutabi.bypass.android.BypassActivity;
 import com.gutabi.bypass.android.BypassAndroidPlatform;
@@ -58,7 +57,7 @@ public class BypassWorldActivity extends BypassActivity {
 				
 				BypassAndroidPlatform platform = (BypassAndroidPlatform)platformCtor.newInstance(getResources());
 				try {
-					BypassApplication.create(platform);
+					platform.createApplication();
 				} catch (Exception e) {
 					Log.e("bypass", e.getMessage(), e);
 				}
@@ -77,15 +76,7 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		if (savedInstanceState != null) {
 			String name = savedInstanceState.getString("com.gutabi.bypass.menu.LevelDB");
-			if (name.equals("tutorial")) {
-				LevelMenu.levelDB = BYPASSAPP.tutorialLevelDB;
-			} else if (name.equals("episode1")) {
-				LevelMenu.levelDB = BYPASSAPP.episode1LevelDB;
-			} else if (name.equals("episode2")) {
-				LevelMenu.levelDB = BYPASSAPP.episode2LevelDB;
-			} else {
-				throw new AssertionError();
-			}
+			LevelMenu.levelDB = BYPASSAPP.bypassPlatform.levelDB(name);
 		}
 		
 		BypassWorld.create(LevelMenu.levelDB, ii);

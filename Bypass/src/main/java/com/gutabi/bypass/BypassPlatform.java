@@ -3,8 +3,13 @@ package com.gutabi.bypass;
 import com.gutabi.bypass.level.Level;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.capsloc.Platform;
+import com.gutabi.capsloc.Resource;
 
 public interface BypassPlatform extends Platform {
+	
+	Resource levelDBResource(String name);
+	
+	LevelDB levelDB(String name);
 	
 	void loadScores(LevelDB levelDB) throws Exception;
 	

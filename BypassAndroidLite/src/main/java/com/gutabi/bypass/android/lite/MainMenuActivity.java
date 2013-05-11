@@ -1,4 +1,4 @@
-package com.gutabi.bypass.android.full;
+package com.gutabi.bypass.android.lite;
 
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
@@ -28,7 +28,7 @@ public class MainMenuActivity extends BypassActivity {
 		if (BYPASSAPP == null) {
 			try {
 				
-				BypassAndroidPlatform platform = new BypassAndroidFullPlatform(getResources());
+				BypassAndroidPlatform platform = new BypassAndroidLitePlatform(getResources());
 				try {
 					platform.createApplication();
 				} catch (Exception e) {

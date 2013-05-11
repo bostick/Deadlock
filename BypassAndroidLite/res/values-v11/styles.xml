@@ -1,0 +1,7 @@
+<resources>
+    
+    <style name="Theme.BypassMainMenu" parent="android:Theme.Holo.NoActionBar.Fullscreen">
+    	<item name="android:windowBackground">@color/grass_green</item>
+	</style>
+    
+</resources>

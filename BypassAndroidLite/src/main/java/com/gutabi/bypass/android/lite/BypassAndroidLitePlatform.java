@@ -1,7 +1,5 @@
-package com.gutabi.bypass.android.full;
+package com.gutabi.bypass.android.lite;
 
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-import static com.gutabi.capsloc.CapslocApplication.APP;
 import android.content.Intent;
 import android.content.res.Resources;
 
@@ -18,13 +16,15 @@ import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.world.sprites.CarSheet;
 import com.gutabi.capsloc.world.sprites.SpriteSheet;
 
-public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
+import static com.gutabi.capsloc.CapslocApplication.APP;
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
+
+public class BypassAndroidLitePlatform extends BypassAndroidPlatform {
 	
 	public LevelDB tutorialLevelDB;
 	public LevelDB episode1LevelDB;
-	public LevelDB episode2LevelDB;
 	
-	public BypassAndroidFullPlatform(Resources resources) {
+	public BypassAndroidLitePlatform(Resources resources) {
 		super(resources);
 	}
 	
@@ -53,16 +53,12 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 			
 			tutorialLevelDB = new LevelDB(levelDBResource("tutorial"));
 			episode1LevelDB = new LevelDB(levelDBResource("episode1"));
-			episode2LevelDB = new LevelDB(levelDBResource("episode2"));
 			
 			loadScores(tutorialLevelDB);
 			tutorialLevelDB.setFirstUnwon();
 			
 			loadScores(episode1LevelDB);
 			episode1LevelDB.setFirstUnwon();
-			
-			loadScores(episode2LevelDB);
-			episode2LevelDB.setFirstUnwon();
 			
 			APP.platform.showAppScreen();
 			
@@ -79,8 +75,6 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 			return tutorialLevelDB;
 		} else if (name.equals("episode1")) {
 			return episode1LevelDB;
-		} else if (name.equals("episode2")) {
-			return episode2LevelDB;
 		} else {
 			throw new AssertionError();
 		}
@@ -108,8 +102,6 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 			return new ResourceImpl(R.raw.tutorial, ResourceType.RAW);
 		} else if (name.equals("episode1")) {
 			return new ResourceImpl(R.raw.episode1, ResourceType.RAW);
-		} else if (name.equals("episode2")) {
-			return new ResourceImpl(R.raw.episode2, ResourceType.RAW);
 		}
 		
 		throw new AssertionError();
@@ -123,8 +115,6 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 			return "tutorial";
 		} else if (i.resId == R.raw.episode1) {
 			return "episode1";
-		} else if (i.resId == R.raw.episode2) {
-			return "episode2";
 		}
 		
 		throw new AssertionError();
@@ -140,7 +130,7 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 		} else if (clazz == LevelMenu.class) {
 			
 			Intent intent = new Intent(CURRENTACTIVITY, LevelMenuActivity.class);
-			intent.putExtra("com.gutabi.bypass.android.PlatformImplClassName", "com.gutabi.bypass.android.full.BypassAndroidFullPlatform");
+			intent.putExtra("com.gutabi.bypass.android.PlatformImplClassName", "com.gutabi.bypass.android.lite.BypassAndroidLitePlatform");
 			CURRENTACTIVITY.startActivity(intent);
 			
 		} else if (clazz == BypassWorld.class) {
@@ -148,7 +138,7 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 			int ii = (Integer)args[0];
 			
 			Intent intent = new Intent(CURRENTACTIVITY, BypassWorldActivity.class);
-			intent.putExtra("com.gutabi.bypass.android.PlatformImplClassName", "com.gutabi.bypass.android.full.BypassAndroidFullPlatform");
+			intent.putExtra("com.gutabi.bypass.android.PlatformImplClassName", "com.gutabi.bypass.android.lite.BypassAndroidLitePlatform");
 			intent.putExtra("com.gutabi.bypass.level.Index", ii);
 			CURRENTACTIVITY.startActivity(intent);
 			
