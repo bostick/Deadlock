@@ -39,7 +39,9 @@ public abstract class BypassMenu extends Menu implements Model {
 		
 		boolean res = false;
 		
-		res = res | shimmer.step();
+		if (shimmer != null) {
+			res = res | shimmer.step();
+		}
 		
 		return res;
 	}

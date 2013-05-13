@@ -9,6 +9,7 @@ import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.LevelMenu;
+import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.menu.MainMenuLite;
 import com.gutabi.capsloc.world.sprites.CarSheet;
 import com.gutabi.capsloc.world.sprites.SpriteSheet;
@@ -79,7 +80,7 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			
 		} else if (oldClazz == MainMenuLite.class) {
 			
-			MainMenuLite.pause();
+			MainMenu.pause();
 			
 		} else if (oldClazz == LevelMenu.class) {
 			
@@ -100,8 +101,8 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			
 			BypassMenu.create();
 			BypassMenu.start();
-			MainMenuLite.resume();
-			MainMenuLite.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			MainMenu.resume();
+			MainMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else if (newClazz == LevelMenu.class) {
 			
@@ -135,7 +136,7 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 		Class oldClazz = CURRENTACTIVITYCLASS;
 		if (oldClazz == MainMenuLite.class) {
 			
-			MainMenuLite.pause();
+			MainMenu.pause();
 			BypassMenu.stop();
 			BypassMenu.destroy();
 			
@@ -149,8 +150,8 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			
 			CURRENTACTIVITYCLASS = MainMenuLite.class;
 			
-			MainMenuLite.resume();
-			MainMenuLite.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			MainMenu.resume();
+			MainMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else if (oldClazz == BypassWorld.class) {
 			

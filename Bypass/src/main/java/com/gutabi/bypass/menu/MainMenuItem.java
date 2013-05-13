@@ -34,8 +34,7 @@ public abstract class MainMenuItem extends MenuItem {
 		
 		aabb = new AABB(aabb.x, aabb.y, menu.columnWidth[c], 20 + lab.aabb.height + 20);
 		
-		try {
-			
+		if (levelDB.percentage != 0.0) {
 			String pString = String.format("%.2f%%", levelDB.percentage * 100);
 			
 			auxLab1 = new Label(pString);
@@ -46,10 +45,6 @@ public abstract class MainMenuItem extends MenuItem {
 			auxLab1.renderLocal();
 			
 			auxLab1.aabb = new AABB(aabb.brX-auxLab1.localAABB.width, aabb.brY-auxLab1.localAABB.height, auxLab1.localAABB.width, auxLab1.localAABB.height);
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		if (auxLab0 != null) {

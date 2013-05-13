@@ -24,20 +24,17 @@ public class Shimmer {
 	MutablePolygon poly = new MutablePolygon();
 	GeometryPath path = APP.platform.createGeometryPath();
 	
-	double traverseSpeed;
-	double timeToRest;
+	/*
+	 * millis / pixel
+	 */
+	double traverseSpeed = 5;
+	double timeToRest = 3000;
 	double timeToTraverse;
 	
 	double t = -1;
 	
 	public Shimmer(double startMillis) {
 		this.startMillis = startMillis;
-		
-		/*
-		 * millis / pixel
-		 */
-		traverseSpeed = 5;
-		timeToRest = 4000;
 	}
 	
 	public void setShape(AABB aabb) {

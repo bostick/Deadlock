@@ -243,8 +243,10 @@ public abstract class Menu {
 		
 		setAABBAndScrolling();
 		
-		shimmer = new Shimmer(System.currentTimeMillis());
-		shimmer.setShape(shimmeringMenuItem.aabb);
+		if (shimmeringMenuItem != null) {
+			shimmer = new Shimmer(System.currentTimeMillis());
+			shimmer.setShape(shimmeringMenuItem.aabb);
+		}
 		
 		rendered = true;
 	}
@@ -320,7 +322,9 @@ public abstract class Menu {
 			hilited.paintHilited(ctxt);			
 		}
 		
-		shimmer.paint(ctxt);
+		if (shimmer != null) {
+			shimmer.paint(ctxt);
+		}
 		
 	}
 }

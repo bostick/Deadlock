@@ -129,6 +129,7 @@ public class LevelDB {
 	
 	public void setFirstUnwon() {
 		
+		firstUnwon = -1;
 		for (int i = 0; i < levelCount; i++) {
 			if (levelMap.get(i).isWon) {
 				

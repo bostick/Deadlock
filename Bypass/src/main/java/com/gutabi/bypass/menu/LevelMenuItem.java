@@ -66,20 +66,16 @@ public abstract class LevelMenuItem extends MenuItem {
 		}
 		
 		if (LevelMenu.showInfo) {
-			try {
-				auxLab1 = new Label(Integer.toString(l.requiredMoves));
-				auxLab1.color = Color.LIGHT_GRAY;
-				auxLab1.fontFile = APP.platform.fontResource("visitor1");
-				auxLab1.fontStyle = FontStyle.PLAIN;
-				auxLab1.fontSize = 36;
-				auxLab1.renderLocal();
-				
-				auxLab1.aabb = new AABB(aabb.x, aabb.y, auxLab1.localAABB.width, auxLab1.localAABB.height);
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			auxLab1 = new Label(Integer.toString(l.requiredMoves));
+			auxLab1.color = Color.LIGHT_GRAY;
+			auxLab1.fontFile = APP.platform.fontResource("visitor1");
+			auxLab1.fontStyle = FontStyle.PLAIN;
+			auxLab1.fontSize = 36;
+			auxLab1.renderLocal();
+			
+			auxLab1.aabb = new AABB(aabb.x, aabb.y, auxLab1.localAABB.width, auxLab1.localAABB.height);
+			
 		} else {
 			auxLab1 = null;
 		}
