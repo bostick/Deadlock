@@ -77,6 +77,10 @@ public class BypassView extends SurfaceView implements SurfaceHolder.Callback {
 			APP.appScreen.contentPane.pcp.releasedDriver(p);
 			break;
 		}
+		case MotionEvent.ACTION_CANCEL:
+			
+			APP.appScreen.contentPane.pcp.canceledDriver();
+			break;
 		case MotionEvent.ACTION_POINTER_DOWN:
 			
 			break;

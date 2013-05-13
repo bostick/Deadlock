@@ -117,6 +117,13 @@ public abstract class Tool {
 		
 	}
 	
+	/**
+	 * in panel coords
+	 */
+	public void canceled(InputEvent ev) {
+		
+	}
+	
 	public Point p;
 	
 	public abstract void setPoint(Point p);

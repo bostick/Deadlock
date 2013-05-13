@@ -56,6 +56,11 @@ public abstract class Panel {
 		APP.tool.clicked(ev);
 	}
 	
+	public void canceled(InputEvent ev) {
+		
+		APP.tool.canceled(ev);
+	}
+	
 	public abstract void postDisplay(int width, int height);
 	
 	public abstract void paint(RenderingContext ctxt);

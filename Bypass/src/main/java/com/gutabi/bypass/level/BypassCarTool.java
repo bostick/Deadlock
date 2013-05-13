@@ -283,6 +283,10 @@ public class BypassCarTool extends WorldToolBase {
 		}
 	}
 	
+	public void canceled(InputEvent ev) {
+		released(ev);
+	}
+	
 	void determineCoasting(GraphPositionPathPosition origVertexPos, GraphPositionPathPosition otherVertexPos, boolean tryOtherSideFirst) {
 		assert origVertexPos.gp instanceof VertexPosition;
 		assert otherVertexPos.gp instanceof VertexPosition;

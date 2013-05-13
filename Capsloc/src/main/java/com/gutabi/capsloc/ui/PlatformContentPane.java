@@ -71,6 +71,18 @@ public abstract class PlatformContentPane implements Paintable {
 		}
 	}
 	
+	public void canceledDriver() {
+		if (lastPressedContentPanePoint == null) {
+			throw new IllegalStateException();
+		}
+		for (Panel child : children) {
+			if (child.aabb.hitTest(lastPressedContentPanePoint)) {
+				child.canceled(new InputEvent(child, null));
+				return;
+			}
+		}
+	}
+	
 	public void draggedDriver(Point p) {
 		if (p == null) {
 			throw new IllegalArgumentException();

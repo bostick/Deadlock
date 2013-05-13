@@ -124,6 +124,18 @@ public abstract class Menu {
 		}
 	}
 	
+	public void canceled(InputEvent ev) {
+		
+		MenuItem item = hitTest(ev.p);
+		
+		if (item != null && item == hilited && item.active) {
+			hilited = null;
+		} else {
+			hilited = null;
+			APP.appScreen.contentPane.repaint();
+		}
+	}
+	
 	public void dragToNewLocation(Point newLoc) {
 		
 		hilited = null;

@@ -106,6 +106,18 @@ public class MenuTool extends Tool {
 		menu.released(new InputEvent(ignore.panel, Point.panelToMenu(ignore.p, menu)));
 	}
 	
+	public void canceled(InputEvent ignore) {
+		Menu menu = APP.model.getMenu();
+		
+		if (origPressed == null) {
+			return;
+		}
+		
+		origPressed = null;
+		
+		menu.canceled(new InputEvent(ignore.panel, null));
+	}
+	
 	public void setPoint(Point p) {
 		
 	}

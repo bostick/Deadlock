@@ -362,7 +362,7 @@ public class World extends PhysicsWorld {
 	
 	public Point lastPressedWorldPoint;
 	public Point lastDraggedWorldPoint;
-	public Point lastReleasedWorldPoint;
+//	public Point lastReleasedWorldPoint;
 	
 	public Point penDraggedWorldPoint;
 	public boolean lastDraggedWorldPointWasNull;
@@ -382,7 +382,7 @@ public class World extends PhysicsWorld {
 	
 	public void released(InputEvent ev) {
 		
-		lastReleasedWorldPoint = ev.p;
+//		lastReleasedWorldPoint = ev.p;
 		
 	}
 	
