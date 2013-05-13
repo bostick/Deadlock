@@ -15,6 +15,7 @@ import javax.swing.WindowConstants;
 
 import com.gutabi.bypass.awt.BypassAWTPlatform;
 import com.gutabi.bypass.awt.ui.WindowInfo;
+import com.gutabi.bypass.menu.MainMenuFull;
 
 public class Main {
 	
@@ -49,7 +50,7 @@ public class Main {
 		
 		APP.DEBUG_DRAW = false;
 		
-		APP.platform.action(MainMenu.class);
+		APP.platform.action(MainMenuFull.class);
 		
 	}
 	

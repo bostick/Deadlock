@@ -112,7 +112,7 @@ public class LevelMenuActivity extends BypassActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.name);
+		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.resourceName);
 		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuLoc", new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y));
 	}
 	

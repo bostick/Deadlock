@@ -9,7 +9,7 @@ import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.LevelMenu;
-import com.gutabi.capsloc.Resource;
+import com.gutabi.bypass.menu.MainMenuLite;
 import com.gutabi.capsloc.world.sprites.CarSheet;
 import com.gutabi.capsloc.world.sprites.SpriteSheet;
 
@@ -29,12 +29,6 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 		
 		try {
 			
-			Resource logo = APP.platform.imageResource("logo");
-			Resource copy = APP.platform.imageResource("copyright");
-			
-			BYPASSAPP.logo = APP.platform.readImage(logo);
-			BYPASSAPP.copyright = APP.platform.readImage(copy);
-			
 			APP.carSheet = new CarSheet();
 			APP.spriteSheet = new SpriteSheet();
 			
@@ -49,6 +43,12 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			
 			loadScores(episode1LevelDB);
 			episode1LevelDB.setFirstUnwon();
+			
+			tutorialLevelDB.computePercentageComplete();
+			episode1LevelDB.computePercentageComplete();
+			
+			tutorialLevelDB.title = " Tutorial ";
+			episode1LevelDB.title = " Episode 1 ";
 			
 			APP.platform.showAppScreen();
 			
@@ -77,9 +77,9 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 		Class oldClazz = CURRENTACTIVITYCLASS;
 		if (oldClazz == null) {
 			
-		} else if (oldClazz == MainMenu.class) {
+		} else if (oldClazz == MainMenuLite.class) {
 			
-			MainMenu.pause();
+			MainMenuLite.pause();
 			
 		} else if (oldClazz == LevelMenu.class) {
 			
@@ -94,14 +94,14 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 		}
 		
 		
-		if (newClazz == MainMenu.class) {
+		if (newClazz == MainMenuLite.class) {
 			
-			CURRENTACTIVITYCLASS = MainMenu.class;
+			CURRENTACTIVITYCLASS = MainMenuLite.class;
 			
 			BypassMenu.create();
 			BypassMenu.start();
-			MainMenu.resume();
-			MainMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			MainMenuLite.resume();
+			MainMenuLite.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else if (newClazz == LevelMenu.class) {
 			
@@ -133,9 +133,9 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 		
 		@SuppressWarnings("rawtypes")
 		Class oldClazz = CURRENTACTIVITYCLASS;
-		if (oldClazz == MainMenu.class) {
+		if (oldClazz == MainMenuLite.class) {
 			
-			MainMenu.pause();
+			MainMenuLite.pause();
 			BypassMenu.stop();
 			BypassMenu.destroy();
 			
@@ -147,10 +147,10 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			BypassMenu.stop();
 			BypassMenu.destroy();
 			
-			CURRENTACTIVITYCLASS = MainMenu.class;
+			CURRENTACTIVITYCLASS = MainMenuLite.class;
 			
-			MainMenu.resume();
-			MainMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			MainMenuLite.resume();
+			MainMenuLite.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else if (oldClazz == BypassWorld.class) {
 			

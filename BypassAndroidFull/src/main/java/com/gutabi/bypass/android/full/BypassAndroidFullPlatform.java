@@ -14,6 +14,7 @@ import com.gutabi.bypass.android.menu.LevelMenuActivity;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.LevelMenu;
+import com.gutabi.bypass.menu.MainMenuFull;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.world.sprites.CarSheet;
 import com.gutabi.capsloc.world.sprites.SpriteSheet;
@@ -39,12 +40,6 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 		
 		try {
 			
-			Resource logo = APP.platform.imageResource("logo");
-			Resource copy = APP.platform.imageResource("copyright");
-			
-			BYPASSAPP.logo = APP.platform.readImage(logo);
-			BYPASSAPP.copyright = APP.platform.readImage(copy);
-			
 			APP.carSheet = new CarSheet();
 			APP.spriteSheet = new SpriteSheet();
 			
@@ -63,6 +58,14 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 			
 			loadScores(episode2LevelDB);
 			episode2LevelDB.setFirstUnwon();
+			
+			tutorialLevelDB.computePercentageComplete();
+			episode1LevelDB.computePercentageComplete();
+			episode2LevelDB.computePercentageComplete();
+			
+			tutorialLevelDB.title = " Tutorial ";
+			episode1LevelDB.title = " Episode 1 ";
+			episode2LevelDB.title = " Episode 2 ";
 			
 			APP.platform.showAppScreen();
 			
@@ -132,7 +135,7 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 	
 	public void action(@SuppressWarnings("rawtypes") Class clazz, Object... args) {
 		
-		if (clazz == MainMenu.class) {
+		if (clazz == MainMenuFull.class) {
 			
 			Intent intent = new Intent(CURRENTACTIVITY, MainMenuActivity.class);
 			CURRENTACTIVITY.startActivity(intent);

@@ -99,8 +99,7 @@ public class BypassCarTool extends WorldToolBase {
 		
 	}
 	
-	public void released(InputEvent ignore) {
-		super.released(ignore);
+	private void releasedOrCanceled() {
 		
 		BypassWorld world = (BypassWorld)APP.model;
 		BypassBoard b = world.bypassBoard;
@@ -283,8 +282,16 @@ public class BypassCarTool extends WorldToolBase {
 		}
 	}
 	
+	public void released(InputEvent ignore) {
+		super.released(ignore);
+		
+		releasedOrCanceled();
+	}
+	
 	public void canceled(InputEvent ev) {
-		released(ev);
+		super.canceled(ev);
+		
+		releasedOrCanceled();
 	}
 	
 	void determineCoasting(GraphPositionPathPosition origVertexPos, GraphPositionPathPosition otherVertexPos, boolean tryOtherSideFirst) {

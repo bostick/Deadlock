@@ -1,15 +1,34 @@
 package com.gutabi.bypass.menu;
 
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
+import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
+import com.gutabi.capsloc.ui.Image;
 import com.gutabi.capsloc.ui.Menu;
 import com.gutabi.capsloc.ui.Panel;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class BypassMenuPanel extends Panel {
+	
+	public Image logo;
+	public Image copyright;
+	
+	public BypassMenuPanel() {
+		
+		Resource logoRes = APP.platform.imageResource("logo");
+		Resource copyRes = APP.platform.imageResource("copyright");
+		
+		try {
+			
+			logo = APP.platform.readImage(logoRes);
+			copyright = APP.platform.readImage(copyRes);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void postDisplay(int width, int height) {
 		Menu menu = (Menu)APP.model;
@@ -42,20 +61,20 @@ public class BypassMenuPanel extends Panel {
 			ctxt.pushTransform();
 			
 			ctxt.translate(0, 0);
-			ctxt.paintImage(BYPASSAPP.logo,
-					0, 0, (int)aabb.width, (int)((aabb.width * BYPASSAPP.logo.getHeight()) / BYPASSAPP.logo.getWidth()),
-					0, 0, BYPASSAPP.logo.getWidth(), BYPASSAPP.logo.getHeight());
+			ctxt.paintImage(logo,
+					0, 0, (int)aabb.width, (int)((aabb.width * logo.getHeight()) / logo.getWidth()),
+					0, 0, logo.getWidth(), logo.getHeight());
 			
 			ctxt.popTransform();
 			
 			ctxt.pushTransform();
 			
-			int w = (int)Math.min(BYPASSAPP.copyright.getWidth(), aabb.width);
-			int h = (w * BYPASSAPP.copyright.getHeight()) / BYPASSAPP.copyright.getWidth();
+			int w = (int)Math.min(copyright.getWidth(), aabb.width);
+			int h = (w * copyright.getHeight()) / copyright.getWidth();
 			ctxt.translate(aabb.width/2 - w/2, aabb.height - h);
-			ctxt.paintImage(BYPASSAPP.copyright,
+			ctxt.paintImage(copyright,
 					0, 0, w, h,
-					0, 0, BYPASSAPP.copyright.getWidth(), BYPASSAPP.copyright.getHeight());
+					0, 0, copyright.getWidth(), copyright.getHeight());
 			
 			ctxt.popTransform();
 			

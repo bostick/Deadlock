@@ -11,6 +11,7 @@ import com.gutabi.bypass.android.BypassActivity;
 import com.gutabi.bypass.android.BypassAndroidPlatform;
 import com.gutabi.bypass.android.BypassView;
 import com.gutabi.bypass.menu.BypassMenu;
+import com.gutabi.bypass.menu.MainMenuLite;
 
 public class MainMenuActivity extends BypassActivity {
 	
@@ -65,7 +66,7 @@ public class MainMenuActivity extends BypassActivity {
 	protected void onResume() {
     	super.onResume();
     	
-    	MainMenu.resume();
+    	MainMenuLite.resume();
     }
 	
 	protected void onSurfaceChanged(int width, int height) {
@@ -79,13 +80,13 @@ public class MainMenuActivity extends BypassActivity {
 			return;
 		}
 		
-		MainMenu.surfaceChanged(width, height);
+		MainMenuLite.surfaceChanged(width, height);
 	}
 	
 	protected void onPause() {
 		super.onPause();
 		
-		MainMenu.pause();
+		MainMenuLite.pause();
 	}
 	
 }

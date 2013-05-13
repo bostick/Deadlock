@@ -1,5 +1,7 @@
 package com.gutabi.bypass.android.lite;
 
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import android.content.Intent;
 import android.content.res.Resources;
 
@@ -12,12 +14,10 @@ import com.gutabi.bypass.android.menu.LevelMenuActivity;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.LevelMenu;
+import com.gutabi.bypass.menu.MainMenuLite;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.world.sprites.CarSheet;
 import com.gutabi.capsloc.world.sprites.SpriteSheet;
-
-import static com.gutabi.capsloc.CapslocApplication.APP;
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 
 public class BypassAndroidLitePlatform extends BypassAndroidPlatform {
 	
@@ -39,12 +39,6 @@ public class BypassAndroidLitePlatform extends BypassAndroidPlatform {
 		
 		try {
 			
-			Resource logo = APP.platform.imageResource("logo");
-			Resource copy = APP.platform.imageResource("copyright");
-			
-			BYPASSAPP.logo = APP.platform.readImage(logo);
-			BYPASSAPP.copyright = APP.platform.readImage(copy);
-			
 			APP.carSheet = new CarSheet();
 			APP.spriteSheet = new SpriteSheet();
 			
@@ -59,6 +53,12 @@ public class BypassAndroidLitePlatform extends BypassAndroidPlatform {
 			
 			loadScores(episode1LevelDB);
 			episode1LevelDB.setFirstUnwon();
+			
+			tutorialLevelDB.computePercentageComplete();
+			episode1LevelDB.computePercentageComplete();
+			
+			tutorialLevelDB.title = " Tutorial ";
+			episode1LevelDB.title = " Episode 1 ";
 			
 			APP.platform.showAppScreen();
 			
@@ -122,7 +122,7 @@ public class BypassAndroidLitePlatform extends BypassAndroidPlatform {
 	
 	public void action(@SuppressWarnings("rawtypes") Class clazz, Object... args) {
 		
-		if (clazz == MainMenu.class) {
+		if (clazz == MainMenuLite.class) {
 			
 			Intent intent = new Intent(CURRENTACTIVITY, MainMenuActivity.class);
 			CURRENTACTIVITY.startActivity(intent);

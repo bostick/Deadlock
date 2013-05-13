@@ -16,10 +16,13 @@ import com.gutabi.capsloc.math.Point;
 
 public class LevelDB {
 	
-	public final String name;
+	public final String resourceName;
+	public String title;
 	
 	public int firstUnwon = 0;
 	public Point loc;
+	
+	public double percentage;
 	
 	private Map<Integer, Level> levelMap = new HashMap<Integer, Level>();
 	
@@ -30,7 +33,7 @@ public class LevelDB {
 		
 		this.res = res;
 		
-		this.name = APP.platform.resourceName(res);
+		this.resourceName = APP.platform.resourceName(res);
 		
 		InputStream is = APP.platform.openResourceInputStream(res);
 		ZipInputStream zis = new ZipInputStream(is);
@@ -71,14 +74,6 @@ public class LevelDB {
 			if (entry.getName().equals("metadata.txt")) {
 				zis.getNextEntry();
 			}
-//			int curIndex = 0;
-//			while (curIndex != index) {
-//				entry = zis.getNextEntry();
-//				if (entry.getName().equals("metadata.txt")) {
-//					zis.getNextEntry();
-//				}
-//				curIndex++;
-//			}
 			
 			count = zis.read(tmp, 0, 100);
 			assert count != -1;
@@ -135,18 +130,29 @@ public class LevelDB {
 	public void setFirstUnwon() {
 		
 		for (int i = 0; i < levelCount; i++) {
-			if (levelMap.keySet().contains(i)) {
-				if (levelMap.get(i).isWon) {
-					
-				} else {
-					firstUnwon = i;
-					break;
-				}
+			if (levelMap.get(i).isWon) {
+				
 			} else {
 				firstUnwon = i;
 				break;
 			}
 		}
+		
+	}
+	
+	public void computePercentageComplete() {
+		
+		percentage = 0.0;
+		for (int i = 0; i < levelCount; i++) {
+			Level l = getLevel(i);
+			if (l.grade == null) {
+				
+			} else {
+				percentage = percentage + Math.min((double)l.requiredMoves / (double)l.userMoves, 1.0);
+			}
+		}
+		
+		percentage = percentage / levelCount;
 		
 	}
 	

@@ -382,7 +382,9 @@ public class World extends PhysicsWorld {
 	
 	public void released(InputEvent ev) {
 		
-//		lastReleasedWorldPoint = ev.p;
+	}
+	
+	public void canceled(InputEvent ev) {
 		
 	}
 	

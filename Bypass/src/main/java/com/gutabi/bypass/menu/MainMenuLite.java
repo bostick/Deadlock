@@ -1,4 +1,4 @@
-package com.gutabi.bypass.awt.full;
+package com.gutabi.bypass.menu;
 
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
@@ -14,11 +14,11 @@ import com.gutabi.capsloc.ui.ContentPane;
 import com.gutabi.capsloc.ui.MenuItem;
 import com.gutabi.capsloc.ui.MenuTool;
 
-public class MainMenu extends BypassMenu {
+public class MainMenuLite extends BypassMenu {
 	
-	public MainMenu() {
+	public MainMenuLite() {
 		
-		MenuItem newMenuItem = new MenuItem(MainMenu.this, " Episode 1 ") {
+		MenuItem newMenuItem = new MainMenuItem(MainMenuLite.this, BYPASSAPP.bypassPlatform.levelDB("episode1")) {
 			public void action() {
 				
 				LevelMenu.levelDB = BYPASSAPP.bypassPlatform.levelDB("episode1");
@@ -28,17 +28,7 @@ public class MainMenu extends BypassMenu {
 		};
 		add(newMenuItem, 0, 0);
 		
-		MenuItem new2MenuItem = new MenuItem(MainMenu.this, " Episode 2 ") {
-			public void action() {
-				
-				LevelMenu.levelDB = BYPASSAPP.bypassPlatform.levelDB("episode2");
-				
-				APP.platform.action(LevelMenu.class);
-			}
-		};
-		add(new2MenuItem, 1, 0);
-		
-		MenuItem resumeMenuItem = new MenuItem(MainMenu.this, "Tutorial") {
+		MenuItem resumeMenuItem = new MainMenuItem(MainMenuLite.this, BYPASSAPP.bypassPlatform.levelDB("tutorial")) {
 			public void action() {
 				
 				LevelMenu.levelDB = BYPASSAPP.bypassPlatform.levelDB("tutorial");
@@ -46,7 +36,7 @@ public class MainMenu extends BypassMenu {
 				APP.platform.action(LevelMenu.class);
 			}
 		};
-		add(resumeMenuItem, 2, 0);
+		add(resumeMenuItem, 1, 0);
 		
 	}
 	
@@ -55,7 +45,7 @@ public class MainMenu extends BypassMenu {
 	
 	public static void resume() {
 		
-		BypassMenu.BYPASSMENU = new MainMenu();
+		BypassMenu.BYPASSMENU = new MainMenuLite();
 		APP.model = BypassMenu.BYPASSMENU;
 		
 		AppScreen s = new AppScreen(new ContentPane(new BypassMenuPanel()));

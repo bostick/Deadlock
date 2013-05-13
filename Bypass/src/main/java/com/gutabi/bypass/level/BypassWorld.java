@@ -504,6 +504,8 @@ public class BypassWorld extends World implements Model {
 			}
 		}
 		
+		levelDB.computePercentageComplete();
+		
 		WinnerMenu.action();
 		
 	}

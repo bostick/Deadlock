@@ -89,6 +89,14 @@ public abstract class WorldToolBase extends Tool {
 		world.released(new InputEvent(ev.panel, null));
 	}
 	
+	public void canceled(InputEvent ev) {
+		World world = (World)APP.model;
+		
+		lastMotion = Motion.CANCELED;
+		
+		world.canceled(new InputEvent(ev.panel, null));
+	}
+	
 	public void moved(InputEvent ev) {
 		World world = (World)APP.model;
 		

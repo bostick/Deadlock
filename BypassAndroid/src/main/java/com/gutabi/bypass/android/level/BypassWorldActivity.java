@@ -244,7 +244,7 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		outState.putBoolean("com.gutabi.bypass.DebugDraw", APP.DEBUG_DRAW);
 		
-		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.name);
+		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.resourceName);
 		
 		outState.putInt("com.gutabi.bypass.level.UserMoves", BypassWorld.BYPASSWORLD.curLevel.userMoves);
 		outState.putLong("com.gutabi.bypass.level.UserStartTime", BypassWorld.BYPASSWORLD.curLevel.userStartTime);
