@@ -324,22 +324,19 @@ public abstract class BypassAndroidPlatform implements BypassPlatform {
 	
 	public void saveScore(LevelDB levelDB, Level l) {
 		
-		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"grades", 0);
+		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-grades", 0);
 		SharedPreferences.Editor editor = grades.edit();
 		editor.putString(Integer.toString(l.index), l.grade);
-		
 		editor.commit();
 		
-		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"userMoves", 0);
+		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-userMoves", 0);
 		editor = userMoves.edit();
 		editor.putInt(Integer.toString(l.index), l.userMoves);
-		
 		editor.commit();
 		
-		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"userTime", 0);
+		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-userTime", 0);
 		editor = userTime.edit();
 		editor.putLong(Integer.toString(l.index), l.userTime);
-		
 		editor.commit();
 	}
 	
@@ -349,17 +346,17 @@ public abstract class BypassAndroidPlatform implements BypassPlatform {
 		
 		menu.lock.lock();
 		
-		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"grades", 0);
+		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-grades", 0);
 		SharedPreferences.Editor editor = grades.edit();
 		editor.clear();
 		editor.commit();
 		
-		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"userMoves", 0);
+		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-userMoves", 0);
 		editor = userMoves.edit();
 		editor.clear();
 		editor.commit();
 		
-		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"userTime", 0);
+		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-userTime", 0);
 		editor = userTime.edit();
 		editor.clear();
 		editor.commit();
