@@ -66,7 +66,7 @@ public class Quadrant {
 //				map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
 //			}
 			
-			for (int i = 0; i < 75; i++) {
+			for (int i = 0; i < 60; i++) {
 				double x = APP.RANDOM.nextDouble();
 				double y = APP.RANDOM.nextDouble();
 				grassMap.addGrass(new AnimatedGrass(new Point((c + x) * QuadrantMap.QUADRANT_WIDTH, (r + y) * QuadrantMap.QUADRANT_HEIGHT)));

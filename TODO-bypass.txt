@@ -1,6 +1,4 @@
 
-solve first level of each episode, go back to main menu, blank
-
 save scores on disk or something outside of the app
 
 
@@ -74,6 +72,11 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+solve first level of each episode, go back to main menu, blank
+fixed, nothing was repainting when nothing was shimmering
+
+
 
 transforms for levels
 
