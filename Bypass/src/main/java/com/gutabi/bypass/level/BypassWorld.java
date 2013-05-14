@@ -1,5 +1,6 @@
 package com.gutabi.bypass.level;
 
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import java.util.concurrent.locks.Lock;
@@ -497,6 +498,8 @@ public class BypassWorld extends World implements Model {
 		curLevel.userTime = (System.currentTimeMillis() - curLevel.userStartTime);
 		
 		curLevel.isWon = true;
+		
+		BYPASSAPP.bypassPlatform.saveScore(levelDB, curLevel);
 		
 		for (int i = 0; i < levelDB.levelCount; i++) {
 			if (levelDB.getLevel(i).isWon) {
