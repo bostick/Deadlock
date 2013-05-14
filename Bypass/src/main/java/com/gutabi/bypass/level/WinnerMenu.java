@@ -1,7 +1,6 @@
 package com.gutabi.bypass.level;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 
 import com.gutabi.capsloc.ui.Menu;
 import com.gutabi.capsloc.ui.MenuItem;
@@ -65,8 +64,6 @@ public class WinnerMenu extends Menu {
 			public void action() {
 				
 				BypassWorld world = (BypassWorld)APP.model;
-				
-				BYPASSAPP.bypassPlatform.saveScore(world.levelDB, world.curLevel);
 				
 				int index = world.curLevel.index;
 				
