@@ -32,7 +32,7 @@ public class Parent {
 	int jConnectedToY = -1;
 	int kConnectedToY = -1;
 	
-	List<Byte> actualCars = new ArrayList<Byte>();
+	public List<Byte> actualCars = new ArrayList<Byte>();
 	byte[] possibleCars = new byte[]{ 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 	
 	CarInfo scratchInfo = new CarInfo();

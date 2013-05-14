@@ -135,7 +135,6 @@ public class Board {
 	
 	byte boardGet(int r, int c) {
 		return arr[r][c];
-		
 	}
 	
 	public void boardSet(int r, int c, byte b) {

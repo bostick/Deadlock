@@ -22,7 +22,13 @@ public class Cursor {
 		case 0:
 			coor[0] = coor[0]-1;
 			if (coor[0] == -1) {
-				assert val() == 'J' || val() == 'K';
+				switch (val()) {
+				case 'J':
+				case 'K':
+					break;
+				default:
+					throw new IllegalArgumentException();
+				}
 				int[] other = Board.par.otherJoint(coor);
 				int otherSide = Board.par.side(other);
 				switch (otherSide) {
@@ -52,7 +58,13 @@ public class Cursor {
 		case 1:
 			coor[1] = coor[1]+1;
 			if (coor[1] == Board.par.colCount) {
-				assert val() == 'J' || val() == 'K';
+				switch (val()) {
+				case 'J':
+				case 'K':
+					break;
+				default:
+					throw new IllegalArgumentException();
+				}
 				int[] other = Board.par.otherJoint(coor);
 				int otherSide = Board.par.side(other);
 				switch (otherSide) {
@@ -82,7 +94,13 @@ public class Cursor {
 		case 2:
 			coor[0] = coor[0]+1;
 			if (coor[0] == Board.par.rowCount) {
-				assert val() == 'J' || val() == 'K';
+				switch (val()) {
+				case 'J':
+				case 'K':
+					break;
+				default:
+					throw new IllegalArgumentException();
+				}
 				int[] other = Board.par.otherJoint(coor);
 				int otherSide = Board.par.side(other);
 				switch (otherSide) {
@@ -112,7 +130,13 @@ public class Cursor {
 		case 3:
 			coor[1] = coor[1]-1;
 			if (coor[1] == -1) {
-				assert val() == 'J' || val() == 'K';
+				switch (val()) {
+				case 'J':
+				case 'K':
+					break;
+				default:
+					throw new IllegalArgumentException();
+				}
 				int[] other = Board.par.otherJoint(coor);
 				int otherSide = Board.par.side(other);
 				switch (otherSide) {
