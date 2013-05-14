@@ -1,4 +1,9 @@
 
+license verification
+randomly move a car if not verified...
+
+
+
 easter egg: click on a grass, do something
 something: cars are now intangible
 in board description, a missing - or | means to allow the car off of the board...

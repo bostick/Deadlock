@@ -15,6 +15,11 @@ public class BypassMenuPanel extends Panel {
 	public Image logo;
 	public Image copyright;
 	
+	double logoAdjustedWidth;
+	double logoAdjustedHeight;
+	double copyAdjustedWidth;
+	double copyAdjustedHeight;
+	
 	public BypassMenuPanel() {
 		
 		Resource logoRes = APP.platform.imageResource("logo");
@@ -35,7 +40,15 @@ public class BypassMenuPanel extends Panel {
 		
 		aabb = new AABB(aabb.x, aabb.y, width, height);
 		
-		menu.postDisplay(width, height);
+		logoAdjustedWidth = aabb.width;
+		logoAdjustedHeight = (aabb.width * logo.getHeight()) / logo.getWidth();
+		
+		copyAdjustedWidth = Math.min(copyright.getWidth(), aabb.width);
+		copyAdjustedHeight = (copyAdjustedWidth * copyright.getHeight()) / copyright.getWidth();
+		
+		menu.panelOffsetX = 0.0;
+		menu.panelOffsetY = logoAdjustedHeight;
+		menu.postDisplay(width, (int)((height - copyAdjustedHeight) - logoAdjustedHeight));
 	}
 	
 	public void paint(RenderingContext ctxt) {
@@ -60,29 +73,23 @@ public class BypassMenuPanel extends Panel {
 			
 			ctxt.pushTransform();
 			
-			ctxt.translate(0, 0);
-			ctxt.paintImage(logo,
-					0, 0, (int)aabb.width, (int)((aabb.width * logo.getHeight()) / logo.getWidth()),
+			ctxt.translate(aabb.width/2 - logoAdjustedWidth/2, 0);
+			ctxt.paintImage(logo, 1.0,
+					0, 0, logoAdjustedWidth, logoAdjustedHeight,
 					0, 0, logo.getWidth(), logo.getHeight());
 			
 			ctxt.popTransform();
 			
 			ctxt.pushTransform();
 			
-			int w = (int)Math.min(copyright.getWidth(), aabb.width);
-			int h = (w * copyright.getHeight()) / copyright.getWidth();
-			ctxt.translate(aabb.width/2 - w/2, aabb.height - h);
-			ctxt.paintImage(copyright,
-					0, 0, w, h,
+			ctxt.translate(aabb.width/2 - copyAdjustedWidth/2, aabb.height - copyAdjustedHeight);
+			ctxt.paintImage(copyright, 1.0,
+					0, 0, copyAdjustedWidth, copyAdjustedHeight,
 					0, 0, copyright.getWidth(), copyright.getHeight());
 			
 			ctxt.popTransform();
 			
-			ctxt.pushTransform();
-			
 			menu.paint_panel(ctxt);
-			
-			ctxt.popTransform();
 			
 			ctxt.popTransform();
 			

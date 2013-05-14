@@ -33,6 +33,8 @@ public abstract class Menu {
 	
 	public AABB aabb = new AABB();
 	public AABB marginAABB = new AABB();
+	public double panelOffsetX;
+	public double panelOffsetY;
 	
 	int parWidth;
 	int parHeight;
@@ -269,7 +271,7 @@ public abstract class Menu {
 			
 			hScrollable = false;
 			
-			x = parWidth/2 - aabb.width/2;
+			x = parWidth/2 - aabb.width/2 + panelOffsetX;
 			
 		} else {
 			/*
@@ -287,7 +289,7 @@ public abstract class Menu {
 			
 			vScrollable = false;
 			
-			y = parHeight/2 - aabb.height/2;
+			y = parHeight/2 - aabb.height/2 + panelOffsetY;
 			
 		} else {
 			/*
