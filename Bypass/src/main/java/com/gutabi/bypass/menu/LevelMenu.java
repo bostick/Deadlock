@@ -85,6 +85,12 @@ public class LevelMenu extends BypassMenu {
 		}
 		
 		BypassMenu.BYPASSMENU.lock.unlock();
+		
+		/*
+		 * repaint once just in case there is nothing else driving repainting (like shimmering)
+		 */
+		APP.appScreen.contentPane.repaint();
+		
 	}
 	
 	public static void pause() {

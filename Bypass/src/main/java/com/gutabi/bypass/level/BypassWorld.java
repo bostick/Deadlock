@@ -116,6 +116,9 @@ public class BypassWorld extends World implements Model {
 		
 		BYPASSWORLD.lock.unlock();
 		
+		/*
+		 * repaint once just in case there is nothing else driving repainting (like shimmering)
+		 */
 		APP.appScreen.contentPane.repaint();
 	}
 	
