@@ -86,7 +86,7 @@ public class LevelDB {
 			Level level = new Level();
 			char[][] board;
 			
-			BufferedReader in = new BufferedReader(new InputStreamReader(bais));
+			BufferedReader in = new BufferedReader(new InputStreamReader(bais), count);
 			
 			int rows = 0;
 			int cols = 0;
