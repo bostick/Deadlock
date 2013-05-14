@@ -91,24 +91,12 @@ public class WinnerMenu extends Menu {
 			}
 		};
 		
-		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back") {
-			public void action() {
-				
-				BypassWorld world = (BypassWorld)APP.model;
-				
-				BYPASSAPP.bypassPlatform.saveScore(world.levelDB, world.curLevel);
-				
-				APP.platform.finishAction();
-			}
-		};
-		
 		if (index < world.levelDB.levelCount-1) {
 			
 			add(exclMenuItem, 0, 0);
 			add(gradeMenuItem, 1, 0);
 			add(nextMenuItem, 2, 0);
 			add(againMenuItem, 3, 0);
-			add(backMenuItem, 4, 0);
 			shimmeringMenuItem = nextMenuItem;
 			
 		} else {
@@ -116,8 +104,7 @@ public class WinnerMenu extends Menu {
 			add(exclMenuItem, 0, 0);
 			add(gradeMenuItem, 1, 0);
 			add(againMenuItem, 2, 0);
-			add(backMenuItem, 3, 0);
-			shimmeringMenuItem = backMenuItem;
+			shimmeringMenuItem = null;
 			
 		}
 		
