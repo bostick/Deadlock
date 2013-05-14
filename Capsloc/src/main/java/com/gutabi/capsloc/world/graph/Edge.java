@@ -36,7 +36,7 @@ public abstract class Edge extends Entity {
 	public abstract Entity decorationsIntersect(Object e);
 	
 	
-	public abstract String toFileString();
+//	public abstract String toFileString();
 	
 	public abstract void paintBorders(RenderingContext ctxt);
 	

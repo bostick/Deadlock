@@ -2,12 +2,8 @@ package com.gutabi.capsloc.world.graph;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import com.gutabi.capsloc.Entity;
 import com.gutabi.capsloc.geom.AABB;
@@ -629,135 +625,135 @@ public class Road extends Edge {
 		
 	}
 	
-	public String toFileString() {
-		
-		StringBuilder s = new StringBuilder();
-		
-		s.append("start road\n");
-		
-		s.append("id " + id + "\n");
-		
-		s.append("start " + start.id + "\n");
-		s.append("end " + end.id + "\n");
-		
-		s.append("start points\n");
-		for (Point p : raw) {
-			s.append(p.toFileString() + "\n");
-		}
-		s.append("end points\n");
-		
-		s.append("direction " + direction + "\n");
-		s.append("startSign " + startSign.isEnabled() + "\n");
-		s.append("endSign " + endSign.isEnabled() + "\n");
-		
-		s.append("end road\n");
-		
-		return s.toString();
-	}
+//	public String toFileString() {
+//		
+//		StringBuilder s = new StringBuilder();
+//		
+//		s.append("start road\n");
+//		
+//		s.append("id " + id + "\n");
+//		
+//		s.append("start " + start.id + "\n");
+//		s.append("end " + end.id + "\n");
+//		
+//		s.append("start points\n");
+//		for (Point p : raw) {
+//			s.append(p.toFileString() + "\n");
+//		}
+//		s.append("end points\n");
+//		
+//		s.append("direction " + direction + "\n");
+//		s.append("startSign " + startSign.isEnabled() + "\n");
+//		s.append("endSign " + endSign.isEnabled() + "\n");
+//		
+//		s.append("end road\n");
+//		
+//		return s.toString();
+//	}
 	
-	public static Road fromFileString(World world, Vertex[] vs, String s) {
-		BufferedReader r = new BufferedReader(new StringReader(s));
-		
-		int id = -1;
-//		int start = 0;
-//		int end = 0;
-		Vertex start = null;
-		Vertex end = null;
-		List<Point> pts = new ArrayList<Point>();
-		Direction d = null;
-		boolean startSignEnabled = false;
-		boolean endSignEnabled = false;
-		
-		
-		try {
-			String l = r.readLine();
-			assert l.equals("start road");
-			
-			l = r.readLine();
-			Scanner sc = new Scanner(l);
-			String tok = sc.next();
-			assert tok.equals("id");
-			id = sc.nextInt();
-			sc.close();
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("start");
-			int startID = sc.nextInt();
-			start = vs[startID];
-			assert start != null;
-			sc.close();
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("end");
-			int endID = sc.nextInt();
-			end = vs[endID];
-			assert end != null;
-			sc.close();
-			
-			l = r.readLine();
-			assert l.equals("start points");
-			
-			while (true) {
-				
-				l = r.readLine();
-				
-				if (l.equals("end points")) {
-					break;
-				} else {
-					
-					Point p = Point.fromFileString(l);
-					pts.add(p);
-					
-				}
-				
-			}
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("direction");
-			String rest = sc.next();
-			d = Direction.fromFileString(rest);
-			sc.close();
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("startSign");
-			startSignEnabled = sc.nextBoolean();
-			sc.close();
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("endSign");
-			endSignEnabled = sc.nextBoolean();
-			sc.close();
-			
-			l = r.readLine();
-			assert l.equals("end road");
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		Road rd = new Road(world, start, end, pts);
-		
-		rd.id = id;
-		rd.direction = d;
-		if (startSignEnabled) {
-			rd.startSign.setEnabled(true);
-		}
-		if (endSignEnabled) {
-			rd.endSign.setEnabled(true);
-		}
-		return rd;
-	}
+//	public static Road fromFileString(World world, Vertex[] vs, String s) {
+//		BufferedReader r = new BufferedReader(new StringReader(s));
+//		
+//		int id = -1;
+////		int start = 0;
+////		int end = 0;
+//		Vertex start = null;
+//		Vertex end = null;
+//		List<Point> pts = new ArrayList<Point>();
+//		Direction d = null;
+//		boolean startSignEnabled = false;
+//		boolean endSignEnabled = false;
+//		
+//		
+//		try {
+//			String l = r.readLine();
+//			assert l.equals("start road");
+//			
+//			l = r.readLine();
+//			Scanner sc = new Scanner(l);
+//			String tok = sc.next();
+//			assert tok.equals("id");
+//			id = sc.nextInt();
+//			sc.close();
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("start");
+//			int startID = sc.nextInt();
+//			start = vs[startID];
+//			assert start != null;
+//			sc.close();
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("end");
+//			int endID = sc.nextInt();
+//			end = vs[endID];
+//			assert end != null;
+//			sc.close();
+//			
+//			l = r.readLine();
+//			assert l.equals("start points");
+//			
+//			while (true) {
+//				
+//				l = r.readLine();
+//				
+//				if (l.equals("end points")) {
+//					break;
+//				} else {
+//					
+//					Point p = Point.fromFileString(l);
+//					pts.add(p);
+//					
+//				}
+//				
+//			}
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("direction");
+//			String rest = sc.next();
+//			d = Direction.fromFileString(rest);
+//			sc.close();
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("startSign");
+//			startSignEnabled = sc.nextBoolean();
+//			sc.close();
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("endSign");
+//			endSignEnabled = sc.nextBoolean();
+//			sc.close();
+//			
+//			l = r.readLine();
+//			assert l.equals("end road");
+//			
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		Road rd = new Road(world, start, end, pts);
+//		
+//		rd.id = id;
+//		rd.direction = d;
+//		if (startSignEnabled) {
+//			rd.startSign.setEnabled(true);
+//		}
+//		if (endSignEnabled) {
+//			rd.endSign.setEnabled(true);
+//		}
+//		return rd;
+//	}
 	
 	public void render() {
 		

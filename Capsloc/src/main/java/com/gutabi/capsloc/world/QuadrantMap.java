@@ -2,11 +2,6 @@ package com.gutabi.capsloc.world;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Scanner;
-
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.CapsuleSequence;
 import com.gutabi.capsloc.geom.Circle;
@@ -313,64 +308,64 @@ public class QuadrantMap {
 		return res;
 	}
 	
-	public String toFileString() {
-		StringBuilder s = new StringBuilder();
-		
-		s.append("start quadrantMap\n");
-		
-		s.append(quadrantRows + " " + quadrantCols + "\n");
-		
-		for (int i = 0; i < quadrantRows; i++) {
-			for (int j = 0; j < quadrantCols; j++) {
-				Quadrant q = quadrants[i][j];
-				s.append(q.toFileString());
-				s.append(" ");
-			}
-			s.append("\n");
-		}
-		
-		s.append("end quadrantMap\n");
-		
-		return s.toString();
-	}
+//	public String toFileString() {
+//		StringBuilder s = new StringBuilder();
+//		
+//		s.append("start quadrantMap\n");
+//		
+//		s.append(quadrantRows + " " + quadrantCols + "\n");
+//		
+//		for (int i = 0; i < quadrantRows; i++) {
+//			for (int j = 0; j < quadrantCols; j++) {
+//				Quadrant q = quadrants[i][j];
+//				s.append(q.toFileString());
+//				s.append(" ");
+//			}
+//			s.append("\n");
+//		}
+//		
+//		s.append("end quadrantMap\n");
+//		
+//		return s.toString();
+//	}
 	
-	public static QuadrantMap fromFileString(String s) {
-		BufferedReader r = new BufferedReader(new StringReader(s));
-		
-		int[][] ini = null;
-		
-		try {
-			String l = r.readLine();
-			assert l.equals("start quadrantMap");
-			
-			l = r.readLine();
-			Scanner scanner = new Scanner(l);
-			int rows = scanner.nextInt();
-			int cols = scanner.nextInt();
-			scanner.close();
-			
-			ini = new int[rows][cols];
-			
-			for (int i = 0; i < rows; i++) {
-				l = r.readLine();
-				scanner = new Scanner(l);
-				for (int j = 0; j < cols; j++) {
-					ini[i][j] = scanner.nextInt();
-				}
-				scanner.close();
-			}
-			
-			l = r.readLine();
-			assert l.equals("end quadrantMap");
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		QuadrantMap qm = new QuadrantMap(ini);
-		return qm;
-	}
+//	public static QuadrantMap fromFileString(String s) {
+//		BufferedReader r = new BufferedReader(new StringReader(s));
+//		
+//		int[][] ini = null;
+//		
+//		try {
+//			String l = r.readLine();
+//			assert l.equals("start quadrantMap");
+//			
+//			l = r.readLine();
+//			Scanner scanner = new Scanner(l);
+//			int rows = scanner.nextInt();
+//			int cols = scanner.nextInt();
+//			scanner.close();
+//			
+//			ini = new int[rows][cols];
+//			
+//			for (int i = 0; i < rows; i++) {
+//				l = r.readLine();
+//				scanner = new Scanner(l);
+//				for (int j = 0; j < cols; j++) {
+//					ini[i][j] = scanner.nextInt();
+//				}
+//				scanner.close();
+//			}
+//			
+//			l = r.readLine();
+//			assert l.equals("end quadrantMap");
+//			
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		QuadrantMap qm = new QuadrantMap(ini);
+//		return qm;
+//	}
 	
 	public void paint_panel(RenderingContext ctxt) {
 		for (int i = 0; i < quadrantRows; i++) {

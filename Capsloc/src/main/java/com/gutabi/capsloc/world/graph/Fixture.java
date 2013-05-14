@@ -2,12 +2,8 @@ package com.gutabi.capsloc.world.graph;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.math.Point;
@@ -269,103 +265,103 @@ public final class Fixture extends Vertex {
 		return c;
 	}
 	
-	public String toFileString() {
-		StringBuilder s = new StringBuilder();
-		
-		s.append("start fixture\n");
-		
-		s.append("id " + id + "\n");
-		
-		s.append("point " + p.toFileString() + "\n");
-		s.append("axis " + a + "\n");
-		s.append("side " + this.s + "\n");
-		s.append("type " + type + "\n");
-		s.append("match " + match.id + "\n");
-		
-		s.append("end fixture\n");
-		
-		return s.toString();
-	}
+//	public String toFileString() {
+//		StringBuilder s = new StringBuilder();
+//		
+//		s.append("start fixture\n");
+//		
+//		s.append("id " + id + "\n");
+//		
+//		s.append("point " + p.toFileString() + "\n");
+//		s.append("axis " + a + "\n");
+//		s.append("side " + this.s + "\n");
+//		s.append("type " + type + "\n");
+//		s.append("match " + match.id + "\n");
+//		
+//		s.append("end fixture\n");
+//		
+//		return s.toString();
+//	}
 	
-	public static Fixture fromFileString(World world, String s) {
-		BufferedReader r = new BufferedReader(new StringReader(s));
-		
-		Point p = null;
-		Axis a = null;
-		int id = -1;
-		Side facingSide = null;
-		FixtureType type = null;
-		int match = -1;
-		
-		try {
-			String l = r.readLine();
-			assert l.equals("start fixture");
-			
-			l = r.readLine();
-			Scanner sc = new Scanner(l);
-			String tok = sc.next();
-			assert tok.equals("id");
-			id = sc.nextInt();
-			sc.close();
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("point");
-			
-			String rest = sc.useDelimiter("\\A").next();
-			sc.close();
-			
-			p = Point.fromFileString(rest);
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("axis");
-			rest = sc.next();
-			a = Axis.fromFileString(rest);
-			sc.close();
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("side");
-			rest = sc.next();
-			facingSide = Side.fromFileString(rest);
-			sc.close();
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("type");
-			rest = sc.next();
-			type = FixtureType.fromFileString(rest);
-			sc.close();
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("match");
-			match = sc.nextInt();
-			sc.close();
-			
-			l = r.readLine();
-			assert l.equals("end fixture");
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		Fixture f = new Fixture(world, p, a);
-		
-		f.id = id;
-		f.matchID = match;
-		f.facingSide = facingSide;
-		f.setType(type);
-		
-		return f;
-	}
+//	public static Fixture fromFileString(World world, String s) {
+//		BufferedReader r = new BufferedReader(new StringReader(s));
+//		
+//		Point p = null;
+//		Axis a = null;
+//		int id = -1;
+//		Side facingSide = null;
+//		FixtureType type = null;
+//		int match = -1;
+//		
+//		try {
+//			String l = r.readLine();
+//			assert l.equals("start fixture");
+//			
+//			l = r.readLine();
+//			Scanner sc = new Scanner(l);
+//			String tok = sc.next();
+//			assert tok.equals("id");
+//			id = sc.nextInt();
+//			sc.close();
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("point");
+//			
+//			String rest = sc.useDelimiter("\\A").next();
+//			sc.close();
+//			
+//			p = Point.fromFileString(rest);
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("axis");
+//			rest = sc.next();
+//			a = Axis.fromFileString(rest);
+//			sc.close();
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("side");
+//			rest = sc.next();
+//			facingSide = Side.fromFileString(rest);
+//			sc.close();
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("type");
+//			rest = sc.next();
+//			type = FixtureType.fromFileString(rest);
+//			sc.close();
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("match");
+//			match = sc.nextInt();
+//			sc.close();
+//			
+//			l = r.readLine();
+//			assert l.equals("end fixture");
+//			
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		Fixture f = new Fixture(world, p, a);
+//		
+//		f.id = id;
+//		f.matchID = match;
+//		f.facingSide = facingSide;
+//		f.setType(type);
+//		
+//		return f;
+//	}
 	
 	public void render() {
 		

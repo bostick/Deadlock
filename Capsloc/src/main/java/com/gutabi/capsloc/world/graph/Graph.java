@@ -2,14 +2,10 @@ package com.gutabi.capsloc.world.graph;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 
 import com.gutabi.capsloc.Entity;
@@ -1089,158 +1085,158 @@ public class Graph {
 		}
 	}
 	
-	public String toFileString() {
-		StringBuilder s = new StringBuilder();
-		
-		s.append("start graph\n");
-		
-		s.append("vertices " + vertices.size() + "\n");
-		s.append("roads " + roads.size() + "\n");
-		s.append("mergers " + mergers.size() + "\n");
-		
-		for (Vertex v : vertices) {
-			s.append(v.toFileString());
-		}
-		for (Road r : roads) {
-			s.append(r.toFileString());
-		}
-		for (Merger m : mergers) {
-			s.append(m.toFileString());
-		}
-		
-		s.append("end graph\n");
-		
-		return s.toString();
-	}
+//	public String toFileString() {
+//		StringBuilder s = new StringBuilder();
+//		
+//		s.append("start graph\n");
+//		
+//		s.append("vertices " + vertices.size() + "\n");
+//		s.append("roads " + roads.size() + "\n");
+//		s.append("mergers " + mergers.size() + "\n");
+//		
+//		for (Vertex v : vertices) {
+//			s.append(v.toFileString());
+//		}
+//		for (Road r : roads) {
+//			s.append(r.toFileString());
+//		}
+//		for (Merger m : mergers) {
+//			s.append(m.toFileString());
+//		}
+//		
+//		s.append("end graph\n");
+//		
+//		return s.toString();
+//	}
 	
-	public static Graph fromFileString(World world, String s) {
-		BufferedReader r = new BufferedReader(new StringReader(s));
-		
-		Vertex[] vs = null;
-		Road[] rs = null;
-		Merger[] ms = null;
-		
-		try {
-			String l = r.readLine();
-			assert l.equals("start graph");
-			
-			l = r.readLine();
-			Scanner sc = new Scanner(l);
-			String tok = sc.next();
-			assert tok.equals("vertices");
-			int vCount = sc.nextInt();
-			sc.close();
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("roads");
-			int rCount = sc.nextInt();
-			sc.close();
-			
-			l = r.readLine();
-			sc = new Scanner(l);
-			tok = sc.next();
-			assert tok.equals("mergers");
-			int mCount = sc.nextInt();
-			sc.close();
-			
-			vs = new Vertex[vCount];
-			rs = new Road[rCount];
-			ms = new Merger[mCount];
-			
-			while (true) {
-				l = r.readLine();
-				
-				StringBuilder builder;
-				
-				if (l.equals("end graph")) {
-					break;
-				} else if (l.equals("start fixture")) {
-					
-					builder = new StringBuilder();
-					builder.append(l+"\n");
-					while (true) {
-						l = r.readLine();
-						builder.append(l+"\n");
-						if (l.equals("end fixture")) {
-							break;
-						}
-					}
-					
-					Fixture f = Fixture.fromFileString(world, builder.toString());
-					
-					vs[f.id] = f;
-					
-				} else if (l.equals("start intersection")) {
-					
-					builder = new StringBuilder();
-					builder.append(l+"\n");
-					while (true) {
-						l = r.readLine();
-						builder.append(l+"\n");
-						if (l.equals("end intersection")) {
-							break;
-						}
-					}
-					
-					Intersection i = Intersection.fromFileString(world, builder.toString());
-					
-					vs[i.id] = i;
-					
-				} else if (l.equals("start road")) {
-					
-					builder = new StringBuilder();
-					builder.append(l+"\n");
-					while (true) {
-						l = r.readLine();
-						builder.append(l+"\n");
-						if (l.equals("end road")) {
-							break;
-						}
-					}
-					
-					Road rd = Road.fromFileString(world, vs, builder.toString());
-					
-					rs[rd.id] = rd;
-					
-				} else {
-					assert false;
-					break;
-				}
-				
-			}
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		for (Vertex v : vs) {
-			if (v instanceof Fixture) {
-				Fixture vf = (Fixture)v;
-				vf.match = (Fixture)vs[vf.matchID];
-			}
-		}
-		
-		Graph g = new Graph(world);
-		
-		for (Vertex v : vs) {
-			g.vertices.add(v);
-		}
-		for (Road ro : rs) {
-			g.roads.add(ro);
-		}
-		for (Merger m : ms) {
-			g.mergers.add(m);
-		}
-		
-		g.refreshVertexIDs();
-		g.refreshRoadIDs();
-		g.refreshMergerIDs();
-		
-		return g;
-	}
+//	public static Graph fromFileString(World world, String s) {
+//		BufferedReader r = new BufferedReader(new StringReader(s));
+//		
+//		Vertex[] vs = null;
+//		Road[] rs = null;
+//		Merger[] ms = null;
+//		
+//		try {
+//			String l = r.readLine();
+//			assert l.equals("start graph");
+//			
+//			l = r.readLine();
+//			Scanner sc = new Scanner(l);
+//			String tok = sc.next();
+//			assert tok.equals("vertices");
+//			int vCount = sc.nextInt();
+//			sc.close();
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("roads");
+//			int rCount = sc.nextInt();
+//			sc.close();
+//			
+//			l = r.readLine();
+//			sc = new Scanner(l);
+//			tok = sc.next();
+//			assert tok.equals("mergers");
+//			int mCount = sc.nextInt();
+//			sc.close();
+//			
+//			vs = new Vertex[vCount];
+//			rs = new Road[rCount];
+//			ms = new Merger[mCount];
+//			
+//			while (true) {
+//				l = r.readLine();
+//				
+//				StringBuilder builder;
+//				
+//				if (l.equals("end graph")) {
+//					break;
+//				} else if (l.equals("start fixture")) {
+//					
+//					builder = new StringBuilder();
+//					builder.append(l+"\n");
+//					while (true) {
+//						l = r.readLine();
+//						builder.append(l+"\n");
+//						if (l.equals("end fixture")) {
+//							break;
+//						}
+//					}
+//					
+//					Fixture f = Fixture.fromFileString(world, builder.toString());
+//					
+//					vs[f.id] = f;
+//					
+//				} else if (l.equals("start intersection")) {
+//					
+//					builder = new StringBuilder();
+//					builder.append(l+"\n");
+//					while (true) {
+//						l = r.readLine();
+//						builder.append(l+"\n");
+//						if (l.equals("end intersection")) {
+//							break;
+//						}
+//					}
+//					
+//					Intersection i = Intersection.fromFileString(world, builder.toString());
+//					
+//					vs[i.id] = i;
+//					
+//				} else if (l.equals("start road")) {
+//					
+//					builder = new StringBuilder();
+//					builder.append(l+"\n");
+//					while (true) {
+//						l = r.readLine();
+//						builder.append(l+"\n");
+//						if (l.equals("end road")) {
+//							break;
+//						}
+//					}
+//					
+//					Road rd = Road.fromFileString(world, vs, builder.toString());
+//					
+//					rs[rd.id] = rd;
+//					
+//				} else {
+//					assert false;
+//					break;
+//				}
+//				
+//			}
+//			
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		for (Vertex v : vs) {
+//			if (v instanceof Fixture) {
+//				Fixture vf = (Fixture)v;
+//				vf.match = (Fixture)vs[vf.matchID];
+//			}
+//		}
+//		
+//		Graph g = new Graph(world);
+//		
+//		for (Vertex v : vs) {
+//			g.vertices.add(v);
+//		}
+//		for (Road ro : rs) {
+//			g.roads.add(ro);
+//		}
+//		for (Merger m : ms) {
+//			g.mergers.add(m);
+//		}
+//		
+//		g.refreshVertexIDs();
+//		g.refreshRoadIDs();
+//		g.refreshMergerIDs();
+//		
+//		return g;
+//	}
 	
 	public void render() {
 		

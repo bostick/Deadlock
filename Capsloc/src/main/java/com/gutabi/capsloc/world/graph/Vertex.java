@@ -264,7 +264,7 @@ public abstract class Vertex extends Entity {
 	}
 	
 
-	public abstract String toFileString();
+//	public abstract String toFileString();
 	
 	public abstract void render();
 	
