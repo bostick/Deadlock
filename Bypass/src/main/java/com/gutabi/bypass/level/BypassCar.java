@@ -179,8 +179,18 @@ public class BypassCar extends Car {
 					} else if (type == CarType.RED && !ShapeUtils.intersectAA(world.worldCamera.worldViewport, this.shape.aabb)) {
 						
 						if (!((BypassWorld)world).curLevel.isWon) {
+							
+							/*
+							 * repaint once right before the winner menu goes up
+							 * 
+							 * rendering the winner menu takes a split second, and it is done on the simulation thread, so the previous scene is not redrawn promptly sometimes
+							 * 
+							 * force redraw with car outside of view now so that everything looks smooth (rendering winner menu still takes some time, but now the car
+							 * is out of view, so it is not noticed) 
+							 */
+							APP.appScreen.contentPane.repaint();
+							
 							((BypassWorld)world).winner();
-							return;
 						}
 						
 					}

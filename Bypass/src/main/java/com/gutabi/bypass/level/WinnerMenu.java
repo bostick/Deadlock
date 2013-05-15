@@ -40,6 +40,7 @@ public class WinnerMenu extends Menu {
 		} finally {
 			world.lock.unlock();
 		}
+		
 	}
 	
 	public WinnerMenu(BypassWorld world, String excl, String grade) {
