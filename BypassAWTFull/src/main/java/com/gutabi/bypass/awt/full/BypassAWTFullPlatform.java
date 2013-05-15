@@ -159,6 +159,7 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 			
 			CURRENTACTIVITYCLASS = MainMenuFull.class;
 			
+			MainMenu.start();
 			BypassMenu.resume();
 			BypassMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
@@ -170,6 +171,7 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 			
 			CURRENTACTIVITYCLASS = LevelMenu.class;
 			
+			LevelMenu.start();
 			BypassMenu.resume();
 			BypassMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			

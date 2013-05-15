@@ -36,7 +36,7 @@ public abstract class LevelMenuItem extends MenuItem {
 		
 		Level l = LevelMenu.levelDB.getLevel(index);
 		
-		if (l.isWon) {
+		if (l.grade != null) {
 			
 			auxLab0 = new Label(l.grade);
 			auxLab0.color = Color.LIGHT_GRAY;
