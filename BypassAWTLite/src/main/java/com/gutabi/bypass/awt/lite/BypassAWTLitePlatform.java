@@ -7,7 +7,6 @@ import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.awt.BypassAWTPlatform;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.LevelDB;
-import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.menu.MainMenuLite;
@@ -99,8 +98,8 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			
 			CURRENTACTIVITYCLASS = MainMenuLite.class;
 			
-			BypassMenu.create();
-			BypassMenu.start();
+			MainMenu.create();
+			MainMenu.start();
 			MainMenu.resume();
 			MainMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
@@ -108,8 +107,8 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			
 			CURRENTACTIVITYCLASS = LevelMenu.class;
 			
-			BypassMenu.create();
-			BypassMenu.start();
+			LevelMenu.create();
+			LevelMenu.start();
 			LevelMenu.resume();
 			LevelMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
@@ -137,16 +136,16 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 		if (oldClazz == MainMenuLite.class) {
 			
 			MainMenu.pause();
-			BypassMenu.stop();
-			BypassMenu.destroy();
+			MainMenu.stop();
+			MainMenu.destroy();
 			
 			CURRENTACTIVITYCLASS = null;
 			
 		} else if (oldClazz == LevelMenu.class) {
 			
 			LevelMenu.pause();
-			BypassMenu.stop();
-			BypassMenu.destroy();
+			LevelMenu.stop();
+			LevelMenu.destroy();
 			
 			CURRENTACTIVITYCLASS = MainMenuLite.class;
 			

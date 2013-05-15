@@ -68,19 +68,25 @@ public class LevelMenuActivity extends BypassActivity {
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;
 		
-		BypassMenu.create();
+		LevelMenu.create();
 	}
+	
+	protected void onDestroy() {
+    	super.onDestroy();
+    	
+    	LevelMenu.destroy();
+    }
 	
 	protected void onStart() {
     	super.onStart();
     	
-    	BypassMenu.start();
+    	LevelMenu.start();
     }
 	
 	protected void onStop() {
 		super.onStop();
 		
-		BypassMenu.stop();
+		LevelMenu.stop();
 	}
 	
 	protected void onResume() {
@@ -93,9 +99,9 @@ public class LevelMenuActivity extends BypassActivity {
 		
 		Log.d("bypassactivity", name + " surfaceChanged");
 		
-		if (state == ActivityState.PAUSE) {
+		if (state != ActivityState.RESUME) {
 			/*
-			 * locking the screen causes surface change after pause
+			 * locking the screen causes surface change after pause, so ignore that
 			 */
 			return;
 		}

@@ -11,10 +11,17 @@ import com.gutabi.capsloc.ui.MenuTool;
 
 public abstract class MainMenu extends BypassMenu {
 	
-	static AtomicBoolean simThreadTrigger = new AtomicBoolean();
-	static Thread simThread;
+	public static void create() {
+		
+	}
 	
-	public static void resume() {
+	public static void destroy() {
+		
+	}
+	
+	public static void start() {
+		
+		APP.tool = new MenuTool();
 		
 		BypassMenu.BYPASSMENU = new MainMenuFull();
 		APP.model = BypassMenu.BYPASSMENU;
@@ -24,7 +31,16 @@ public abstract class MainMenu extends BypassMenu {
 		
 		APP.platform.setupAppScreen(s.contentPane.pcp);
 		
-		APP.tool = new MenuTool();
+	}
+	
+	public static void stop() {
+		
+	}
+	
+	static AtomicBoolean simThreadTrigger = new AtomicBoolean();
+	static Thread simThread;
+	
+	public static void resume() {
 		
 		simThreadTrigger.set(true);
 		
@@ -58,10 +74,6 @@ public abstract class MainMenu extends BypassMenu {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		simThread = null;
-		
-		BypassMenu.BYPASSMENU = null;
 		
 	}
 	

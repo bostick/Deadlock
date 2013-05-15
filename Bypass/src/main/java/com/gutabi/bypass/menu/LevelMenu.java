@@ -20,14 +20,17 @@ public class LevelMenu extends BypassMenu {
 	
 	public static boolean showInfo = false;
 	
-	public LevelMenu() {
+	public static void create() {
 		
 	}
 	
-	static AtomicBoolean simThreadTrigger = new AtomicBoolean();
-	static Thread simThread;
+	public static void destroy() {
+		
+	}
 	
-	public static void resume() {
+	public static void start() {
+		
+		APP.tool = new MenuTool();
 		
 		BypassMenu.BYPASSMENU = new LevelMenu();
 		
@@ -38,7 +41,16 @@ public class LevelMenu extends BypassMenu {
 		
 		APP.platform.setupAppScreen(s.contentPane.pcp);
 		
-		APP.tool = new MenuTool();
+	}
+	
+	public static void stop() {
+		
+	}
+	
+	static AtomicBoolean simThreadTrigger = new AtomicBoolean();
+	static Thread simThread;
+	
+	public static void resume() {
 		
 		simThreadTrigger.set(true);
 		
@@ -104,10 +116,7 @@ public class LevelMenu extends BypassMenu {
 			e.printStackTrace();
 		}
 		
-		simThread = null;
-		
 		levelDB.loc = new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y);
-		BypassMenu.BYPASSMENU = null;
 		
 	}
 	

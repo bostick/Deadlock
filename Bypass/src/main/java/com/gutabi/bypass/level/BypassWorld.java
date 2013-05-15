@@ -11,6 +11,7 @@ import com.gutabi.capsloc.Model;
 import com.gutabi.capsloc.SimulationRunnable;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.ContentPane;
+import com.gutabi.capsloc.ui.Label;
 import com.gutabi.capsloc.ui.Menu;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.QuadrantMap;
@@ -44,6 +45,8 @@ public class BypassWorld extends World implements Model {
 	
 	public WinnerMenu winnerMenu;
 	
+	Label infoLab;
+	
 	BypassBoard bypassBoard;
 	
 	
@@ -57,7 +60,6 @@ public class BypassWorld extends World implements Model {
 		
 		BYPASSWORLD.preStart();
 		
-		APP.tool = new BypassCarTool();
 	}
 	
 	public static void destroy() {
@@ -69,13 +71,7 @@ public class BypassWorld extends World implements Model {
 	
 	public static void start() {
 		
-	}
-	
-	public static void stop() {
-		
-	}
-	
-	public static void resume() {
+		APP.tool = new BypassCarTool();
 		
 		APP.model = BYPASSWORLD;
 		
@@ -83,6 +79,14 @@ public class BypassWorld extends World implements Model {
 		APP.setAppScreen(worldScreen);
 		
 		APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
+		
+	}
+	
+	public static void stop() {
+		
+	}
+	
+	public static void resume() {
 		
 //		if (APP.DEBUGGER_SCREEN) {
 //			
@@ -542,6 +546,15 @@ public class BypassWorld extends World implements Model {
 			
 		}
 		
+//		infoLab = new Label(levelDB.title + " Level " + curLevel.index);
+//		infoLab.color = Color.LIGHT_GRAY;
+//		infoLab.fontFile = APP.platform.fontResource("visitor1");
+//		infoLab.fontStyle = FontStyle.PLAIN;
+//		infoLab.fontSize = 36;
+//		infoLab.renderLocal();
+//		infoLab.setLocation(5, 5);
+//		infoLab.render();
+		
 		rendered = true;
 	}
 	
@@ -555,6 +568,10 @@ public class BypassWorld extends World implements Model {
 			}
 			
 			super.paint_panel(ctxt);
+			
+			if (infoLab != null) {
+				infoLab.paint(ctxt);
+			}
 			
 			if (curLevel.isWon && winnerMenu != null && winnerMenu.ready) {
 				winnerMenu.paint_panel(ctxt);

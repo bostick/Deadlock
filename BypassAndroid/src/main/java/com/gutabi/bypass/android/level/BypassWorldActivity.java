@@ -211,9 +211,9 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		Log.d("bypassactivity", name + " surfaceChanged");
 		
-		if (state == ActivityState.PAUSE) {
+		if (state != ActivityState.RESUME) {
 			/*
-			 * locking the screen causes surface change after pause
+			 * locking the screen causes surface change after pause, so ignore that
 			 */
 			return;
 		}

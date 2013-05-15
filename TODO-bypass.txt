@@ -1,12 +1,7 @@
 
-save scores on disk or something outside of the app
-
-
 toggle info in world
 episode, level
 required moves, user moves
-
-
 
 
 fix little hang when red car exits to win

@@ -7,22 +7,6 @@ public abstract class BypassMenu extends Menu implements Model {
 	
 	public static BypassMenu BYPASSMENU;
 	
-	public static void create() {
-		
-	}
-	
-	public static void destroy() {
-		
-	}
-	
-	public static void start() {
-		
-	}
-	
-	public static void stop() {
-		
-	}
-	
 	public Menu getMenu() {
 		return this;
 	}

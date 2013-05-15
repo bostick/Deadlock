@@ -10,7 +10,6 @@ import com.gutabi.bypass.android.ActivityState;
 import com.gutabi.bypass.android.BypassActivity;
 import com.gutabi.bypass.android.BypassAndroidPlatform;
 import com.gutabi.bypass.android.BypassView;
-import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.MainMenu;
 
 public class MainMenuActivity extends BypassActivity {
@@ -48,19 +47,25 @@ public class MainMenuActivity extends BypassActivity {
 		
 		APP.DEBUG_DRAW = false;
 		
-		BypassMenu.create();
+		MainMenu.create();
 	}
+	
+	protected void onDestroy() {
+    	super.onDestroy();
+    	
+    	MainMenu.destroy();
+    }
 	
 	protected void onStart() {
     	super.onStart();
     	
-    	BypassMenu.start();
+    	MainMenu.start();
     }
 	
 	protected void onStop() {
 		super.onStop();
 		
-		BypassMenu.stop();
+		MainMenu.stop();
 	}
 	
 	protected void onResume() {
@@ -73,9 +78,9 @@ public class MainMenuActivity extends BypassActivity {
 		
 		Log.d("bypassactivity", name + " surfaceChanged " + width + " " + height);
 		
-		if (state == ActivityState.PAUSE) {
+		if (state != ActivityState.RESUME) {
 			/*
-			 * locking the screen causes surface change after pause
+			 * locking the screen causes surface change after pause, so ignore that
 			 */
 			return;
 		}
