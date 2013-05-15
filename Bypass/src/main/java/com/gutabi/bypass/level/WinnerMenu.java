@@ -31,13 +31,15 @@ public class WinnerMenu extends Menu {
 		APP.tool = new MenuTool();
 		
 		world.lock.lock();
-		
-		world.panelPostDisplay((int)world.worldCamera.panelAABB.width, (int)world.worldCamera.panelAABB.height);
-		
-		world.render_worldPanel();
-		
-		world.lock.unlock();
-		
+		try {
+			
+			world.postDisplay((int)world.worldCamera.panelAABB.width, (int)world.worldCamera.panelAABB.height);
+			
+			world.render();
+			
+		} finally {
+			world.lock.unlock();
+		}
 	}
 	
 	public WinnerMenu(BypassWorld world, String excl, String grade) {

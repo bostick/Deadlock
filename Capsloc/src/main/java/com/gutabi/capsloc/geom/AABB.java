@@ -47,10 +47,10 @@ public class AABB implements Serializable {
 		this.height = height;
 		
 		if (width <= 0) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("width is not positive: " + width);
 		}
 		if (height <= 0) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("height is not positive: " + height);
 		}
 		
 		dim = new Dim(width, height);

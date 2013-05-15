@@ -174,7 +174,7 @@ public class FixtureTool extends WorldToolBase {
 			APP.tool = new RegularTool();
 			APP.tool.setPoint(world.lastMovedWorldPoint);
 			
-			world.render_worldPanel();
+			world.render();
 //			world.render_preview();
 		}
 	}

@@ -345,29 +345,32 @@ public abstract class BypassAndroidPlatform implements BypassPlatform {
 		LevelMenu menu = (LevelMenu)APP.model;
 		
 		menu.lock.lock();
-		
-		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-grades", 0);
-		SharedPreferences.Editor editor = grades.edit();
-		editor.clear();
-		editor.commit();
-		
-		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-userMoves", 0);
-		editor = userMoves.edit();
-		editor.clear();
-		editor.commit();
-		
-		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-userTime", 0);
-		editor = userTime.edit();
-		editor.clear();
-		editor.commit();
-		
-		levelDB.clearLevels();
-		
-		menu.shimmeringMenuItem = menu.tree.get(0).get(0);
-		
-		menu.render();
-		
-		menu.lock.unlock();
+		try {
+			
+			SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-grades", 0);
+			SharedPreferences.Editor editor = grades.edit();
+			editor.clear();
+			editor.commit();
+			
+			SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-userMoves", 0);
+			editor = userMoves.edit();
+			editor.clear();
+			editor.commit();
+			
+			SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences(levelDB.resourceName+"-userTime", 0);
+			editor = userTime.edit();
+			editor.clear();
+			editor.commit();
+			
+			levelDB.clearLevels();
+			
+			menu.shimmeringMenuItem = menu.tree.get(0).get(0);
+			
+			menu.render();
+			
+		} finally {
+			menu.lock.unlock();
+		}
 	}
 	
 	public long monotonicClockMillis() {

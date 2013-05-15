@@ -20,7 +20,7 @@ public class WorldPanel extends Panel {
 		
 		world.worldCamera.panelAABB = aabb;
 		
-		world.panelPostDisplay(width, height);
+		world.postDisplay(width, height);
 	}
 	
 	public void paint(RenderingContext ctxt) {
@@ -32,7 +32,7 @@ public class WorldPanel extends Panel {
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
-		world.paint_panel(ctxt);
+		world.paint(ctxt);
 		
 		APP.tool.paint_panel(ctxt);
 		

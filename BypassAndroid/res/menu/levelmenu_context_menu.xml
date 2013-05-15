@@ -1,11 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     
     <item
-        android:id="@+id/btn_toggle_info"
+        android:id="@+id/btn_levelmenu_toggleInfo"
         android:title="@string/toggle_info" />
     
     <item
-        android:id="@+id/btn_clear_scores"
+        android:id="@+id/btn_levelmenu_clearScores"
         android:title="@string/clear_scores" />
     	
 </menu>

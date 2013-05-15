@@ -3,7 +3,6 @@ package com.gutabi.bypass.level;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.capsloc.AppScreen;
@@ -13,6 +12,9 @@ import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.ContentPane;
 import com.gutabi.capsloc.ui.Label;
 import com.gutabi.capsloc.ui.Menu;
+import com.gutabi.capsloc.ui.MenuTool;
+import com.gutabi.capsloc.ui.paint.Color;
+import com.gutabi.capsloc.ui.paint.FontStyle;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.QuadrantMap;
 import com.gutabi.capsloc.world.World;
@@ -35,7 +37,7 @@ import com.gutabi.capsloc.world.sprites.CarSheet.CarType;
 
 public class BypassWorld extends World implements Model {
 	
-	public Lock lock = new ReentrantLock(true);
+	public ReentrantLock lock = new ReentrantLock(true);
 	boolean rendered;
 	
 	public static BypassWorld BYPASSWORLD;
@@ -48,6 +50,8 @@ public class BypassWorld extends World implements Model {
 	Label infoLab;
 	
 	BypassBoard bypassBoard;
+	
+	public static boolean showInfo = false;
 	
 	
 	
@@ -71,7 +75,11 @@ public class BypassWorld extends World implements Model {
 	
 	public static void start() {
 		
-		APP.tool = new BypassCarTool();
+		if (BYPASSWORLD.curLevel.isWon) {
+			APP.tool = new MenuTool();
+		} else {
+			APP.tool = new BypassCarTool();
+		}
 		
 		APP.model = BYPASSWORLD;
 		
@@ -105,21 +113,24 @@ public class BypassWorld extends World implements Model {
 	public static void surfaceChanged(int width, int height) {
 		
 		BYPASSWORLD.lock.lock();
-		
-		APP.appScreen.postDisplay(width, height);
-		
-		BYPASSWORLD.render_worldPanel();
-		
-//		if (APP.DEBUGGER_SCREEN) {
-//			
-//			APP.debuggerScreen.postDisplay(width, height);
-//			
-//			BYPASSWORLD.render_preview();
-//			
-//			APP.platform.showDebuggerScreen();
-//		}
-		
-		BYPASSWORLD.lock.unlock();
+		try {
+			
+			APP.appScreen.postDisplay(width, height);
+			
+			BYPASSWORLD.render();
+			
+//			if (APP.DEBUGGER_SCREEN) {
+//				
+//				APP.debuggerScreen.postDisplay(width, height);
+//				
+//				BYPASSWORLD.render_preview();
+//				
+//				APP.platform.showDebuggerScreen();
+//			}
+			
+		} finally {
+			BYPASSWORLD.lock.unlock();
+		}
 		
 		/*
 		 * repaint once just in case there is nothing else driving repainting (like shimmering)
@@ -465,6 +476,18 @@ public class BypassWorld extends World implements Model {
 		worldCamera.zoomAbsolute(1.0);
 	}
 	
+	public boolean integrate(double t) {
+		
+		boolean res = false;
+		
+		res = res | super.integrate(t);
+		if (curLevel.isWon) {
+			res = res | winnerMenu.integrate(t); 
+		}
+		
+		return res;
+	}
+	
 	public void winner() {
 		
 		int diff = (curLevel.userMoves - curLevel.requiredMoves);
@@ -520,7 +543,10 @@ public class BypassWorld extends World implements Model {
 		
 	}
 	
-	public void panelPostDisplay(int width, int height) {
+	public void postDisplay(int width, int height) {
+		if (!lock.isHeldByCurrentThread()) {
+			throw new AssertionError();
+		}
 		
 		int min = Math.min(width, height);
 		double ppm = min / 8.0;
@@ -528,7 +554,7 @@ public class BypassWorld extends World implements Model {
 		worldCamera.pixelsPerMeter = ppm;
 		worldCamera.origPixelsPerMeter = ppm;
 		
-		super.panelPostDisplay(width, height);
+		super.postDisplay(width, height);
 		
 		if (curLevel.isWon) {
 			
@@ -536,9 +562,12 @@ public class BypassWorld extends World implements Model {
 		}
 	}
 	
-	public void render_worldPanel() {
+	public void render() {
+		if (!lock.isHeldByCurrentThread()) {
+			throw new AssertionError();
+		}
 		
-		super.render_worldPanel();
+		super.render();
 		
 		if (curLevel.isWon) {
 			
@@ -546,19 +575,21 @@ public class BypassWorld extends World implements Model {
 			
 		}
 		
-//		infoLab = new Label(levelDB.title + " Level " + curLevel.index);
-//		infoLab.color = Color.LIGHT_GRAY;
-//		infoLab.fontFile = APP.platform.fontResource("visitor1");
-//		infoLab.fontStyle = FontStyle.PLAIN;
-//		infoLab.fontSize = 36;
-//		infoLab.renderLocal();
-//		infoLab.setLocation(5, 5);
-//		infoLab.render();
+		if (showInfo) {
+			infoLab = new Label(levelDB.title + " Level " + curLevel.index);
+			infoLab.color = Color.LIGHT_GRAY;
+			infoLab.fontFile = APP.platform.fontResource("visitor1");
+			infoLab.fontStyle = FontStyle.PLAIN;
+			infoLab.fontSize = 36;
+			infoLab.renderLocal();
+			infoLab.setLocation(5, 5);
+			infoLab.render();
+		}
 		
 		rendered = true;
 	}
 	
-	public void paint_panel(RenderingContext ctxt) {
+	public void paint(RenderingContext ctxt) {
 		
 		BYPASSWORLD.lock.lock();
 		try {
@@ -567,14 +598,14 @@ public class BypassWorld extends World implements Model {
 				return;
 			}
 			
-			super.paint_panel(ctxt);
+			super.paint(ctxt);
 			
 			if (infoLab != null) {
 				infoLab.paint(ctxt);
 			}
 			
 			if (curLevel.isWon && winnerMenu != null && winnerMenu.ready) {
-				winnerMenu.paint_panel(ctxt);
+				winnerMenu.paint(ctxt);
 			}
 			
 		} finally {

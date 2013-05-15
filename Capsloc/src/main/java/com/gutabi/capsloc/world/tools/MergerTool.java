@@ -58,7 +58,7 @@ public class MergerTool extends WorldToolBase {
 				
 				APP.tool.setPoint(world.lastMovedWorldPoint);
 				
-				world.render_worldPanel();
+				world.render();
 //				world.render_preview();
 			}
 			

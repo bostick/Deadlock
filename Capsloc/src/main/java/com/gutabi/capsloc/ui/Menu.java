@@ -4,8 +4,6 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.math.DMath;
@@ -14,10 +12,6 @@ import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public abstract class Menu {
-	
-	public boolean rendered;
-	
-	public Lock lock = new ReentrantLock(true);
 	
 	public List<List<MenuItem>> tree = new ArrayList<List<MenuItem>>();
 	public List<AABB> colAABBs = new ArrayList<AABB>();
@@ -33,8 +27,7 @@ public abstract class Menu {
 	
 	public AABB aabb = new AABB();
 	public AABB marginAABB = new AABB();
-	public double panelOffsetX;
-	public double panelOffsetY;
+	public Point panelOffset = new Point(0, 0);
 	
 	int parWidth;
 	int parHeight;
@@ -176,6 +169,17 @@ public abstract class Menu {
 	
 	public abstract void escape();
 	
+	public boolean integrate(double t) {
+		
+		boolean res = false;
+		
+		if (shimmer != null) {
+			res = res | shimmer.step();
+		}
+		
+		return res;
+	}
+	
 	public void postDisplay(int width, int height) {
 		
 		parWidth = width;
@@ -249,8 +253,6 @@ public abstract class Menu {
 			shimmer = new Shimmer(System.currentTimeMillis());
 			shimmer.setShape(shimmeringMenuItem.aabb);
 		}
-		
-		rendered = true;
 	}
 	
 	private void setAABBAndScrolling() {
@@ -271,7 +273,7 @@ public abstract class Menu {
 			
 			hScrollable = false;
 			
-			x = parWidth/2 - aabb.width/2 + panelOffsetX;
+			x = parWidth/2 - aabb.width/2 + panelOffset.x;
 			
 		} else {
 			/*
@@ -289,7 +291,7 @@ public abstract class Menu {
 			
 			vScrollable = false;
 			
-			y = parHeight/2 - aabb.height/2 + panelOffsetY;
+			y = parHeight/2 - aabb.height/2 + panelOffset.y;
 			
 		} else {
 			/*
@@ -304,7 +306,7 @@ public abstract class Menu {
 		
 	}
 	
-	public void paint_panel(RenderingContext ctxt) {
+	public void paint(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.menuBackground);
 		ctxt.paintAABB(marginAABB);

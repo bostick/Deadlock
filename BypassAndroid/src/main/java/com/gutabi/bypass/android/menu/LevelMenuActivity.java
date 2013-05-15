@@ -60,7 +60,10 @@ public class LevelMenuActivity extends BypassActivity {
 			LevelMenu.levelDB = BYPASSAPP.bypassPlatform.levelDB(name);
 			
 			Point loc = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.LevelMenuLoc");
-			LevelMenu.levelDB.loc = loc;
+			BypassMenu.tmpLoc = loc;
+			
+			Point panelOffset = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.LevelMenuPanelOffset");
+			BypassMenu.tmpPanelOffset = panelOffset;
 		}
 		
 		v = (BypassView)findViewById(R.id.view_levelmenu);
@@ -92,7 +95,7 @@ public class LevelMenuActivity extends BypassActivity {
 	protected void onResume() {
     	super.onResume();
     	
-    	LevelMenu.resume();
+    	BypassMenu.resume();
     }
 	
 	protected void onSurfaceChanged(int width, int height) {
@@ -106,20 +109,22 @@ public class LevelMenuActivity extends BypassActivity {
 			return;
 		}
 		
-		LevelMenu.surfaceChanged(width, height);
+		BypassMenu.surfaceChanged(width, height);
 	}
 	
 	protected void onPause() {
 		super.onPause();
 		
-		LevelMenu.pause();
+		BypassMenu.pause();
 	}
 	
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
 		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.resourceName);
-		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuLoc", new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y));
+		Point loc = new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y);
+		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuLoc", loc);
+		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuPanelOffset", BypassMenu.BYPASSMENU.panelOffset);
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -129,16 +134,21 @@ public class LevelMenuActivity extends BypassActivity {
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    if (item.getItemId() == R.id.btn_clear_scores) {
+	    if (item.getItemId() == R.id.btn_levelmenu_clearScores) {
 			BYPASSAPP.bypassPlatform.clearScores(LevelMenu.levelDB);
 			return true;
-		} else if (item.getItemId() == R.id.btn_toggle_info) {
+		} else if (item.getItemId() == R.id.btn_levelmenu_toggleInfo) {
 			LevelMenu.showInfo = !LevelMenu.showInfo;
 			Point loc = new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y);
 			BypassMenu.BYPASSMENU.lock.lock();
-			BypassMenu.BYPASSMENU.render();
-			BypassMenu.BYPASSMENU.setLocation(loc);
-			BypassMenu.BYPASSMENU.lock.unlock();
+			try {
+				
+				BypassMenu.BYPASSMENU.render();
+				BypassMenu.BYPASSMENU.setLocation(loc);
+				
+			} finally {
+				BypassMenu.BYPASSMENU.lock.unlock();
+			}
 			return true;
 		} else {
 			return super.onOptionsItemSelected(item);

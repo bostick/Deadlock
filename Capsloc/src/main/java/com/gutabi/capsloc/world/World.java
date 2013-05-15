@@ -66,22 +66,6 @@ public class World extends PhysicsWorld {
 		
 	}
 	
-	public void panelPostDisplay(int width, int height) {
-		
-		worldCamera.worldViewport.setShape(
-				-(width / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldAABB.width/2 ,
-				-(height / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldAABB.height/2,
-				width / worldCamera.pixelsPerMeter,
-				height / worldCamera.pixelsPerMeter);
-		
-		worldCamera.origWorldViewport = worldCamera.worldViewport.copy();
-		
-		background.panelPostDisplay(width, height);
-		
-		quadrantMap.panelPostDisplay(worldCamera);
-		
-	}
-	
 //	public void previewPostDisplay() {
 //		
 //		previewImage = APP.platform.createImage(
@@ -408,8 +392,23 @@ public class World extends PhysicsWorld {
 		
 	}
 	
-	
-	public void render_worldPanel() {
+	public void postDisplay(int width, int height) {
+		
+		worldCamera.worldViewport.setShape(
+				-(width / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldAABB.width/2 ,
+				-(height / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldAABB.height/2,
+				width / worldCamera.pixelsPerMeter,
+				height / worldCamera.pixelsPerMeter);
+		
+		worldCamera.origWorldViewport = worldCamera.worldViewport.copy();
+		
+		background.panelPostDisplay(width, height);
+		
+		quadrantMap.panelPostDisplay(worldCamera);
+		
+	}
+
+	public void render() {
 		
 		background.render();
 	}
@@ -444,7 +443,7 @@ public class World extends PhysicsWorld {
 //		ctxt.dispose();
 //	}
 	
-	public void paint_panel(RenderingContext ctxt) {
+	public void paint(RenderingContext ctxt) {
 		
 		background.paint_pixels(ctxt);
 		

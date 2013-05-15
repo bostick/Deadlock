@@ -4,6 +4,7 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
+import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.Image;
 import com.gutabi.capsloc.ui.Menu;
 import com.gutabi.capsloc.ui.Panel;
@@ -46,13 +47,12 @@ public class BypassMenuPanel extends Panel {
 		copyAdjustedWidth = Math.min(copyright.getWidth(), aabb.width);
 		copyAdjustedHeight = (copyAdjustedWidth * copyright.getHeight()) / copyright.getWidth();
 		
-		menu.panelOffsetX = 0.0;
-		menu.panelOffsetY = logoAdjustedHeight;
+		menu.panelOffset = new Point(0.0, logoAdjustedHeight);
 		menu.postDisplay(width, (int)((height - copyAdjustedHeight) - logoAdjustedHeight));
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		Menu menu = (Menu)APP.model;
+		BypassMenu menu = (BypassMenu)APP.model;
 		
 		menu.lock.lock();
 		try {
@@ -89,7 +89,7 @@ public class BypassMenuPanel extends Panel {
 			
 			ctxt.popTransform();
 			
-			menu.paint_panel(ctxt);
+			menu.paint(ctxt);
 			
 			ctxt.popTransform();
 			

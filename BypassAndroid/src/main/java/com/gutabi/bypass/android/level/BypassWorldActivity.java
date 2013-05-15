@@ -27,7 +27,6 @@ import com.gutabi.capsloc.geom.Geom;
 import com.gutabi.capsloc.geom.MutableOBB;
 import com.gutabi.capsloc.geom.MutableSweptOBB;
 import com.gutabi.capsloc.math.Point;
-import com.gutabi.capsloc.ui.MenuTool;
 import com.gutabi.capsloc.world.WorldCamera;
 import com.gutabi.capsloc.world.cars.Car;
 import com.gutabi.capsloc.world.cars.CarStateEnum;
@@ -137,21 +136,22 @@ public class BypassWorldActivity extends BypassActivity {
 					
 					
 					c.driver.toolOrigExitingVertexPos = (GraphPositionPathPosition)savedInstanceState.getSerializable("com.gutabi.bypass.level.Car"+id+".OrigExitingVertexPos");
-					c.driver.toolOrigExitingVertexPos.path = c.driver.overallPath;
-					if (c.driver.toolOrigExitingVertexPos.bound) {
-						c.driver.toolOrigExitingVertexPos.gp = c.driver.toolOrigExitingVertexPos.path.get(c.driver.toolOrigExitingVertexPos.index);
-						c.driver.toolOrigExitingVertexPos.p = c.driver.toolOrigExitingVertexPos.gp.p;
-					} else {
-						GraphPosition p1 = c.driver.toolOrigExitingVertexPos.path.get(c.driver.toolOrigExitingVertexPos.index);
-						GraphPosition p2 = c.driver.toolOrigExitingVertexPos.path.get(c.driver.toolOrigExitingVertexPos.index+1);			
-						double dist = Point.distance(p1.p, p2.p);
-						c.driver.toolOrigExitingVertexPos.gp = p1.approachNeighbor(p2, dist * c.driver.toolOrigExitingVertexPos.param);
-						c.driver.toolOrigExitingVertexPos.p = c.driver.toolOrigExitingVertexPos.gp.p;
+					if (c.driver.toolOrigExitingVertexPos != null) {
+						c.driver.toolOrigExitingVertexPos.path = c.driver.overallPath;
+						if (c.driver.toolOrigExitingVertexPos.bound) {
+							c.driver.toolOrigExitingVertexPos.gp = c.driver.toolOrigExitingVertexPos.path.get(c.driver.toolOrigExitingVertexPos.index);
+							c.driver.toolOrigExitingVertexPos.p = c.driver.toolOrigExitingVertexPos.gp.p;
+						} else {
+							GraphPosition p1 = c.driver.toolOrigExitingVertexPos.path.get(c.driver.toolOrigExitingVertexPos.index);
+							GraphPosition p2 = c.driver.toolOrigExitingVertexPos.path.get(c.driver.toolOrigExitingVertexPos.index+1);			
+							double dist = Point.distance(p1.p, p2.p);
+							c.driver.toolOrigExitingVertexPos.gp = p1.approachNeighbor(p2, dist * c.driver.toolOrigExitingVertexPos.param);
+							c.driver.toolOrigExitingVertexPos.p = c.driver.toolOrigExitingVertexPos.gp.p;
+						}
+						c.driver.toolOrigExitingVertexPos.mao = new MutableOBB();
+						c.driver.toolOrigExitingVertexPos.mbo = new MutableOBB();
+						c.driver.toolOrigExitingVertexPos.swept = new MutableSweptOBB();
 					}
-					c.driver.toolOrigExitingVertexPos.mao = new MutableOBB();
-					c.driver.toolOrigExitingVertexPos.mbo = new MutableOBB();
-					c.driver.toolOrigExitingVertexPos.swept = new MutableSweptOBB();
-					
 					
 					c.coastingVel = savedInstanceState.getDouble("com.gutabi.bypass.level.Car"+id+".CoastingVel");
 				}
@@ -178,15 +178,17 @@ public class BypassWorldActivity extends BypassActivity {
 				
 				BypassWorld.BYPASSWORLD.winnerMenu = new WinnerMenu(BypassWorld.BYPASSWORLD, excl, "Grade: " + BypassWorld.BYPASSWORLD.curLevel.grade);
 				
-				BypassWorld.BYPASSWORLD.render_worldPanel();
-				BypassWorld.BYPASSWORLD.panelPostDisplay((int)BypassWorld.BYPASSWORLD.worldCamera.panelAABB.width, (int)BypassWorld.BYPASSWORLD.worldCamera.panelAABB.height);
-				
-				APP.tool = new MenuTool();
-				
+				BypassWorld.BYPASSWORLD.lock.lock();
+				try {
+					
+					BypassWorld.BYPASSWORLD.postDisplay((int)BypassWorld.BYPASSWORLD.worldCamera.panelAABB.width, (int)BypassWorld.BYPASSWORLD.worldCamera.panelAABB.height);
+					BypassWorld.BYPASSWORLD.render();
+					
+				} finally {
+					BypassWorld.BYPASSWORLD.lock.unlock();
+				}
 			}
-			
 		}
-		
 	}
 	
 	protected void onStart() {
@@ -288,8 +290,19 @@ public class BypassWorldActivity extends BypassActivity {
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    if (item.getItemId() == R.id.btn_reset_level) {
+	    if (item.getItemId() == R.id.btn_world_resetLevel) {
 			BypassWorld.BYPASSWORLD.reset();
+			return true;
+		} else if (item.getItemId() == R.id.btn_world_toggleInfo) {
+			BypassWorld.showInfo = !BypassWorld.showInfo;
+			BypassWorld.BYPASSWORLD.lock.lock();
+			try {
+				
+				BypassWorld.BYPASSWORLD.render();
+				
+			} finally {
+				BypassWorld.BYPASSWORLD.lock.unlock();
+			}
 			return true;
 		} else {
 			return super.onOptionsItemSelected(item);

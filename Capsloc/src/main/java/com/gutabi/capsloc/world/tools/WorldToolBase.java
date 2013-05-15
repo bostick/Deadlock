@@ -22,7 +22,7 @@ public abstract class WorldToolBase extends Tool {
 		
 		setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		
-		world.render_worldPanel();
+		world.render();
 		
 //		if (world.previewImage != null) {
 //			world.render_preview();
@@ -36,7 +36,7 @@ public abstract class WorldToolBase extends Tool {
 		
 		world.quadrantMap.computeGridSpacing(world.worldCamera);
 		
-		world.render_worldPanel();
+		world.render();
 //		if (world.previewImage != null) {
 //			world.render_preview();
 //		}
@@ -50,7 +50,7 @@ public abstract class WorldToolBase extends Tool {
 		
 		world.quadrantMap.computeGridSpacing(world.worldCamera);
 		
-		world.render_worldPanel();
+		world.render();
 		
 //		if (world.previewImage != null) {
 //			world.render_preview();

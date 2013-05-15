@@ -10,7 +10,9 @@ import com.gutabi.bypass.android.ActivityState;
 import com.gutabi.bypass.android.BypassActivity;
 import com.gutabi.bypass.android.BypassAndroidPlatform;
 import com.gutabi.bypass.android.BypassView;
+import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.MainMenu;
+import com.gutabi.capsloc.math.Point;
 
 public class MainMenuActivity extends BypassActivity {
 	
@@ -71,7 +73,7 @@ public class MainMenuActivity extends BypassActivity {
 	protected void onResume() {
     	super.onResume();
     	
-    	MainMenu.resume();
+    	BypassMenu.resume();
     }
 	
 	protected void onSurfaceChanged(int width, int height) {
@@ -85,13 +87,20 @@ public class MainMenuActivity extends BypassActivity {
 			return;
 		}
 		
-		MainMenu.surfaceChanged(width, height);
+		BypassMenu.surfaceChanged(width, height);
 	}
 	
 	protected void onPause() {
 		super.onPause();
 		
-		MainMenu.pause();
+		BypassMenu.pause();
+	}
+	
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		outState.putSerializable("com.gutabi.bypass.menu.MainMenuLoc", new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y));
+		outState.putSerializable("com.gutabi.bypass.menu.MainMenuPanelOffset", BypassMenu.BYPASSMENU.panelOffset);
 	}
 	
 }

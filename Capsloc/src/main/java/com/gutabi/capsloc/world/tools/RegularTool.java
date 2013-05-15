@@ -74,7 +74,7 @@ public class RegularTool extends WorldToolBase {
 				
 				r.setDirection(null, Direction.STARTTOEND);
 				
-				world.render_worldPanel();
+				world.render();
 				
 			} else if (hilited instanceof Fixture) {
 				Fixture f = (Fixture)hilited;
@@ -91,7 +91,7 @@ public class RegularTool extends WorldToolBase {
 				f.setFacingSide(f.getFacingSide().other());
 				g.setFacingSide(g.getFacingSide().other());
 				
-				world.render_worldPanel();
+				world.render();
 				
 			}
 			
@@ -108,7 +108,7 @@ public class RegularTool extends WorldToolBase {
 				
 				r.setDirection(null, Direction.ENDTOSTART);
 				
-				world.render_worldPanel();
+				world.render();
 				
 			}
 			
@@ -125,7 +125,7 @@ public class RegularTool extends WorldToolBase {
 				
 				r.setDirection(null, null);
 			
-				world.render_worldPanel();
+				world.render();
 				
 			}
 			
@@ -188,7 +188,7 @@ public class RegularTool extends WorldToolBase {
 				
 				s.setEnabled(true);
 				
-				world.render_worldPanel();
+				world.render();
 			}
 			
 		} else {
@@ -247,7 +247,7 @@ public class RegularTool extends WorldToolBase {
 			
 		}
 		
-		world.render_worldPanel();
+		world.render();
 		
 //		if (world.previewImage != null) {
 //			world.render_preview();
@@ -314,7 +314,7 @@ public class RegularTool extends WorldToolBase {
 		case DRAFTING:
 			draftEnd();
 			
-			world.render_worldPanel();
+			world.render();
 //			if (world.previewImage != null) {
 //				world.render_preview();
 //			}

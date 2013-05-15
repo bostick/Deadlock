@@ -3,13 +3,10 @@ package com.gutabi.bypass.menu;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.capsloc.AppScreen;
-import com.gutabi.capsloc.SimulationRunnable;
-import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.ContentPane;
 import com.gutabi.capsloc.ui.MenuItem;
 import com.gutabi.capsloc.ui.MenuTool;
@@ -33,36 +30,6 @@ public class LevelMenu extends BypassMenu {
 		APP.tool = new MenuTool();
 		
 		BypassMenu.BYPASSMENU = new LevelMenu();
-		
-		APP.model = BypassMenu.BYPASSMENU;
-		
-		AppScreen s = new AppScreen(new ContentPane(new BypassMenuPanel()));
-		APP.appScreen = s;
-		
-		APP.platform.setupAppScreen(s.contentPane.pcp);
-		
-	}
-	
-	public static void stop() {
-		
-	}
-	
-	static AtomicBoolean simThreadTrigger = new AtomicBoolean();
-	static Thread simThread;
-	
-	public static void resume() {
-		
-		simThreadTrigger.set(true);
-		
-		simThread = new Thread(new SimulationRunnable(simThreadTrigger));
-		simThread.start();
-		
-	}
-	
-	public static void surfaceChanged(int width, int height) {
-		
-		BypassMenu.BYPASSMENU.lock.lock();
-		
 		for (int i = 0; i < levelDB.levelCount; i++) {
 			int menuRow = i / 4;
 			int menuCol = i % 4;
@@ -89,34 +56,16 @@ public class LevelMenu extends BypassMenu {
 			BypassMenu.BYPASSMENU.shimmeringMenuItem = null;
 		}
 		
-		APP.appScreen.postDisplay(width, height);
+		APP.model = BypassMenu.BYPASSMENU;
 		
-		BypassMenu.BYPASSMENU.render();
-		if (levelDB.loc != null) {
-			BypassMenu.BYPASSMENU.setLocation(levelDB.loc);
-		}
+		AppScreen s = new AppScreen(new ContentPane(new BypassMenuPanel()));
+		APP.appScreen = s;
 		
-		BypassMenu.BYPASSMENU.lock.unlock();
-		
-		/*
-		 * repaint once just in case there is nothing else driving repainting (like shimmering)
-		 */
-		APP.appScreen.contentPane.repaint();
+		APP.platform.setupAppScreen(s.contentPane.pcp);
 		
 	}
 	
-	public static void pause() {
-		
-		simThreadTrigger.set(false);
-		
-		try {
-			simThread.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		levelDB.loc = new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y);
+	public static void stop() {
 		
 	}
 	

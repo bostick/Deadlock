@@ -12,7 +12,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.gutabi.capsloc.Resource;
-import com.gutabi.capsloc.math.Point;
 
 public class LevelDB {
 	
@@ -20,7 +19,6 @@ public class LevelDB {
 	public String title;
 	
 	public int firstUnwon = 0;
-	public Point loc;
 	
 	public double percentage;
 	
