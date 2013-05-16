@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -160,6 +161,18 @@ public class LevelDB {
 	}
 	
 	public void clearLevels() {
-		levelMap.clear();
+		
+		for (Entry<Integer, Level> e : levelMap.entrySet()) {
+			Level l = e.getValue();
+			l.isWon = false;
+			l.grade = null;
+			l.userMoves = 0;
+			l.userStartTime = 0;
+			l.userTime = 0;
+		}
+		
+		firstUnwon = 0;
+		percentage = 0;
+		
 	}
 }

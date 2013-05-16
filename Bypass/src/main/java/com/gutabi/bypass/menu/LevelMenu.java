@@ -42,6 +42,11 @@ public class LevelMenu extends BypassMenu {
 			}, menuRow, menuCol);
 		}
 		
+		updateFirstUnwon();
+		
+	}
+	
+	public void updateFirstUnwon() {
 		if (levelDB.firstUnwon != -1) {
 			int firstUnwonRow = levelDB.firstUnwon / 4;
 			int firstUnwonCol = levelDB.firstUnwon % 4;
@@ -53,7 +58,6 @@ public class LevelMenu extends BypassMenu {
 		} else {
 			shimmeringMenuItem = null;
 		}
-		
 	}
 	
 	public static void create() {

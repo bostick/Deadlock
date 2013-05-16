@@ -22,21 +22,16 @@ public abstract class LevelMenuItem extends MenuItem {
 	
 	public void render() {
 		
-		if (active) {
-			lab.color = Color.WHITE;
-		} else {
-			lab.color = Color.GRAY;
-		}
-		
-		lab.render();
-		
-		lab.aabb = new AABB(aabb.x + menu.columnWidth[c]/2 - lab.localAABB.width/2, aabb.y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
-		
-		aabb = new AABB(aabb.x, aabb.y, menu.columnWidth[c], 20 + lab.aabb.height + 20);
-		
 		Level l = ((LevelMenu)menu).levelDB.getLevel(index);
 		
 		if (l.grade != null) {
+			
+			lab.color = Color.LIGHT_GRAY;
+			lab.render();
+			
+			lab.aabb = new AABB(aabb.x + menu.columnWidth[c]/2 - lab.localAABB.width/2, aabb.y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
+			
+			aabb = new AABB(aabb.x, aabb.y, menu.columnWidth[c], 20 + lab.aabb.height + 20);
 			
 			auxLab0 = new Label(l.grade);
 			auxLab0.color = Color.LIGHT_GRAY;
@@ -61,6 +56,14 @@ public abstract class LevelMenuItem extends MenuItem {
 			}
 			
 		} else {
+			
+			lab.color = Color.WHITE;
+			lab.render();
+			
+			lab.aabb = new AABB(aabb.x + menu.columnWidth[c]/2 - lab.localAABB.width/2, aabb.y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
+			
+			aabb = new AABB(aabb.x, aabb.y, menu.columnWidth[c], 20 + lab.aabb.height + 20);
+			
 			auxLab0 = null;
 			auxLab2 = null;
 		}
