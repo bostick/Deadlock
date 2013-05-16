@@ -1,4 +1,11 @@
 
+scroll menu to something
+lock screen, unlock screen
+menu loc set back to 0
+
+
+
+
 toggle info in world
 episode, level
 required moves, user moves

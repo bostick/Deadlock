@@ -2,11 +2,14 @@ package com.gutabi.bypass.menu;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.capsloc.AppScreen;
+import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.ContentPane;
 import com.gutabi.capsloc.ui.MenuItem;
 import com.gutabi.capsloc.ui.MenuTool;
@@ -15,7 +18,7 @@ public class LevelMenu extends BypassMenu {
 	
 	public static LevelDB levelDB;
 	
-	public static boolean showInfo = false;
+	public static Map<LevelDB, LevelMenuInfo> map = new HashMap<LevelDB, LevelMenuInfo>();
 	
 	public static void create() {
 		
@@ -66,6 +69,60 @@ public class LevelMenu extends BypassMenu {
 	}
 	
 	public static void stop() {
+		
+	}
+	
+	public static void surfaceChanged(int width, int height) {
+		
+		BypassMenu.BYPASSMENU.lock.lock();
+		try {
+			
+			APP.appScreen.postDisplay(width, height);
+			
+			if (tmpPanelOffset != null) {
+				BypassMenu.BYPASSMENU.panelOffset = tmpPanelOffset;
+				tmpPanelOffset = null;
+			}
+			BypassMenu.BYPASSMENU.render();
+			if (tmpLevelMenuLoc != null) {
+				BypassMenu.BYPASSMENU.setLocation(tmpLevelMenuLoc);
+				tmpLevelMenuLoc = null;
+			}
+			
+		} finally {
+			BypassMenu.BYPASSMENU.lock.unlock();
+		}
+		
+		/*
+		 * repaint once just in case there is nothing else driving repainting (like shimmering)
+		 */
+		APP.appScreen.contentPane.repaint();
+	}
+	
+	public static void pause() {
+		
+		simThreadTrigger.set(false);
+		
+		try {
+			simThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		/*
+		 * we want to save tmpLoc when 
+		 */
+		BypassMenu.BYPASSMENU.lock.lock();
+		try {
+			
+			if (BypassMenu.BYPASSMENU.rendered) {
+				tmpLevelMenuLoc = new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y);
+			}
+			
+		} finally {
+			BypassMenu.BYPASSMENU.lock.unlock();
+		}
 		
 	}
 	

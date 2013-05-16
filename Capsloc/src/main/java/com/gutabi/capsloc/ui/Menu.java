@@ -121,14 +121,8 @@ public abstract class Menu {
 	
 	public void canceled(InputEvent ev) {
 		
-		MenuItem item = hitTest(ev.p);
-		
-		if (item != null && item == hilited && item.active) {
-			hilited = null;
-		} else {
-			hilited = null;
-			APP.appScreen.contentPane.repaint();
-		}
+		hilited = null;
+		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void dragToNewLocation(Point newLoc) {
@@ -257,8 +251,8 @@ public abstract class Menu {
 	
 	private void setAABBAndScrolling() {
 		
-		double x = 0;
-		double y = 0;
+		double x = aabb.x;
+		double y = aabb.y;
 		
 		double s = (widthFraction * parWidth) / menuWidth;
 		
@@ -282,6 +276,8 @@ public abstract class Menu {
 			
 			hScrollable = true;
 			
+			panelOffset = new Point(0, panelOffset.y);
+			
 		}
 		
 		if (DMath.lessThanEquals(aabb.height, parHeight)) {
@@ -299,6 +295,8 @@ public abstract class Menu {
 			 */
 			
 			vScrollable = true;
+			
+			panelOffset = new Point(panelOffset.x, 0);
 			
 		}
 		

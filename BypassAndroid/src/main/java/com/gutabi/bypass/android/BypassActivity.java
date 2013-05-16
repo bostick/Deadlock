@@ -44,7 +44,6 @@ public abstract class BypassActivity extends Activity {
 		
 		Log.d("bypassactivity", name + " stop");
 		state = ActivityState.STOP;
-		
 	}
 	
 	protected void onRestart() {

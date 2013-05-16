@@ -270,7 +270,9 @@ public abstract class BypassAndroidPlatform implements BypassPlatform {
 
 
 
-	
+	public void finishAction() {
+		CURRENTACTIVITY.finish();
+	}
 
 	public void exit() {
 		
@@ -295,10 +297,6 @@ public abstract class BypassAndroidPlatform implements BypassPlatform {
 		}
 		
 		return null;
-	}
-	
-	public void finishAction() {
-		CURRENTACTIVITY.finish();
 	}
 	
 	public void loadScores(LevelDB levelDB) throws Exception {

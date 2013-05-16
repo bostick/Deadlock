@@ -80,11 +80,11 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			
 		} else if (oldClazz == MainMenuLite.class) {
 			
-			BypassMenu.pause();
+			MainMenu.pause();
 			
 		} else if (oldClazz == LevelMenu.class) {
 			
-			BypassMenu.pause();
+			LevelMenu.pause();
 			
 		} else if (oldClazz == BypassWorld.class) {
 			
@@ -100,9 +100,9 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			CURRENTACTIVITYCLASS = MainMenuLite.class;
 			
 			MainMenu.create();
-			MainMenu.start();
+			MainMenuLite.start();
 			BypassMenu.resume();
-			BypassMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			MainMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else if (newClazz == LevelMenu.class) {
 			
@@ -111,7 +111,7 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			LevelMenu.create();
 			LevelMenu.start();
 			BypassMenu.resume();
-			BypassMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			LevelMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else if (newClazz == BypassWorld.class) {
 			
@@ -136,7 +136,7 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 		Class oldClazz = CURRENTACTIVITYCLASS;
 		if (oldClazz == MainMenuLite.class) {
 			
-			BypassMenu.pause();
+			MainMenu.pause();
 			MainMenu.stop();
 			MainMenu.destroy();
 			
@@ -144,14 +144,15 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			
 		} else if (oldClazz == LevelMenu.class) {
 			
-			BypassMenu.pause();
+			LevelMenu.pause();
 			LevelMenu.stop();
 			LevelMenu.destroy();
 			
 			CURRENTACTIVITYCLASS = MainMenuLite.class;
 			
+			MainMenuLite.start();
 			BypassMenu.resume();
-			BypassMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			MainMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else if (oldClazz == BypassWorld.class) {
 			
@@ -161,8 +162,9 @@ public class BypassAWTLitePlatform extends BypassAWTPlatform {
 			
 			CURRENTACTIVITYCLASS = LevelMenu.class;
 			
+			LevelMenu.start();
 			BypassMenu.resume();
-			BypassMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			LevelMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else {
 			throw new AssertionError();

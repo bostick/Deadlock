@@ -584,6 +584,8 @@ public class BypassWorld extends World implements Model {
 			infoLab.renderLocal();
 			infoLab.setLocation(5, 5);
 			infoLab.render();
+		} else {
+			infoLab = null;
 		}
 		
 		rendered = true;

@@ -60,7 +60,7 @@ public class LevelMenuActivity extends BypassActivity {
 			LevelMenu.levelDB = BYPASSAPP.bypassPlatform.levelDB(name);
 			
 			Point loc = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.LevelMenuLoc");
-			BypassMenu.tmpLoc = loc;
+			LevelMenu.tmpLevelMenuLoc = loc;
 			
 			Point panelOffset = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.LevelMenuPanelOffset");
 			BypassMenu.tmpPanelOffset = panelOffset;
@@ -109,13 +109,13 @@ public class LevelMenuActivity extends BypassActivity {
 			return;
 		}
 		
-		BypassMenu.surfaceChanged(width, height);
+		LevelMenu.surfaceChanged(width, height);
 	}
 	
 	protected void onPause() {
 		super.onPause();
 		
-		BypassMenu.pause();
+		LevelMenu.pause();
 	}
 	
 	protected void onSaveInstanceState(Bundle outState) {

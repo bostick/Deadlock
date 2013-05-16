@@ -12,6 +12,7 @@ import com.gutabi.bypass.android.BypassAndroidPlatform;
 import com.gutabi.bypass.android.BypassView;
 import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.MainMenu;
+import com.gutabi.bypass.menu.MainMenuLite;
 import com.gutabi.capsloc.math.Point;
 
 public class MainMenuActivity extends BypassActivity {
@@ -61,7 +62,7 @@ public class MainMenuActivity extends BypassActivity {
 	protected void onStart() {
     	super.onStart();
     	
-    	MainMenu.start();
+    	MainMenuLite.start();
     }
 	
 	protected void onStop() {
@@ -87,13 +88,13 @@ public class MainMenuActivity extends BypassActivity {
 			return;
 		}
 		
-		BypassMenu.surfaceChanged(width, height);
+		MainMenu.surfaceChanged(width, height);
 	}
 	
 	protected void onPause() {
 		super.onPause();
 		
-		BypassMenu.pause();
+		MainMenu.pause();
 	}
 	
 	protected void onSaveInstanceState(Bundle outState) {
