@@ -5,5 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/BypassAWT"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Capsloc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Bypass"/>
+	<classpathentry kind="lib" path="build/bin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

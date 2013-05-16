@@ -7,9 +7,12 @@ import com.gutabi.capsloc.ui.MenuItem;
 
 public class MainMenuLite extends MainMenu {
 	
+	MenuItem episode1MenuItem;
+	MenuItem tutorialMenuItem;
+	
 	public MainMenuLite() {
 		
-		MenuItem episode1MenuItem = new MainMenuItem(MainMenuLite.this, BYPASSAPP.bypassPlatform.levelDB("episode1")) {
+		episode1MenuItem = new MainMenuItem(MainMenuLite.this, BYPASSAPP.bypassPlatform.levelDB("episode1")) {
 			public void action() {
 				
 				LevelMenu.levelDBName = "episode1";
@@ -19,7 +22,7 @@ public class MainMenuLite extends MainMenu {
 		};
 		add(episode1MenuItem, 0, 0);
 		
-		MenuItem tutorialMenuItem = new MainMenuItem(MainMenuLite.this, BYPASSAPP.bypassPlatform.levelDB("tutorial")) {
+		tutorialMenuItem = new MainMenuItem(MainMenuLite.this, BYPASSAPP.bypassPlatform.levelDB("tutorial")) {
 			public void action() {
 				
 				LevelMenu.levelDBName = "tutorial";
@@ -29,6 +32,10 @@ public class MainMenuLite extends MainMenu {
 		};
 		add(tutorialMenuItem, 1, 0);
 		
+		updateFirstUnplayed();
+	}
+	
+	public void updateFirstUnplayed() {
 		if (BYPASSAPP.bypassPlatform.levelDB("tutorial").percentage == 0.0) {
 			shimmeringMenuItem = tutorialMenuItem;
 		} else if (BYPASSAPP.bypassPlatform.levelDB("episode1").percentage == 0.0) {
@@ -36,7 +43,6 @@ public class MainMenuLite extends MainMenu {
 		} else {
 			shimmeringMenuItem = null;
 		}
-		
 	}
-
+	
 }

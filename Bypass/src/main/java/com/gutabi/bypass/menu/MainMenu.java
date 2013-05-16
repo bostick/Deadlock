@@ -13,6 +13,8 @@ public abstract class MainMenu extends BypassMenu {
 	
 	public static Point tmpMainMenuLoc;
 	
+	public abstract void updateFirstUnplayed();
+	
 	public static void create() {
 		
 	}

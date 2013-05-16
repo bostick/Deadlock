@@ -15,7 +15,6 @@ import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.bypass.menu.MainMenu;
-import com.gutabi.bypass.menu.MainMenuFull;
 import com.gutabi.bypass.menu.MainMenuLite;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.world.sprites.CarSheet;
@@ -62,7 +61,7 @@ public class BypassAndroidLitePlatform extends BypassAndroidPlatform {
 			tutorialLevelDB.title = " Tutorial ";
 			episode1LevelDB.title = " Episode 1 ";
 			
-			MainMenu.MAINMENU = new MainMenuFull();
+			MainMenu.MAINMENU = new MainMenuLite();
 			
 			LevelMenu.map.put("tutorial", new LevelMenu("tutorial"));
 			LevelMenu.map.put("episode1", new LevelMenu("episode1"));

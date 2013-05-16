@@ -3,8 +3,6 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Bypass"/>
-	<classpathentry kind="lib" path="/BypassResources/static"/>
-	<classpathentry kind="lib" path="/BypassResources/gen"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Capsloc"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -299,4 +299,12 @@ public class RenderingContextImpl extends RenderingContext {
 		return new Color(r, g, b, a);
 	}
 	
+	public void setAntialiasing() {
+		paint.setFlags(Paint.ANTI_ALIAS_FLAG);
+	}
+	
+	public void clearAntialiasing() {
+		int fs = paint.getFlags();
+		paint.setFlags(fs & ~Paint.ANTI_ALIAS_FLAG);
+	}
 }

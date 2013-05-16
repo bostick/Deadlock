@@ -48,8 +48,8 @@
 		<copy tofile="${buildDir}/bin/carsheet.png" file="${bypassResDir}/static/carsheet.png"/>
 		<copy tofile="${buildDir}/bin/spritesheet.png" file="${bypassResDir}/static/spritesheet.png"/>
 		<copy tofile="${buildDir}/bin/visitor1.ttf" file="${bypassResDir}/static/visitor1.ttf"/>
-		<copy tofile="${buildDir}/bin/logo.png" file="${bypassResDir}/static/logo.png"/>
-		<copy tofile="${buildDir}/bin/icon256x256.ico" file="${bypassResDir}/static/icon256x256.ico"/>
+		<copy tofile="${buildDir}/bin/logo.png" file="${bypassResDir}/static/logo-lite.png"/>
+		<copy tofile="${buildDir}/bin/icon256x256.ico" file="${bypassResDir}/static/icon256x256-lite.ico"/>
 		
 		<copy tofile="${buildDir}/bin/tutorial.zip" file="${bypassResDir}/gen/tutorial.zip"/>
 		<copy tofile="${buildDir}/bin/episode1.zip" file="${bypassResDir}/gen/episode1.zip"/>

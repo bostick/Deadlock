@@ -21,7 +21,7 @@ public class Main {
 	
 	static void createAndShowGUI() throws Exception {
 		
-		JFrame mainFrame = new JFrame("Bypass");
+		JFrame mainFrame = new JFrame("Bypass Lite");
 		mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		mainFrame.addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent e) {
@@ -31,15 +31,15 @@ public class Main {
 		
 		mainFrame.setLocation((int)WindowInfo.windowDim().width/2 - BypassAWTPlatform.MAINWINDOW_WIDTH/2, (int)WindowInfo.windowDim().height/2 - BypassAWTPlatform.MAINWINDOW_HEIGHT/2);
 		
-		JFrame debuggerFrame = new JFrame("Debug Control Panel");
-		debuggerFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		
-		debuggerFrame.setLocation((int)WindowInfo.windowDim().width/2 + BypassAWTPlatform.MAINWINDOW_WIDTH/2 + 100, 0);
+//		JFrame debuggerFrame = new JFrame("Debug Control Panel");
+//		debuggerFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+//		
+//		debuggerFrame.setLocation((int)WindowInfo.windowDim().width/2 + BypassAWTPlatform.MAINWINDOW_WIDTH/2 + 100, 0);
 		
 		if (BYPASSAPP == null) {
 			BypassAWTLitePlatform platform = new BypassAWTLitePlatform();
 			platform.appContainer = mainFrame;
-			platform.debuggerContainer = debuggerFrame;
+//			platform.debuggerContainer = debuggerFrame;
 			try {
 				platform.createApplication();
 			} catch (Exception e) {

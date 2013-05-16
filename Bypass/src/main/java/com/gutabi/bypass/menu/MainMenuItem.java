@@ -45,6 +45,8 @@ public abstract class MainMenuItem extends MenuItem {
 			auxLab1.renderLocal();
 			
 			auxLab1.aabb = new AABB(aabb.brX-auxLab1.localAABB.width, aabb.brY-auxLab1.localAABB.height, auxLab1.localAABB.width, auxLab1.localAABB.height);
+		} else {
+			auxLab1 = null;
 		}
 		
 		if (auxLab0 != null) {

@@ -7,9 +7,13 @@ import com.gutabi.capsloc.ui.MenuItem;
 
 public class MainMenuFull extends MainMenu {
 	
+	MenuItem episode1MenuItem;
+	MenuItem episode2MenuItem;
+	MenuItem tutorialMenuItem;
+	
 	public MainMenuFull() {
 		
-		MenuItem episode1MenuItem = new MainMenuItem(MainMenuFull.this, BYPASSAPP.bypassPlatform.levelDB("episode1")) {
+		episode1MenuItem = new MainMenuItem(MainMenuFull.this, BYPASSAPP.bypassPlatform.levelDB("episode1")) {
 			public void action() {
 				
 				LevelMenu.levelDBName = "episode1";
@@ -19,7 +23,7 @@ public class MainMenuFull extends MainMenu {
 		};
 		add(episode1MenuItem, 0, 0);
 		
-		MenuItem episode2MenuItem = new MainMenuItem(MainMenuFull.this, BYPASSAPP.bypassPlatform.levelDB("episode2")) {
+		episode2MenuItem = new MainMenuItem(MainMenuFull.this, BYPASSAPP.bypassPlatform.levelDB("episode2")) {
 			public void action() {
 				
 				LevelMenu.levelDBName = "episode2";
@@ -29,7 +33,7 @@ public class MainMenuFull extends MainMenu {
 		};
 		add(episode2MenuItem, 1, 0);
 		
-		MenuItem tutorialMenuItem = new MainMenuItem(MainMenuFull.this, BYPASSAPP.bypassPlatform.levelDB("tutorial")) {
+		tutorialMenuItem = new MainMenuItem(MainMenuFull.this, BYPASSAPP.bypassPlatform.levelDB("tutorial")) {
 			public void action() {
 				
 				LevelMenu.levelDBName = "tutorial";
@@ -39,6 +43,10 @@ public class MainMenuFull extends MainMenu {
 		};
 		add(tutorialMenuItem, 2, 0);
 		
+		updateFirstUnplayed();
+	}
+	
+	public void updateFirstUnplayed() {
 		if (BYPASSAPP.bypassPlatform.levelDB("tutorial").percentage == 0.0) {
 			shimmeringMenuItem = tutorialMenuItem;
 		} else if (BYPASSAPP.bypassPlatform.levelDB("episode1").percentage == 0.0) {
@@ -48,7 +56,6 @@ public class MainMenuFull extends MainMenu {
 		} else {
 			shimmeringMenuItem = null;
 		}
-		
 	}
-
+	
 }

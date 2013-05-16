@@ -10,10 +10,10 @@
 	
 	<target name="build">
 		
-	    <copy tofile="${resDir}/drawable-hdpi/ic_launcher.png" file="${bypassResDir}/static/ic_launcher.png"/>
+	    <copy tofile="${resDir}/drawable-hdpi/ic_launcher.png" file="${bypassResDir}/static/ic_launcher-lite.png"/>
 	    
 		<copy tofile="${resDir}/drawable-nodpi/copyright.png" file="${bypassResDir}/static/copyright.png"/>
-		<copy tofile="${resDir}/drawable-nodpi/logo.png" file="${bypassResDir}/static/logo.png"/>
+		<copy tofile="${resDir}/drawable-nodpi/logo.png" file="${bypassResDir}/static/logo-lite.png"/>
 		<copy tofile="${resDir}/drawable-nodpi/carsheet.png" file="${bypassResDir}/static/carsheet.png"/>
 		<copy tofile="${resDir}/drawable-nodpi/spritesheet.png" file="${bypassResDir}/static/spritesheet.png"/>
 		

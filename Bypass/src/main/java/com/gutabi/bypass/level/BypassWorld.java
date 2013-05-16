@@ -6,6 +6,7 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.bypass.menu.LevelMenu;
+import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.capsloc.AppScreen;
 import com.gutabi.capsloc.Model;
 import com.gutabi.capsloc.SimulationRunnable;
@@ -539,8 +540,8 @@ public class BypassWorld extends World implements Model {
 			}
 		}
 		LevelMenu.map.get(LevelMenu.levelDBName).updateFirstUnwon();
-		
 		levelDB.computePercentageComplete();
+		MainMenu.MAINMENU.updateFirstUnplayed();
 		
 		WinnerMenu.action();
 		

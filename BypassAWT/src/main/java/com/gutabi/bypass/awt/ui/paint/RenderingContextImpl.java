@@ -280,4 +280,12 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.dispose();
 	}
 	
+	public void setAntialiasing() {
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	}
+	
+	public void clearAntialiasing() {
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+	}
+	
 }

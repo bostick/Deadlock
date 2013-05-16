@@ -25,6 +25,7 @@ import com.gutabi.bypass.android.ui.paint.RenderingContextImpl;
 import com.gutabi.bypass.level.Level;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.LevelMenu;
+import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.GeometryPath;
@@ -362,7 +363,8 @@ public abstract class BypassAndroidPlatform implements BypassPlatform {
 			
 			levelDB.clearLevels();
 			
-			menu.shimmeringMenuItem = menu.tree.get(0).get(0);
+			menu.updateFirstUnwon();
+			MainMenu.MAINMENU.updateFirstUnplayed();
 			
 			menu.render();
 			

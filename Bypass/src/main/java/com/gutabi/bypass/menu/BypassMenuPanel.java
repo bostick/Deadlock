@@ -74,9 +74,12 @@ public class BypassMenuPanel extends Panel {
 			ctxt.pushTransform();
 			
 			ctxt.translate(aabb.width/2 - logoAdjustedWidth/2, 0);
+			
+			ctxt.setAntialiasing();
 			ctxt.paintImage(logo, 1.0,
 					0, 0, logoAdjustedWidth, logoAdjustedHeight,
 					0, 0, logo.getWidth(), logo.getHeight());
+			ctxt.clearAntialiasing();
 			
 			ctxt.popTransform();
 			

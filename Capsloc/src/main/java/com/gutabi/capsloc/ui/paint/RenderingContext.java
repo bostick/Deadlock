@@ -84,4 +84,8 @@ public abstract class RenderingContext {
 	
 	public abstract void paintCircle(Circle c);
 	
+	public abstract void setAntialiasing();
+	
+	public abstract void clearAntialiasing();
+	
 }
