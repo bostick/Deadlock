@@ -14,6 +14,7 @@ import com.gutabi.bypass.android.menu.LevelMenuActivity;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.LevelMenu;
+import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.menu.MainMenuFull;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.world.sprites.CarSheet;
@@ -67,6 +68,12 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 			episode1LevelDB.title = " Episode 1 ";
 			episode2LevelDB.title = " Episode 2 ";
 			
+			MainMenu.MAINMENU = new MainMenuFull();
+			
+			LevelMenu.map.put("tutorial", new LevelMenu("tutorial"));
+			LevelMenu.map.put("episode1", new LevelMenu("episode1"));
+			LevelMenu.map.put("episode2", new LevelMenu("episode2"));
+			
 			APP.platform.showAppScreen();
 			
 		} catch (Exception e) {
@@ -85,7 +92,7 @@ public class BypassAndroidFullPlatform extends BypassAndroidPlatform {
 		} else if (name.equals("episode2")) {
 			return episode2LevelDB;
 		} else {
-			throw new AssertionError();
+			throw new AssertionError("name: " + name);
 		}
 		
 	}

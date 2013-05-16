@@ -58,6 +58,12 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 			episode1LevelDB.title = " Episode 1 ";
 			episode2LevelDB.title = " Episode 2 ";
 			
+			MainMenu.MAINMENU = new MainMenuFull();
+			
+			LevelMenu.map.put("tutorial", new LevelMenu("tutorial"));
+			LevelMenu.map.put("episode1", new LevelMenu("episode1"));
+			LevelMenu.map.put("episode2", new LevelMenu("episode2"));
+			
 			APP.platform.showAppScreen();
 			
 		} catch (Exception e) {
@@ -76,7 +82,7 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 		} else if (name.equals("episode2")) {
 			return episode2LevelDB;
 		} else {
-			throw new AssertionError();
+			throw new AssertionError("name: " + name);
 		}
 		
 	}
@@ -89,11 +95,11 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 			
 		} else if (oldClazz == MainMenuFull.class) {
 			
-			MainMenu.pause();
+			BypassMenu.pause();
 			
 		} else if (oldClazz == LevelMenu.class) {
 			
-			LevelMenu.pause();
+			BypassMenu.pause();
 			
 		} else if (oldClazz == BypassWorld.class) {
 			
@@ -109,9 +115,9 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 			CURRENTACTIVITYCLASS = MainMenuFull.class;
 			
 			MainMenu.create();
-			MainMenuFull.start();
+			MainMenu.start();
 			BypassMenu.resume();
-			MainMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			BypassMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else if (newClazz == LevelMenu.class) {
 			
@@ -120,7 +126,7 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 			LevelMenu.create();
 			LevelMenu.start();
 			BypassMenu.resume();
-			LevelMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			BypassMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else if (newClazz == BypassWorld.class) {
 			
@@ -128,7 +134,9 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 			
 			int ii = (Integer)args[0];
 			
-			BypassWorld.create(LevelMenu.levelDB, ii);
+			LevelDB levelDB = levelDB(LevelMenu.levelDBName);
+			
+			BypassWorld.create(levelDB, ii);
 			BypassWorld.start();
 			BypassWorld.resume();
 			BypassWorld.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
@@ -145,7 +153,7 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 		Class oldClazz = CURRENTACTIVITYCLASS;
 		if (oldClazz == MainMenuFull.class) {
 			
-			MainMenu.pause();
+			BypassMenu.pause();
 			MainMenu.stop();
 			MainMenu.destroy();
 			
@@ -153,15 +161,15 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 			
 		} else if (oldClazz == LevelMenu.class) {
 			
-			LevelMenu.pause();
+			BypassMenu.pause();
 			LevelMenu.stop();
 			LevelMenu.destroy();
 			
 			CURRENTACTIVITYCLASS = MainMenuFull.class;
 			
-			MainMenuFull.start();
+			MainMenu.start();
 			BypassMenu.resume();
-			MainMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			BypassMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else if (oldClazz == BypassWorld.class) {
 			
@@ -173,7 +181,7 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 			
 			LevelMenu.start();
 			BypassMenu.resume();
-			LevelMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
+			BypassMenu.surfaceChanged(BypassAWTPlatform.MAINWINDOW_WIDTH, BypassAWTPlatform.MAINWINDOW_HEIGHT);
 			
 		} else {
 			throw new AssertionError();

@@ -1,19 +1,18 @@
 package com.gutabi.bypass.menu;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.capsloc.Model;
 import com.gutabi.capsloc.SimulationRunnable;
-import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.Menu;
 
 public abstract class BypassMenu extends Menu implements Model {
 	
 	public ReentrantLock lock = new ReentrantLock(true);
 	public boolean rendered;
-	
-	public static Point tmpPanelOffset;
 	
 	public static BypassMenu BYPASSMENU;
 	
@@ -35,6 +34,38 @@ public abstract class BypassMenu extends Menu implements Model {
 		
 		simThread = new Thread(new SimulationRunnable(simThreadTrigger));
 		simThread.start();
+		
+	}
+	
+	public static void surfaceChanged(int width, int height) {
+		
+		BypassMenu.BYPASSMENU.lock.lock();
+		try {
+			
+			APP.appScreen.postDisplay(width, height);
+			
+			BypassMenu.BYPASSMENU.render();
+			
+		} finally {
+			BypassMenu.BYPASSMENU.lock.unlock();
+		}
+		
+		/*
+		 * repaint once just in case there is nothing else driving repainting (like shimmering)
+		 */
+		APP.appScreen.contentPane.repaint();
+	}
+	
+	public static void pause() {
+		
+		simThreadTrigger.set(false);
+		
+		try {
+			simThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	

@@ -18,6 +18,7 @@ import com.gutabi.bypass.android.BypassActivity;
 import com.gutabi.bypass.android.BypassAndroidPlatform;
 import com.gutabi.bypass.android.BypassView;
 import com.gutabi.bypass.android.R;
+import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.capsloc.math.Point;
@@ -56,14 +57,16 @@ public class LevelMenuActivity extends BypassActivity {
 		}
 		
 		if (savedInstanceState != null) {
-			String name = savedInstanceState.getString("com.gutabi.bypass.menu.LevelDB");
-			LevelMenu.levelDB = BYPASSAPP.bypassPlatform.levelDB(name);
+			String name = savedInstanceState.getString("com.gutabi.bypass.menu.LevelDBName");
+			LevelMenu.levelDBName = name;
 			
-			Point loc = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.LevelMenuLoc");
-			LevelMenu.tmpLevelMenuLoc = loc;
+			LevelMenu menu = LevelMenu.map.get(name);
 			
 			Point panelOffset = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.LevelMenuPanelOffset");
-			BypassMenu.tmpPanelOffset = panelOffset;
+			menu.panelOffset = panelOffset;
+			
+			Point loc = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.LevelMenuLoc");
+			menu.setLocation(loc);
 		}
 		
 		v = (BypassView)findViewById(R.id.view_levelmenu);
@@ -109,19 +112,19 @@ public class LevelMenuActivity extends BypassActivity {
 			return;
 		}
 		
-		LevelMenu.surfaceChanged(width, height);
+		BypassMenu.surfaceChanged(width, height);
 	}
 	
 	protected void onPause() {
 		super.onPause();
 		
-		LevelMenu.pause();
+		BypassMenu.pause();
 	}
 	
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.resourceName);
+		outState.putString("com.gutabi.bypass.menu.LevelDBName", LevelMenu.levelDBName);
 		Point loc = new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y);
 		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuLoc", loc);
 		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuPanelOffset", BypassMenu.BYPASSMENU.panelOffset);
@@ -135,10 +138,13 @@ public class LevelMenuActivity extends BypassActivity {
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    if (item.getItemId() == R.id.btn_levelmenu_clearScores) {
-			BYPASSAPP.bypassPlatform.clearScores(LevelMenu.levelDB);
+	    	
+	    	LevelDB levelDB = BYPASSAPP.bypassPlatform.levelDB(LevelMenu.levelDBName);
+	    	
+			BYPASSAPP.bypassPlatform.clearScores(levelDB);
 			return true;
 		} else if (item.getItemId() == R.id.btn_levelmenu_toggleInfo) {
-			LevelMenu.showInfo = !LevelMenu.showInfo;
+			((LevelMenu)BypassMenu.BYPASSMENU).showInfo = !((LevelMenu)BypassMenu.BYPASSMENU).showInfo;
 			Point loc = new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y);
 			BypassMenu.BYPASSMENU.lock.lock();
 			try {

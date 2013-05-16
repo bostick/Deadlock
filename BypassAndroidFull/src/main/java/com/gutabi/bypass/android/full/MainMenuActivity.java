@@ -12,7 +12,6 @@ import com.gutabi.bypass.android.BypassAndroidPlatform;
 import com.gutabi.bypass.android.BypassView;
 import com.gutabi.bypass.menu.BypassMenu;
 import com.gutabi.bypass.menu.MainMenu;
-import com.gutabi.bypass.menu.MainMenuFull;
 import com.gutabi.capsloc.math.Point;
 
 public class MainMenuActivity extends BypassActivity {
@@ -45,11 +44,12 @@ public class MainMenuActivity extends BypassActivity {
 		
 		if (savedInstanceState != null) {
 			
-			Point loc = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.MainMenuLoc");
-			MainMenu.tmpMainMenuLoc = loc;
-			
 			Point panelOffset = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.MainMenuPanelOffset");
-			BypassMenu.tmpPanelOffset = panelOffset;
+			MainMenu.MAINMENU.panelOffset = panelOffset;
+			
+			Point loc = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.MainMenuLoc");
+			MainMenu.MAINMENU.setLocation(loc);
+			
 		}
 		
 		v = (BypassView)findViewById(R.id.view_mainmenu);
@@ -71,7 +71,7 @@ public class MainMenuActivity extends BypassActivity {
 	protected void onStart() {
     	super.onStart();
     	
-    	MainMenuFull.start();
+    	MainMenu.start();
     }
 	
 	protected void onStop() {
@@ -97,13 +97,13 @@ public class MainMenuActivity extends BypassActivity {
 			return;
 		}
 		
-		MainMenu.surfaceChanged(width, height);
+		BypassMenu.surfaceChanged(width, height);
 	}
 	
 	protected void onPause() {
 		super.onPause();
 		
-		MainMenu.pause();
+		BypassMenu.pause();
 	}
 	
 	protected void onSaveInstanceState(Bundle outState) {

@@ -34,7 +34,7 @@ public abstract class LevelMenuItem extends MenuItem {
 		
 		aabb = new AABB(aabb.x, aabb.y, menu.columnWidth[c], 20 + lab.aabb.height + 20);
 		
-		Level l = LevelMenu.levelDB.getLevel(index);
+		Level l = ((LevelMenu)menu).levelDB.getLevel(index);
 		
 		if (l.grade != null) {
 			
@@ -47,7 +47,7 @@ public abstract class LevelMenuItem extends MenuItem {
 			
 			auxLab0.aabb = new AABB(aabb.brX-auxLab0.localAABB.width, aabb.brY-auxLab0.localAABB.height, auxLab0.localAABB.width, auxLab0.localAABB.height);
 			
-			if (LevelMenu.showInfo) {
+			if (((LevelMenu)menu).showInfo) {
 				auxLab2 = new Label(Integer.toString(l.userMoves));
 				auxLab2.color = Color.LIGHT_GRAY;
 				auxLab2.fontFile = APP.platform.fontResource("visitor1");
@@ -65,7 +65,7 @@ public abstract class LevelMenuItem extends MenuItem {
 			auxLab2 = null;
 		}
 		
-		if (LevelMenu.showInfo) {
+		if (((LevelMenu)menu).showInfo) {
 			
 			auxLab1 = new Label(Integer.toString(l.requiredMoves));
 			auxLab1.color = Color.LIGHT_GRAY;

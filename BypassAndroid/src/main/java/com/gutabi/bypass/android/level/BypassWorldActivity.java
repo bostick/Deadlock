@@ -20,6 +20,7 @@ import com.gutabi.bypass.android.BypassView;
 import com.gutabi.bypass.android.R;
 import com.gutabi.bypass.level.BypassCar;
 import com.gutabi.bypass.level.BypassWorld;
+import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.level.WinnerMenu;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.capsloc.SimulationRunnable;
@@ -74,11 +75,13 @@ public class BypassWorldActivity extends BypassActivity {
 		int ii = (Integer)getIntent().getExtras().get("com.gutabi.bypass.level.Index");
 		
 		if (savedInstanceState != null) {
-			String name = savedInstanceState.getString("com.gutabi.bypass.menu.LevelDB");
-			LevelMenu.levelDB = BYPASSAPP.bypassPlatform.levelDB(name);
+			String name = savedInstanceState.getString("com.gutabi.bypass.menu.LevelDBName");
+			LevelMenu.levelDBName = name;
 		}
 		
-		BypassWorld.create(LevelMenu.levelDB, ii);
+		LevelDB levelDB = BYPASSAPP.bypassPlatform.levelDB(LevelMenu.levelDBName);
+		
+		BypassWorld.create(levelDB, ii);
 		
 		if (savedInstanceState != null) {
 			
@@ -246,7 +249,7 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		outState.putBoolean("com.gutabi.bypass.DebugDraw", APP.DEBUG_DRAW);
 		
-		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.resourceName);
+		outState.putString("com.gutabi.bypass.menu.LevelDBName", LevelMenu.levelDBName);
 		
 		outState.putInt("com.gutabi.bypass.level.UserMoves", BypassWorld.BYPASSWORLD.curLevel.userMoves);
 		outState.putLong("com.gutabi.bypass.level.UserStartTime", BypassWorld.BYPASSWORLD.curLevel.userStartTime);
