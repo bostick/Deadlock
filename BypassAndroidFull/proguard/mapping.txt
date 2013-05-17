@@ -1,879 +1,11 @@
-android.support.v4.app.ActivityCompatHoneycomb -> android.support.v4.app.a:
-    void invalidateOptionsMenu(android.app.Activity) -> a
-android.support.v4.app.BackStackRecord -> android.support.v4.app.b:
-    android.support.v4.app.FragmentManagerImpl mManager -> a
-    android.support.v4.app.BackStackRecord$Op mHead -> b
-    android.support.v4.app.BackStackRecord$Op mTail -> c
-    int mNumOp -> d
-    int mEnterAnim -> e
-    int mExitAnim -> f
-    int mPopEnterAnim -> g
-    int mPopExitAnim -> h
-    int mTransition -> i
-    int mTransitionStyle -> j
-    boolean mAddToBackStack -> k
-    boolean mAllowAddToBackStack -> l
-    java.lang.String mName -> m
-    boolean mCommitted -> n
-    int mIndex -> o
-    int mBreadCrumbTitleRes -> p
-    java.lang.CharSequence mBreadCrumbTitleText -> q
-    int mBreadCrumbShortTitleRes -> r
-    java.lang.CharSequence mBreadCrumbShortTitleText -> s
-    java.lang.String toString() -> toString
-    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
-    void dump(java.lang.String,java.io.PrintWriter,boolean) -> a
-    void addOp(android.support.v4.app.BackStackRecord$Op) -> a
-    android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment,java.lang.String) -> a
-    void doAddOp(int,android.support.v4.app.Fragment,java.lang.String,int) -> a
-    android.support.v4.app.FragmentTransaction detach(android.support.v4.app.Fragment) -> a
-    android.support.v4.app.FragmentTransaction attach(android.support.v4.app.Fragment) -> b
-    void bumpBackStackNesting(int) -> a
-    int commit() -> a
-    int commitInternal(boolean) -> a
-    void run() -> run
-    void popFromBackStack(boolean) -> b
-    java.lang.String getName() -> b
-android.support.v4.app.BackStackRecord$Op -> android.support.v4.app.c:
-    android.support.v4.app.BackStackRecord$Op next -> a
-    android.support.v4.app.BackStackRecord$Op prev -> b
-    int cmd -> c
-    android.support.v4.app.Fragment fragment -> d
-    int enterAnim -> e
-    int exitAnim -> f
-    int popEnterAnim -> g
-    int popExitAnim -> h
-    java.util.ArrayList removed -> i
-android.support.v4.app.BackStackState -> android.support.v4.app.BackStackState:
-    int[] mOps -> a
-    int mTransition -> b
-    int mTransitionStyle -> c
-    java.lang.String mName -> d
-    int mIndex -> e
-    int mBreadCrumbTitleRes -> f
-    java.lang.CharSequence mBreadCrumbTitleText -> g
-    int mBreadCrumbShortTitleRes -> h
-    java.lang.CharSequence mBreadCrumbShortTitleText -> i
-    android.os.Parcelable$Creator CREATOR -> CREATOR
-    android.support.v4.app.BackStackRecord instantiate(android.support.v4.app.FragmentManagerImpl) -> a
-    int describeContents() -> describeContents
-    void writeToParcel(android.os.Parcel,int) -> writeToParcel
-android.support.v4.app.BackStackState$1 -> android.support.v4.app.d:
-    android.support.v4.app.BackStackState createFromParcel(android.os.Parcel) -> a
-    android.support.v4.app.BackStackState[] newArray(int) -> a
-    java.lang.Object[] newArray(int) -> newArray
-    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-android.support.v4.app.Fragment -> android.support.v4.app.Fragment:
-    java.util.HashMap sClassMap -> P
-    int mState -> a
-    android.view.View mAnimatingAway -> b
-    int mStateAfterAnimating -> c
-    android.os.Bundle mSavedFragmentState -> d
-    android.util.SparseArray mSavedViewState -> e
-    int mIndex -> f
-    java.lang.String mWho -> g
-    android.os.Bundle mArguments -> h
-    android.support.v4.app.Fragment mTarget -> i
-    int mTargetIndex -> j
-    int mTargetRequestCode -> k
-    boolean mAdded -> l
-    boolean mRemoving -> m
-    boolean mResumed -> n
-    boolean mFromLayout -> o
-    boolean mInLayout -> p
-    boolean mRestored -> q
-    int mBackStackNesting -> r
-    android.support.v4.app.FragmentManagerImpl mFragmentManager -> s
-    android.support.v4.app.FragmentActivity mActivity -> t
-    android.support.v4.app.FragmentManagerImpl mChildFragmentManager -> u
-    android.support.v4.app.Fragment mParentFragment -> v
-    int mFragmentId -> w
-    int mContainerId -> x
-    java.lang.String mTag -> y
-    boolean mHidden -> z
-    boolean mDetached -> A
-    boolean mRetainInstance -> B
-    boolean mRetaining -> C
-    boolean mHasMenu -> D
-    boolean mMenuVisible -> E
-    boolean mCalled -> F
-    int mNextAnim -> G
-    android.view.ViewGroup mContainer -> H
-    android.view.View mView -> I
-    android.view.View mInnerView -> J
-    boolean mDeferStart -> K
-    boolean mUserVisibleHint -> L
-    android.support.v4.app.LoaderManagerImpl mLoaderManager -> M
-    boolean mLoadersStarted -> N
-    boolean mCheckedForLoaderManager -> O
-    android.support.v4.app.Fragment instantiate(android.content.Context,java.lang.String) -> a
-    android.support.v4.app.Fragment instantiate(android.content.Context,java.lang.String,android.os.Bundle) -> a
-    void restoreViewState(android.os.Bundle) -> a
-    void setIndex(int,android.support.v4.app.Fragment) -> a
-    boolean isInBackStack() -> a
-    boolean equals(java.lang.Object) -> equals
-    int hashCode() -> hashCode
-    java.lang.String toString() -> toString
-    android.support.v4.app.FragmentActivity getActivity() -> b
-    android.content.res.Resources getResources() -> c
-    boolean isDetached() -> d
-    void onHiddenChanged(boolean) -> a
-    void onActivityResult(int,int,android.content.Intent) -> a
-    android.view.LayoutInflater getLayoutInflater(android.os.Bundle) -> b
-    void onInflate(android.app.Activity,android.util.AttributeSet,android.os.Bundle) -> a
-    void onAttach(android.app.Activity) -> a
-    android.view.animation.Animation onCreateAnimation(int,boolean,int) -> a
-    void onCreate(android.os.Bundle) -> c
-    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
-    void onViewCreated(android.view.View,android.os.Bundle) -> a
-    void onActivityCreated(android.os.Bundle) -> d
-    void onViewStateRestored(android.os.Bundle) -> e
-    void onStart() -> e
-    void onResume() -> f
-    void onSaveInstanceState(android.os.Bundle) -> f
-    void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
-    void onPause() -> g
-    void onStop() -> h
-    void onLowMemory() -> onLowMemory
-    void onDestroyView() -> i
-    void onDestroy() -> j
-    void initState() -> k
-    void onDetach() -> l
-    void onCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> a
-    void onPrepareOptionsMenu(android.view.Menu) -> a
-    void onDestroyOptionsMenu() -> m
-    boolean onOptionsItemSelected(android.view.MenuItem) -> a
-    void onOptionsMenuClosed(android.view.Menu) -> b
-    void onCreateContextMenu(android.view.ContextMenu,android.view.View,android.view.ContextMenu$ContextMenuInfo) -> onCreateContextMenu
-    boolean onContextItemSelected(android.view.MenuItem) -> b
-    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
-    void instantiateChildFragmentManager() -> n
-    void performCreate(android.os.Bundle) -> g
-    android.view.View performCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> b
-    void performActivityCreated(android.os.Bundle) -> h
-    void performStart() -> o
-    void performResume() -> p
-    void performConfigurationChanged(android.content.res.Configuration) -> a
-    void performLowMemory() -> q
-    boolean performCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> b
-    boolean performPrepareOptionsMenu(android.view.Menu) -> c
-    boolean performOptionsItemSelected(android.view.MenuItem) -> c
-    boolean performContextItemSelected(android.view.MenuItem) -> d
-    void performOptionsMenuClosed(android.view.Menu) -> d
-    void performSaveInstanceState(android.os.Bundle) -> i
-    void performPause() -> r
-    void performStop() -> s
-    void performReallyStop() -> t
-    void performDestroyView() -> u
-    void performDestroy() -> v
-android.support.v4.app.Fragment$1 -> android.support.v4.app.e:
-    android.support.v4.app.Fragment this$0 -> a
-    android.view.View findViewById(int) -> a
-android.support.v4.app.Fragment$InstantiationException -> android.support.v4.app.f:
-android.support.v4.app.Fragment$SavedState -> android.support.v4.app.Fragment$SavedState:
-    android.os.Bundle mState -> a
-    android.os.Parcelable$Creator CREATOR -> CREATOR
-    int describeContents() -> describeContents
-    void writeToParcel(android.os.Parcel,int) -> writeToParcel
-android.support.v4.app.Fragment$SavedState$1 -> android.support.v4.app.g:
-    android.support.v4.app.Fragment$SavedState createFromParcel(android.os.Parcel) -> a
-    android.support.v4.app.Fragment$SavedState[] newArray(int) -> a
-    java.lang.Object[] newArray(int) -> newArray
-    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-android.support.v4.app.FragmentActivity -> android.support.v4.app.h:
-    android.os.Handler mHandler -> a
-    android.support.v4.app.FragmentManagerImpl mFragments -> b
-    android.support.v4.app.FragmentContainer mContainer -> c
-    boolean mCreated -> d
-    boolean mResumed -> e
-    boolean mStopped -> f
-    boolean mReallyStopped -> g
-    boolean mRetaining -> h
-    boolean mOptionsMenuInvalidated -> i
-    boolean mCheckedForLoaderManager -> j
-    boolean mLoadersStarted -> k
-    java.util.HashMap mAllLoaderManagers -> l
-    android.support.v4.app.LoaderManagerImpl mLoaderManager -> m
-    void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    void onBackPressed() -> onBackPressed
-    void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
-    void onCreate(android.os.Bundle) -> onCreate
-    boolean onCreatePanelMenu(int,android.view.Menu) -> onCreatePanelMenu
-    android.view.View onCreateView(java.lang.String,android.content.Context,android.util.AttributeSet) -> onCreateView
-    void onDestroy() -> onDestroy
-    boolean onKeyDown(int,android.view.KeyEvent) -> onKeyDown
-    void onLowMemory() -> onLowMemory
-    boolean onMenuItemSelected(int,android.view.MenuItem) -> onMenuItemSelected
-    void onPanelClosed(int,android.view.Menu) -> onPanelClosed
-    void onPause() -> onPause
-    void onNewIntent(android.content.Intent) -> onNewIntent
-    void onResume() -> onResume
-    void onPostResume() -> onPostResume
-    void onResumeFragments() -> a
-    boolean onPreparePanel(int,android.view.View,android.view.Menu) -> onPreparePanel
-    java.lang.Object onRetainNonConfigurationInstance() -> onRetainNonConfigurationInstance
-    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
-    void onStart() -> onStart
-    void onStop() -> onStop
-    java.lang.Object onRetainCustomNonConfigurationInstance() -> b
-    void supportInvalidateOptionsMenu() -> c
-    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> dump
-    java.lang.String viewToString(android.view.View) -> a
-    void dumpViewHierarchy(java.lang.String,java.io.PrintWriter,android.view.View) -> a
-    void doReallyStop(boolean) -> a
-    void onReallyStop() -> d
-    void onAttachFragment(android.support.v4.app.Fragment) -> a
-    void startActivityForResult(android.content.Intent,int) -> startActivityForResult
-    void invalidateSupportFragment(java.lang.String) -> a
-    android.support.v4.app.LoaderManagerImpl getLoaderManager(java.lang.String,boolean,boolean) -> a
-android.support.v4.app.FragmentActivity$FragmentTag -> android.support.v4.app.i:
-    int[] Fragment -> a
-android.support.v4.app.FragmentActivity$NonConfigurationInstances -> android.support.v4.app.j:
-    java.lang.Object activity -> a
-    java.lang.Object custom -> b
-    java.util.HashMap children -> c
-    java.util.ArrayList fragments -> d
-    java.util.HashMap loaders -> e
-android.support.v4.app.FragmentContainer -> android.support.v4.app.k:
-    android.view.View findViewById(int) -> a
-android.support.v4.app.FragmentManager -> android.support.v4.app.l:
-    android.support.v4.app.FragmentTransaction beginTransaction() -> a
-    boolean executePendingTransactions() -> b
-    android.support.v4.app.Fragment findFragmentByTag(java.lang.String) -> a
-android.support.v4.app.FragmentManager$OnBackStackChangedListener -> android.support.v4.app.m:
-    void onBackStackChanged() -> a
-android.support.v4.app.FragmentManagerImpl -> android.support.v4.app.n:
-    boolean DEBUG -> a
-    boolean HONEYCOMB -> b
-    java.util.ArrayList mPendingActions -> c
-    java.lang.Runnable[] mTmpActions -> d
-    boolean mExecutingActions -> e
-    java.util.ArrayList mActive -> f
-    java.util.ArrayList mAdded -> g
-    java.util.ArrayList mAvailIndices -> h
-    java.util.ArrayList mBackStack -> i
-    java.util.ArrayList mCreatedMenus -> j
-    java.util.ArrayList mBackStackIndices -> k
-    java.util.ArrayList mAvailBackStackIndices -> l
-    java.util.ArrayList mBackStackChangeListeners -> m
-    int mCurState -> n
-    android.support.v4.app.FragmentActivity mActivity -> o
-    android.support.v4.app.FragmentContainer mContainer -> p
-    android.support.v4.app.Fragment mParent -> q
-    boolean mNeedMenuInvalidate -> r
-    boolean mStateSaved -> s
-    boolean mDestroyed -> t
-    java.lang.String mNoTransactionsBecause -> u
-    boolean mHavePendingDeferredStart -> v
-    android.os.Bundle mStateBundle -> w
-    android.util.SparseArray mStateArray -> x
-    java.lang.Runnable mExecCommit -> y
-    android.view.animation.Interpolator DECELERATE_QUINT -> z
-    android.view.animation.Interpolator DECELERATE_CUBIC -> A
-    android.view.animation.Interpolator ACCELERATE_QUINT -> B
-    android.view.animation.Interpolator ACCELERATE_CUBIC -> C
-    void throwException(java.lang.RuntimeException) -> a
-    android.support.v4.app.FragmentTransaction beginTransaction() -> a
-    boolean executePendingTransactions() -> b
-    boolean popBackStackImmediate() -> c
-    void putFragment(android.os.Bundle,java.lang.String,android.support.v4.app.Fragment) -> a
-    android.support.v4.app.Fragment getFragment(android.os.Bundle,java.lang.String) -> a
-    java.lang.String toString() -> toString
-    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
-    android.view.animation.Animation makeOpenCloseAnimation(android.content.Context,float,float,float,float) -> a
-    android.view.animation.Animation makeFadeAnimation(android.content.Context,float,float) -> a
-    android.view.animation.Animation loadAnimation(android.support.v4.app.Fragment,int,boolean,int) -> a
-    void performPendingDeferredStart(android.support.v4.app.Fragment) -> a
-    void moveToState(android.support.v4.app.Fragment,int,int,int,boolean) -> a
-    void moveToState(android.support.v4.app.Fragment) -> b
-    void moveToState(int,boolean) -> a
-    void moveToState(int,int,int,boolean) -> a
-    void startPendingDeferredFragments() -> d
-    void makeActive(android.support.v4.app.Fragment) -> c
-    void makeInactive(android.support.v4.app.Fragment) -> d
-    void addFragment(android.support.v4.app.Fragment,boolean) -> a
-    void removeFragment(android.support.v4.app.Fragment,int,int) -> a
-    void hideFragment(android.support.v4.app.Fragment,int,int) -> b
-    void showFragment(android.support.v4.app.Fragment,int,int) -> c
-    void detachFragment(android.support.v4.app.Fragment,int,int) -> d
-    void attachFragment(android.support.v4.app.Fragment,int,int) -> e
-    android.support.v4.app.Fragment findFragmentById(int) -> a
-    android.support.v4.app.Fragment findFragmentByTag(java.lang.String) -> a
-    void checkStateLoss() -> t
-    void enqueueAction(java.lang.Runnable,boolean) -> a
-    int allocBackStackIndex(android.support.v4.app.BackStackRecord) -> a
-    void setBackStackIndex(int,android.support.v4.app.BackStackRecord) -> a
-    void freeBackStackIndex(int) -> b
-    boolean execPendingActions() -> e
-    void reportBackStackChanged() -> f
-    void addBackStackState(android.support.v4.app.BackStackRecord) -> b
-    boolean popBackStackState(android.os.Handler,java.lang.String,int,int) -> a
-    java.util.ArrayList retainNonConfig() -> g
-    void saveFragmentViewState(android.support.v4.app.Fragment) -> e
-    android.os.Bundle saveFragmentBasicState(android.support.v4.app.Fragment) -> f
-    android.os.Parcelable saveAllState() -> h
-    void restoreAllState(android.os.Parcelable,java.util.ArrayList) -> a
-    void attachActivity(android.support.v4.app.FragmentActivity,android.support.v4.app.FragmentContainer,android.support.v4.app.Fragment) -> a
-    void noteStateNotSaved() -> i
-    void dispatchCreate() -> j
-    void dispatchActivityCreated() -> k
-    void dispatchStart() -> l
-    void dispatchResume() -> m
-    void dispatchPause() -> n
-    void dispatchStop() -> o
-    void dispatchReallyStop() -> p
-    void dispatchDestroyView() -> q
-    void dispatchDestroy() -> r
-    void dispatchConfigurationChanged(android.content.res.Configuration) -> a
-    void dispatchLowMemory() -> s
-    boolean dispatchCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> a
-    boolean dispatchPrepareOptionsMenu(android.view.Menu) -> a
-    boolean dispatchOptionsItemSelected(android.view.MenuItem) -> a
-    boolean dispatchContextItemSelected(android.view.MenuItem) -> b
-    void dispatchOptionsMenuClosed(android.view.Menu) -> b
-    int reverseTransit(int) -> c
-    int transitToStyleIndex(int,boolean) -> b
-android.support.v4.app.FragmentManagerImpl$1 -> android.support.v4.app.o:
-    android.support.v4.app.FragmentManagerImpl this$0 -> a
-    void run() -> run
-android.support.v4.app.FragmentManagerImpl$5 -> android.support.v4.app.p:
-    android.support.v4.app.Fragment val$fragment -> a
-    android.support.v4.app.FragmentManagerImpl this$0 -> b
-    void onAnimationEnd(android.view.animation.Animation) -> onAnimationEnd
-    void onAnimationRepeat(android.view.animation.Animation) -> onAnimationRepeat
-    void onAnimationStart(android.view.animation.Animation) -> onAnimationStart
-android.support.v4.app.FragmentManagerState -> android.support.v4.app.FragmentManagerState:
-    android.support.v4.app.FragmentState[] mActive -> a
-    int[] mAdded -> b
-    android.support.v4.app.BackStackState[] mBackStack -> c
-    android.os.Parcelable$Creator CREATOR -> CREATOR
-    int describeContents() -> describeContents
-    void writeToParcel(android.os.Parcel,int) -> writeToParcel
-android.support.v4.app.FragmentManagerState$1 -> android.support.v4.app.q:
-    android.support.v4.app.FragmentManagerState createFromParcel(android.os.Parcel) -> a
-    android.support.v4.app.FragmentManagerState[] newArray(int) -> a
-    java.lang.Object[] newArray(int) -> newArray
-    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-android.support.v4.app.FragmentState -> android.support.v4.app.FragmentState:
-    java.lang.String mClassName -> a
-    int mIndex -> b
-    boolean mFromLayout -> c
-    int mFragmentId -> d
-    int mContainerId -> e
-    java.lang.String mTag -> f
-    boolean mRetainInstance -> g
-    boolean mDetached -> h
-    android.os.Bundle mArguments -> i
-    android.os.Bundle mSavedFragmentState -> j
-    android.support.v4.app.Fragment mInstance -> k
-    android.os.Parcelable$Creator CREATOR -> CREATOR
-    android.support.v4.app.Fragment instantiate(android.support.v4.app.FragmentActivity,android.support.v4.app.Fragment) -> a
-    int describeContents() -> describeContents
-    void writeToParcel(android.os.Parcel,int) -> writeToParcel
-android.support.v4.app.FragmentState$1 -> android.support.v4.app.r:
-    android.support.v4.app.FragmentState createFromParcel(android.os.Parcel) -> a
-    android.support.v4.app.FragmentState[] newArray(int) -> a
-    java.lang.Object[] newArray(int) -> newArray
-    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-android.support.v4.app.FragmentTabHost -> android.support.v4.app.FragmentTabHost:
-    java.util.ArrayList mTabs -> a
-    android.content.Context mContext -> b
-    android.support.v4.app.FragmentManager mFragmentManager -> c
-    int mContainerId -> d
-    android.widget.TabHost$OnTabChangeListener mOnTabChangeListener -> e
-    android.support.v4.app.FragmentTabHost$TabInfo mLastTab -> f
-    boolean mAttached -> g
-    void setup() -> setup
-    void setOnTabChangedListener(android.widget.TabHost$OnTabChangeListener) -> setOnTabChangedListener
-    void onAttachedToWindow() -> onAttachedToWindow
-    void onDetachedFromWindow() -> onDetachedFromWindow
-    android.os.Parcelable onSaveInstanceState() -> onSaveInstanceState
-    void onRestoreInstanceState(android.os.Parcelable) -> onRestoreInstanceState
-    void onTabChanged(java.lang.String) -> onTabChanged
-    android.support.v4.app.FragmentTransaction doTabChanged(java.lang.String,android.support.v4.app.FragmentTransaction) -> a
-android.support.v4.app.FragmentTabHost$1 -> android.support.v4.app.s:
-android.support.v4.app.FragmentTabHost$SavedState -> android.support.v4.app.FragmentTabHost$SavedState:
-    java.lang.String curTab -> a
-    android.os.Parcelable$Creator CREATOR -> CREATOR
-    void writeToParcel(android.os.Parcel,int) -> writeToParcel
-    java.lang.String toString() -> toString
-android.support.v4.app.FragmentTabHost$SavedState$1 -> android.support.v4.app.t:
-    android.support.v4.app.FragmentTabHost$SavedState createFromParcel(android.os.Parcel) -> a
-    android.support.v4.app.FragmentTabHost$SavedState[] newArray(int) -> a
-    java.lang.Object[] newArray(int) -> newArray
-    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-android.support.v4.app.FragmentTabHost$TabInfo -> android.support.v4.app.u:
-    java.lang.String tag -> a
-    java.lang.Class clss -> b
-    android.os.Bundle args -> c
-    android.support.v4.app.Fragment fragment -> d
-    android.support.v4.app.Fragment access$102(android.support.v4.app.FragmentTabHost$TabInfo,android.support.v4.app.Fragment) -> a
-    android.support.v4.app.Fragment access$100(android.support.v4.app.FragmentTabHost$TabInfo) -> a
-    java.lang.String access$200(android.support.v4.app.FragmentTabHost$TabInfo) -> b
-    java.lang.Class access$300(android.support.v4.app.FragmentTabHost$TabInfo) -> c
-    android.os.Bundle access$400(android.support.v4.app.FragmentTabHost$TabInfo) -> d
-android.support.v4.app.FragmentTransaction -> android.support.v4.app.v:
-    android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment,java.lang.String) -> a
-    android.support.v4.app.FragmentTransaction detach(android.support.v4.app.Fragment) -> a
-    android.support.v4.app.FragmentTransaction attach(android.support.v4.app.Fragment) -> b
-    int commit() -> a
-android.support.v4.app.LoaderManager -> android.support.v4.app.w:
-    boolean hasRunningLoaders() -> a
-android.support.v4.app.LoaderManager$LoaderCallbacks -> android.support.v4.app.x:
-    android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> a
-    void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
-    void onLoaderReset(android.support.v4.content.Loader) -> a
-android.support.v4.app.LoaderManagerImpl -> android.support.v4.app.y:
-    boolean DEBUG -> a
-    android.support.v4.util.SparseArrayCompat mLoaders -> b
-    android.support.v4.util.SparseArrayCompat mInactiveLoaders -> c
-    java.lang.String mWho -> d
-    android.support.v4.app.FragmentActivity mActivity -> e
-    boolean mStarted -> f
-    boolean mRetaining -> g
-    void updateActivity(android.support.v4.app.FragmentActivity) -> a
-    void doStart() -> b
-    void doStop() -> c
-    void doRetain() -> d
-    void finishRetain() -> e
-    void doReportNextStart() -> f
-    void doReportStart() -> g
-    void doDestroy() -> h
-    java.lang.String toString() -> toString
-    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
-    boolean hasRunningLoaders() -> a
-android.support.v4.app.LoaderManagerImpl$LoaderInfo -> android.support.v4.app.z:
-    int mId -> a
-    android.os.Bundle mArgs -> b
-    android.support.v4.app.LoaderManager$LoaderCallbacks mCallbacks -> c
-    android.support.v4.content.Loader mLoader -> d
-    boolean mHaveData -> e
-    boolean mDeliveredData -> f
-    java.lang.Object mData -> g
-    boolean mStarted -> h
-    boolean mRetaining -> i
-    boolean mRetainingStarted -> j
-    boolean mReportNextStart -> k
-    boolean mDestroyed -> l
-    boolean mListenerRegistered -> m
-    android.support.v4.app.LoaderManagerImpl$LoaderInfo mPendingLoader -> n
-    android.support.v4.app.LoaderManagerImpl this$0 -> o
-    void start() -> a
-    void retain() -> b
-    void finishRetain() -> c
-    void reportStart() -> d
-    void stop() -> e
-    void destroy() -> f
-    void callOnLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
-    java.lang.String toString() -> toString
-    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
-android.support.v4.app.NoSaveStateFrameLayout -> android.support.v4.app.aa:
-    android.view.ViewGroup wrap(android.view.View) -> a
-    void dispatchSaveInstanceState(android.util.SparseArray) -> dispatchSaveInstanceState
-    void dispatchRestoreInstanceState(android.util.SparseArray) -> dispatchRestoreInstanceState
-android.support.v4.app.SuperNotCalledException -> android.support.v4.app.ab:
-android.support.v4.content.Loader -> android.support.v4.a.a:
-    int mId -> a
-    android.support.v4.content.Loader$OnLoadCompleteListener mListener -> b
-    boolean mStarted -> c
-    boolean mAbandoned -> d
-    boolean mReset -> e
-    boolean mContentChanged -> f
-    void registerListener(int,android.support.v4.content.Loader$OnLoadCompleteListener) -> a
-    void unregisterListener(android.support.v4.content.Loader$OnLoadCompleteListener) -> a
-    void startLoading() -> a
-    void onStartLoading() -> b
-    void stopLoading() -> c
-    void onStopLoading() -> d
-    void reset() -> e
-    void onReset() -> f
-    java.lang.String dataToString(java.lang.Object) -> a
-    java.lang.String toString() -> toString
-    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
-android.support.v4.content.Loader$OnLoadCompleteListener -> android.support.v4.a.b:
-android.support.v4.os.ParcelableCompat -> android.support.v4.b.a:
-    android.os.Parcelable$Creator newCreator(android.support.v4.os.ParcelableCompatCreatorCallbacks) -> a
-android.support.v4.os.ParcelableCompat$CompatCreator -> android.support.v4.b.b:
-    android.support.v4.os.ParcelableCompatCreatorCallbacks mCallbacks -> a
-    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-    java.lang.Object[] newArray(int) -> newArray
-android.support.v4.os.ParcelableCompatCreatorCallbacks -> android.support.v4.b.c:
-    java.lang.Object createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> a
-    java.lang.Object[] newArray(int) -> a
-android.support.v4.os.ParcelableCompatCreatorHoneycombMR2 -> android.support.v4.b.d:
-    android.support.v4.os.ParcelableCompatCreatorCallbacks mCallbacks -> a
-    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-    java.lang.Object createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> createFromParcel
-    java.lang.Object[] newArray(int) -> newArray
-android.support.v4.os.ParcelableCompatCreatorHoneycombMR2Stub -> android.support.v4.b.e:
-    android.os.Parcelable$Creator instantiate(android.support.v4.os.ParcelableCompatCreatorCallbacks) -> a
-android.support.v4.util.DebugUtils -> android.support.v4.c.a:
-    void buildShortClassTag(java.lang.Object,java.lang.StringBuilder) -> a
-android.support.v4.util.LogWriter -> android.support.v4.c.b:
-    java.lang.String mTag -> a
-    java.lang.StringBuilder mBuilder -> b
-    void close() -> close
-    void flush() -> flush
-    void write(char[],int,int) -> write
-    void flushBuilder() -> a
-android.support.v4.util.SparseArrayCompat -> android.support.v4.c.c:
-    java.lang.Object DELETED -> a
-    boolean mGarbage -> b
-    int[] mKeys -> c
-    java.lang.Object[] mValues -> d
-    int mSize -> e
-    void gc() -> c
-    int size() -> a
-    int keyAt(int) -> a
-    java.lang.Object valueAt(int) -> b
-    void clear() -> b
-    int idealByteArraySize(int) -> c
-    int idealIntArraySize(int) -> d
-android.support.v4.view.KeyEventCompat -> android.support.v4.view.a:
-    android.support.v4.view.KeyEventCompat$KeyEventVersionImpl IMPL -> a
-    boolean hasModifiers(android.view.KeyEvent,int) -> a
-    boolean hasNoModifiers(android.view.KeyEvent) -> a
-android.support.v4.view.KeyEventCompat$BaseKeyEventVersionImpl -> android.support.v4.view.b:
-    int metaStateFilterDirectionalModifiers(int,int,int,int,int) -> a
-    int normalizeMetaState(int) -> a
-    boolean metaStateHasModifiers(int,int) -> a
-    boolean metaStateHasNoModifiers(int) -> b
-android.support.v4.view.KeyEventCompat$HoneycombKeyEventVersionImpl -> android.support.v4.view.c:
-    boolean metaStateHasModifiers(int,int) -> a
-    boolean metaStateHasNoModifiers(int) -> b
-android.support.v4.view.KeyEventCompat$KeyEventVersionImpl -> android.support.v4.view.d:
-    boolean metaStateHasModifiers(int,int) -> a
-    boolean metaStateHasNoModifiers(int) -> b
-android.support.v4.view.KeyEventCompatHoneycomb -> android.support.v4.view.e:
-    boolean metaStateHasModifiers(int,int) -> a
-    boolean metaStateHasNoModifiers(int) -> a
-android.support.v4.view.MotionEventCompat -> android.support.v4.view.f:
-    android.support.v4.view.MotionEventCompat$MotionEventVersionImpl IMPL -> a
-    int getActionIndex(android.view.MotionEvent) -> a
-    int findPointerIndex(android.view.MotionEvent,int) -> a
-    int getPointerId(android.view.MotionEvent,int) -> b
-    float getX(android.view.MotionEvent,int) -> c
-    float getY(android.view.MotionEvent,int) -> d
-android.support.v4.view.MotionEventCompat$BaseMotionEventVersionImpl -> android.support.v4.view.g:
-    int findPointerIndex(android.view.MotionEvent,int) -> a
-    int getPointerId(android.view.MotionEvent,int) -> b
-    float getX(android.view.MotionEvent,int) -> c
-    float getY(android.view.MotionEvent,int) -> d
-android.support.v4.view.MotionEventCompat$EclairMotionEventVersionImpl -> android.support.v4.view.h:
-    int findPointerIndex(android.view.MotionEvent,int) -> a
-    int getPointerId(android.view.MotionEvent,int) -> b
-    float getX(android.view.MotionEvent,int) -> c
-    float getY(android.view.MotionEvent,int) -> d
-android.support.v4.view.MotionEventCompat$MotionEventVersionImpl -> android.support.v4.view.i:
-    int findPointerIndex(android.view.MotionEvent,int) -> a
-    int getPointerId(android.view.MotionEvent,int) -> b
-    float getX(android.view.MotionEvent,int) -> c
-    float getY(android.view.MotionEvent,int) -> d
-android.support.v4.view.MotionEventCompatEclair -> android.support.v4.view.j:
-    int findPointerIndex(android.view.MotionEvent,int) -> a
-    int getPointerId(android.view.MotionEvent,int) -> b
-    float getX(android.view.MotionEvent,int) -> c
-    float getY(android.view.MotionEvent,int) -> d
-android.support.v4.view.PagerAdapter -> android.support.v4.view.k:
-    android.database.DataSetObservable mObservable -> a
-    int getCount() -> a
-    void startUpdate(android.view.ViewGroup) -> a
-    java.lang.Object instantiateItem(android.view.ViewGroup,int) -> a
-    void destroyItem(android.view.ViewGroup,int,java.lang.Object) -> a
-    void setPrimaryItem(android.view.ViewGroup,int,java.lang.Object) -> b
-    void finishUpdate(android.view.ViewGroup) -> b
-    void startUpdate(android.view.View) -> a
-    java.lang.Object instantiateItem(android.view.View,int) -> a
-    void destroyItem(android.view.View,int,java.lang.Object) -> a
-    void setPrimaryItem(android.view.View,int,java.lang.Object) -> b
-    void finishUpdate(android.view.View) -> b
-    boolean isViewFromObject(android.view.View,java.lang.Object) -> a
-    android.os.Parcelable saveState() -> b
-    void restoreState(android.os.Parcelable,java.lang.ClassLoader) -> a
-    int getItemPosition(java.lang.Object) -> a
-    void registerDataSetObserver(android.database.DataSetObserver) -> a
-    void unregisterDataSetObserver(android.database.DataSetObserver) -> b
-    float getPageWidth(int) -> a
-android.support.v4.view.VelocityTrackerCompat -> android.support.v4.view.l:
-    android.support.v4.view.VelocityTrackerCompat$VelocityTrackerVersionImpl IMPL -> a
-    float getXVelocity(android.view.VelocityTracker,int) -> a
-android.support.v4.view.VelocityTrackerCompat$BaseVelocityTrackerVersionImpl -> android.support.v4.view.m:
-    float getXVelocity(android.view.VelocityTracker,int) -> a
-android.support.v4.view.VelocityTrackerCompat$HoneycombVelocityTrackerVersionImpl -> android.support.v4.view.n:
-    float getXVelocity(android.view.VelocityTracker,int) -> a
-android.support.v4.view.VelocityTrackerCompat$VelocityTrackerVersionImpl -> android.support.v4.view.o:
-    float getXVelocity(android.view.VelocityTracker,int) -> a
-android.support.v4.view.VelocityTrackerCompatHoneycomb -> android.support.v4.view.p:
-    float getXVelocity(android.view.VelocityTracker,int) -> a
-android.support.v4.view.ViewCompat -> android.support.v4.view.q:
-    android.support.v4.view.ViewCompat$ViewCompatImpl IMPL -> a
-    boolean canScrollHorizontally(android.view.View,int) -> a
-    int getOverScrollMode(android.view.View) -> a
-    void postInvalidateOnAnimation(android.view.View) -> b
-    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
-    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
-android.support.v4.view.ViewCompat$BaseViewCompatImpl -> android.support.v4.view.r:
-    boolean canScrollHorizontally(android.view.View,int) -> a
-    int getOverScrollMode(android.view.View) -> a
-    void postInvalidateOnAnimation(android.view.View) -> b
-    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
-    long getFrameTime() -> a
-    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
-android.support.v4.view.ViewCompat$GBViewCompatImpl -> android.support.v4.view.s:
-    int getOverScrollMode(android.view.View) -> a
-android.support.v4.view.ViewCompat$HCViewCompatImpl -> android.support.v4.view.t:
-    long getFrameTime() -> a
-    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
-android.support.v4.view.ViewCompat$ICSViewCompatImpl -> android.support.v4.view.u:
-    boolean canScrollHorizontally(android.view.View,int) -> a
-android.support.v4.view.ViewCompat$JBViewCompatImpl -> android.support.v4.view.v:
-    void postInvalidateOnAnimation(android.view.View) -> b
-    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
-android.support.v4.view.ViewCompat$JbMr1ViewCompatImpl -> android.support.v4.view.w:
-android.support.v4.view.ViewCompat$ViewCompatImpl -> android.support.v4.view.x:
-    boolean canScrollHorizontally(android.view.View,int) -> a
-    int getOverScrollMode(android.view.View) -> a
-    void postInvalidateOnAnimation(android.view.View) -> b
-    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
-    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
-android.support.v4.view.ViewCompatGingerbread -> android.support.v4.view.y:
-    int getOverScrollMode(android.view.View) -> a
-android.support.v4.view.ViewCompatHC -> android.support.v4.view.z:
-    long getFrameTime() -> a
-    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
-android.support.v4.view.ViewCompatICS -> android.support.v4.view.aa:
-    boolean canScrollHorizontally(android.view.View,int) -> a
-android.support.v4.view.ViewCompatJB -> android.support.v4.view.ab:
-    void postInvalidateOnAnimation(android.view.View) -> a
-    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
-android.support.v4.view.ViewPager -> android.support.v4.view.ViewPager:
-    int[] LAYOUT_ATTRS -> a
-    java.util.Comparator COMPARATOR -> b
-    android.view.animation.Interpolator sInterpolator -> c
-    java.util.ArrayList mItems -> d
-    android.support.v4.view.ViewPager$ItemInfo mTempItem -> e
-    android.graphics.Rect mTempRect -> f
-    android.support.v4.view.PagerAdapter mAdapter -> g
-    int mCurItem -> h
-    int mRestoredCurItem -> i
-    android.os.Parcelable mRestoredAdapterState -> j
-    java.lang.ClassLoader mRestoredClassLoader -> k
-    android.widget.Scroller mScroller -> l
-    android.support.v4.view.ViewPager$PagerObserver mObserver -> m
-    int mPageMargin -> n
-    android.graphics.drawable.Drawable mMarginDrawable -> o
-    int mTopPageBounds -> p
-    int mBottomPageBounds -> q
-    float mFirstOffset -> r
-    float mLastOffset -> s
-    int mChildWidthMeasureSpec -> t
-    int mChildHeightMeasureSpec -> u
-    boolean mInLayout -> v
-    boolean mScrollingCacheEnabled -> w
-    boolean mPopulatePending -> x
-    int mOffscreenPageLimit -> y
-    boolean mIsBeingDragged -> z
-    boolean mIsUnableToDrag -> A
-    int mDefaultGutterSize -> B
-    int mGutterSize -> C
-    int mTouchSlop -> D
-    float mLastMotionX -> E
-    float mLastMotionY -> F
-    float mInitialMotionX -> G
-    float mInitialMotionY -> H
-    int mActivePointerId -> I
-    android.view.VelocityTracker mVelocityTracker -> J
-    int mMinimumVelocity -> K
-    int mMaximumVelocity -> L
-    int mFlingDistance -> M
-    int mCloseEnough -> N
-    boolean mFakeDragging -> O
-    android.support.v4.widget.EdgeEffectCompat mLeftEdge -> P
-    android.support.v4.widget.EdgeEffectCompat mRightEdge -> Q
-    boolean mFirstLayout -> R
-    boolean mNeedCalculatePageOffsets -> S
-    boolean mCalledSuper -> T
-    int mDecorChildCount -> U
-    android.support.v4.view.ViewPager$OnPageChangeListener mOnPageChangeListener -> V
-    android.support.v4.view.ViewPager$OnPageChangeListener mInternalPageChangeListener -> W
-    android.support.v4.view.ViewPager$OnAdapterChangeListener mAdapterChangeListener -> Z
-    android.support.v4.view.ViewPager$PageTransformer mPageTransformer -> aa
-    java.lang.reflect.Method mSetChildrenDrawingOrderEnabled -> ab
-    int mDrawingOrder -> ac
-    java.util.ArrayList mDrawingOrderedChildren -> ad
-    android.support.v4.view.ViewPager$ViewPositionComparator sPositionComparator -> ae
-    java.lang.Runnable mEndScrollRunnable -> af
-    int mScrollState -> ag
-    void onDetachedFromWindow() -> onDetachedFromWindow
-    void setScrollState(int) -> setScrollState
-    void setAdapter(android.support.v4.view.PagerAdapter) -> setAdapter
-    void removeNonDecorViews() -> f
-    android.support.v4.view.PagerAdapter getAdapter() -> getAdapter
-    void setOnAdapterChangeListener(android.support.v4.view.ViewPager$OnAdapterChangeListener) -> setOnAdapterChangeListener
-    void setCurrentItem(int) -> setCurrentItem
-    void setCurrentItem(int,boolean) -> a
-    int getCurrentItem() -> getCurrentItem
-    void setCurrentItemInternal(int,boolean,boolean) -> a
-    void setCurrentItemInternal(int,boolean,boolean,int) -> a
-    void scrollToItem(int,boolean,int,boolean) -> a
-    void setOnPageChangeListener(android.support.v4.view.ViewPager$OnPageChangeListener) -> setOnPageChangeListener
-    void setChildrenDrawingOrderEnabledCompat(boolean) -> setChildrenDrawingOrderEnabledCompat
-    int getChildDrawingOrder(int,int) -> getChildDrawingOrder
-    int getOffscreenPageLimit() -> getOffscreenPageLimit
-    void setOffscreenPageLimit(int) -> setOffscreenPageLimit
-    void setPageMargin(int) -> setPageMargin
-    int getPageMargin() -> getPageMargin
-    void setPageMarginDrawable(android.graphics.drawable.Drawable) -> setPageMarginDrawable
-    void setPageMarginDrawable(int) -> setPageMarginDrawable
-    boolean verifyDrawable(android.graphics.drawable.Drawable) -> verifyDrawable
-    void drawableStateChanged() -> drawableStateChanged
-    float distanceInfluenceForSnapDuration(float) -> a
-    void smoothScrollTo(int,int,int) -> a
-    android.support.v4.view.ViewPager$ItemInfo addNewItem(int,int) -> a
-    void dataSetChanged() -> a
-    void populate() -> b
-    void populate(int) -> a
-    void calculatePageOffsets(android.support.v4.view.ViewPager$ItemInfo,int,android.support.v4.view.ViewPager$ItemInfo) -> a
-    android.os.Parcelable onSaveInstanceState() -> onSaveInstanceState
-    void onRestoreInstanceState(android.os.Parcelable) -> onRestoreInstanceState
-    void addView(android.view.View,int,android.view.ViewGroup$LayoutParams) -> addView
-    void removeView(android.view.View) -> removeView
-    android.support.v4.view.ViewPager$ItemInfo infoForChild(android.view.View) -> a
-    android.support.v4.view.ViewPager$ItemInfo infoForAnyChild(android.view.View) -> b
-    android.support.v4.view.ViewPager$ItemInfo infoForPosition(int) -> b
-    void onAttachedToWindow() -> onAttachedToWindow
-    void onMeasure(int,int) -> onMeasure
-    void onSizeChanged(int,int,int,int) -> onSizeChanged
-    void recomputeScrollPosition(int,int,int,int) -> a
-    void onLayout(boolean,int,int,int,int) -> onLayout
-    void computeScroll() -> computeScroll
-    boolean pageScrolled(int) -> d
-    void onPageScrolled(int,float,int) -> a
-    void completeScroll(boolean) -> a
-    boolean isGutterDrag(float,float) -> a
-    void enableLayers(boolean) -> b
-    boolean onInterceptTouchEvent(android.view.MotionEvent) -> onInterceptTouchEvent
-    boolean onTouchEvent(android.view.MotionEvent) -> onTouchEvent
-    boolean performDrag(float) -> b
-    android.support.v4.view.ViewPager$ItemInfo infoForCurrentScrollPosition() -> g
-    int determineTargetPage(int,float,int,int) -> a
-    void draw(android.graphics.Canvas) -> draw
-    void onDraw(android.graphics.Canvas) -> onDraw
-    void onSecondaryPointerUp(android.view.MotionEvent) -> a
-    void endDrag() -> h
-    void setScrollingCacheEnabled(boolean) -> setScrollingCacheEnabled
-    boolean canScroll(android.view.View,boolean,int,int,int) -> a
-    boolean dispatchKeyEvent(android.view.KeyEvent) -> dispatchKeyEvent
-    boolean executeKeyEvent(android.view.KeyEvent) -> a
-    boolean arrowScroll(int) -> c
-    android.graphics.Rect getChildRectInPagerCoordinates(android.graphics.Rect,android.view.View) -> a
-    boolean pageLeft() -> c
-    boolean pageRight() -> d
-    void addFocusables(java.util.ArrayList,int,int) -> addFocusables
-    void addTouchables(java.util.ArrayList) -> addTouchables
-    boolean onRequestFocusInDescendants(int,android.graphics.Rect) -> onRequestFocusInDescendants
-    boolean dispatchPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) -> dispatchPopulateAccessibilityEvent
-    android.view.ViewGroup$LayoutParams generateDefaultLayoutParams() -> generateDefaultLayoutParams
-    android.view.ViewGroup$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> generateLayoutParams
-    boolean checkLayoutParams(android.view.ViewGroup$LayoutParams) -> checkLayoutParams
-    android.view.ViewGroup$LayoutParams generateLayoutParams(android.util.AttributeSet) -> generateLayoutParams
-    int[] access$400() -> e
-android.support.v4.view.ViewPager$1 -> android.support.v4.view.ac:
-    int compare(android.support.v4.view.ViewPager$ItemInfo,android.support.v4.view.ViewPager$ItemInfo) -> a
-    int compare(java.lang.Object,java.lang.Object) -> compare
-android.support.v4.view.ViewPager$2 -> android.support.v4.view.ad:
-    float getInterpolation(float) -> getInterpolation
-android.support.v4.view.ViewPager$Decor -> android.support.v4.view.ae:
-android.support.v4.view.ViewPager$ItemInfo -> android.support.v4.view.af:
-    java.lang.Object object -> a
-    int position -> b
-    boolean scrolling -> c
-    float widthFactor -> d
-    float offset -> e
-android.support.v4.view.ViewPager$LayoutParams -> android.support.v4.view.ag:
-    boolean isDecor -> a
-    int gravity -> b
-    float widthFactor -> c
-    boolean needsMeasure -> d
-    int position -> e
-    int childIndex -> f
-android.support.v4.view.ViewPager$OnAdapterChangeListener -> android.support.v4.view.ah:
-    void onAdapterChanged(android.support.v4.view.PagerAdapter,android.support.v4.view.PagerAdapter) -> a
-android.support.v4.view.ViewPager$OnPageChangeListener -> android.support.v4.view.ai:
-    void onPageScrolled(int,float,int) -> a
-    void onPageSelected(int) -> a
-    void onPageScrollStateChanged(int) -> b
-android.support.v4.view.ViewPager$PageTransformer -> android.support.v4.view.aj:
-    void transformPage(android.view.View,float) -> a
-android.support.v4.view.ViewPager$PagerObserver -> android.support.v4.view.ak:
-    android.support.v4.view.ViewPager this$0 -> a
-    void onChanged() -> onChanged
-    void onInvalidated() -> onInvalidated
-android.support.v4.view.ViewPager$SavedState -> android.support.v4.view.ViewPager$SavedState:
-    int position -> a
-    android.os.Parcelable adapterState -> b
-    java.lang.ClassLoader loader -> c
-    android.os.Parcelable$Creator CREATOR -> CREATOR
-    void writeToParcel(android.os.Parcel,int) -> writeToParcel
-    java.lang.String toString() -> toString
-android.support.v4.view.ViewPager$SavedState$1 -> android.support.v4.view.al:
-    android.support.v4.view.ViewPager$SavedState createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> b
-    android.support.v4.view.ViewPager$SavedState[] newArray(int) -> b
-    java.lang.Object[] newArray(int) -> a
-    java.lang.Object createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> a
-android.support.v4.view.ViewPager$ViewPositionComparator -> android.support.v4.view.am:
-    int compare(android.view.View,android.view.View) -> a
-    int compare(java.lang.Object,java.lang.Object) -> compare
-android.support.v4.widget.EdgeEffectCompat -> android.support.v4.d.a:
-    java.lang.Object mEdgeEffect -> a
-    android.support.v4.widget.EdgeEffectCompat$EdgeEffectImpl IMPL -> b
-    void setSize(int,int) -> a
-    boolean isFinished() -> a
-    void finish() -> b
-    boolean onPull(float) -> a
-    boolean onRelease() -> c
-    boolean draw(android.graphics.Canvas) -> a
-android.support.v4.widget.EdgeEffectCompat$BaseEdgeEffectImpl -> android.support.v4.d.b:
-    void setSize(java.lang.Object,int,int) -> a
-    boolean isFinished(java.lang.Object) -> a
-    void finish(java.lang.Object) -> b
-    boolean onPull(java.lang.Object,float) -> a
-    boolean onRelease(java.lang.Object) -> c
-    boolean draw(java.lang.Object,android.graphics.Canvas) -> a
-android.support.v4.widget.EdgeEffectCompat$EdgeEffectIcsImpl -> android.support.v4.d.c:
-    void setSize(java.lang.Object,int,int) -> a
-    boolean isFinished(java.lang.Object) -> a
-    void finish(java.lang.Object) -> b
-    boolean onPull(java.lang.Object,float) -> a
-    boolean onRelease(java.lang.Object) -> c
-    boolean draw(java.lang.Object,android.graphics.Canvas) -> a
-android.support.v4.widget.EdgeEffectCompat$EdgeEffectImpl -> android.support.v4.d.d:
-    void setSize(java.lang.Object,int,int) -> a
-    boolean isFinished(java.lang.Object) -> a
-    void finish(java.lang.Object) -> b
-    boolean onPull(java.lang.Object,float) -> a
-    boolean onRelease(java.lang.Object) -> c
-    boolean draw(java.lang.Object,android.graphics.Canvas) -> a
-android.support.v4.widget.EdgeEffectCompatIcs -> android.support.v4.d.e:
-    void setSize(java.lang.Object,int,int) -> a
-    boolean isFinished(java.lang.Object) -> a
-    void finish(java.lang.Object) -> b
-    boolean onPull(java.lang.Object,float) -> a
-    boolean onRelease(java.lang.Object) -> c
-    boolean draw(java.lang.Object,android.graphics.Canvas) -> a
 com.gutabi.bypass.BypassApplication -> com.gutabi.bypass.a:
-    com.gutabi.capsloc.ui.Image logo -> a
-    com.gutabi.capsloc.ui.Image copyright -> b
-    com.gutabi.bypass.level.LevelDB tutorialLevelDB -> c
-    com.gutabi.bypass.level.LevelDB episode1LevelDB -> d
-    com.gutabi.bypass.level.LevelDB episode2LevelDB -> e
-    com.gutabi.bypass.BypassPlatform bypassPlatform -> f
-    com.gutabi.bypass.BypassApplication BYPASSAPP -> g
-    void create(com.gutabi.bypass.BypassPlatform) -> a
+    com.gutabi.bypass.BypassPlatform bypassPlatform -> a
+    com.gutabi.bypass.BypassApplication BYPASSAPP -> b
 com.gutabi.bypass.BypassPlatform -> com.gutabi.bypass.b:
-    void loadScores(com.gutabi.bypass.level.LevelDB) -> a
+    void createApplication() -> a
+    com.gutabi.bypass.level.LevelDB levelDB(java.lang.String) -> a
     void saveScore(com.gutabi.bypass.level.LevelDB,com.gutabi.bypass.level.Level) -> a
-    void clearScores(com.gutabi.bypass.level.LevelDB) -> b
+    void clearScores(com.gutabi.bypass.level.LevelDB) -> a
 com.gutabi.bypass.android.ActivityState -> com.gutabi.bypass.android.a:
     com.gutabi.bypass.android.ActivityState CREATE -> a
     com.gutabi.bypass.android.ActivityState DESTROY -> b
@@ -910,7 +42,7 @@ com.gutabi.bypass.android.BypassAndroidPlatform -> com.gutabi.bypass.android.c:
     android.graphics.Paint imgPaint -> h
     java.util.Map fontBoundsCache -> i
     boolean $assertionsDisabled -> j
-    com.gutabi.capsloc.ui.paint.RenderingContext createRenderingContext() -> a
+    com.gutabi.capsloc.ui.paint.RenderingContext createRenderingContext() -> b
     void setRenderingContextFields1(com.gutabi.capsloc.ui.paint.RenderingContext,java.lang.Object) -> a
     void setRenderingContextFields2(com.gutabi.capsloc.ui.paint.RenderingContext,java.lang.Object,java.lang.Object) -> a
     android.graphics.Paint getFontPaint(com.gutabi.capsloc.Resource,com.gutabi.capsloc.ui.paint.FontStyle,int) -> a
@@ -918,17 +50,17 @@ com.gutabi.bypass.android.BypassAndroidPlatform -> com.gutabi.bypass.android.c:
     com.gutabi.capsloc.ui.Image createImage(int,int) -> a
     com.gutabi.capsloc.ui.Image createTransparentImage(int,int) -> b
     com.gutabi.capsloc.ui.Image readImage(com.gutabi.capsloc.Resource) -> a
-    com.gutabi.capsloc.ui.PlatformContentPane createPlatformContentPane() -> b
+    com.gutabi.capsloc.ui.PlatformContentPane createPlatformContentPane() -> c
     void setupAppScreen(java.lang.Object[]) -> a
-    void showAppScreen() -> c
-    com.gutabi.capsloc.Resource fontResource(java.lang.String) -> a
+    void showAppScreen() -> d
+    void finishAction() -> e
+    com.gutabi.capsloc.Resource fontResource(java.lang.String) -> b
     java.io.InputStream openResourceInputStream(com.gutabi.capsloc.Resource) -> b
-    void finishAction() -> d
-    void loadScores(com.gutabi.bypass.level.LevelDB) -> a
+    void loadScores(com.gutabi.bypass.level.LevelDB) -> b
     void saveScore(com.gutabi.bypass.level.LevelDB,com.gutabi.bypass.level.Level) -> a
-    void clearScores(com.gutabi.bypass.level.LevelDB) -> b
-    long monotonicClockMillis() -> e
-    com.gutabi.capsloc.geom.GeometryPath createGeometryPath() -> f
+    void clearScores(com.gutabi.bypass.level.LevelDB) -> a
+    long monotonicClockMillis() -> f
+    com.gutabi.capsloc.geom.GeometryPath createGeometryPath() -> g
 com.gutabi.bypass.android.BypassView -> com.gutabi.bypass.android.BypassView:
     com.gutabi.bypass.android.BypassActivity activity -> a
     android.view.SurfaceHolder holder -> b
@@ -943,17 +75,18 @@ com.gutabi.bypass.android.BypassView -> com.gutabi.bypass.android.BypassView:
     void doDraw(android.graphics.Canvas) -> a
 com.gutabi.bypass.android.R -> com.gutabi.bypass.android.d:
 com.gutabi.bypass.android.R$id -> com.gutabi.bypass.android.e:
-    int view_levelmenu -> view_levelmenu
+    int btn_levelmenu_clearScores -> btn_levelmenu_clearScores
+    int btn_levelmenu_toggleInfo -> btn_levelmenu_toggleInfo
+    int btn_world_resetLevel -> btn_world_resetLevel
+    int btn_world_toggleInfo -> btn_world_toggleInfo
     int view_bypassworld -> view_bypassworld
-    int btn_clear_scores -> btn_clear_scores
-    int btn_reset_level -> btn_reset_level
-    int btn_toggle_info -> btn_toggle_info
+    int view_levelmenu -> view_levelmenu
 com.gutabi.bypass.android.R$layout -> com.gutabi.bypass.android.f:
     int activity_bypassworld -> activity_bypassworld
     int activity_levelmenu -> activity_levelmenu
 com.gutabi.bypass.android.R$menu -> com.gutabi.bypass.android.g:
-    int world_context_menu -> world_context_menu
     int levelmenu_context_menu -> levelmenu_context_menu
+    int world_context_menu -> world_context_menu
 com.gutabi.bypass.android.ResourceImpl -> com.gutabi.bypass.android.h:
     int resId -> a
     com.gutabi.bypass.android.ResourceType resType -> b
@@ -965,17 +98,24 @@ com.gutabi.bypass.android.ResourceType -> com.gutabi.bypass.android.i:
     com.gutabi.bypass.android.ResourceType[] values() -> values
     com.gutabi.bypass.android.ResourceType valueOf(java.lang.String) -> valueOf
 com.gutabi.bypass.android.full.BypassAndroidFullPlatform -> com.gutabi.bypass.android.full.a:
-    com.gutabi.capsloc.Resource imageResource(java.lang.String) -> b
-    com.gutabi.capsloc.Resource levelDBResource(java.lang.String) -> c
+    com.gutabi.bypass.level.LevelDB tutorialLevelDB -> k
+    com.gutabi.bypass.level.LevelDB episode1LevelDB -> l
+    com.gutabi.bypass.level.LevelDB episode2LevelDB -> m
+    void createApplication() -> a
+    com.gutabi.bypass.level.LevelDB levelDB(java.lang.String) -> a
+    com.gutabi.capsloc.Resource imageResource(java.lang.String) -> c
+    com.gutabi.capsloc.Resource levelDBResource(java.lang.String) -> d
     java.lang.String resourceName(com.gutabi.capsloc.Resource) -> c
     void action(java.lang.Class,java.lang.Object[]) -> a
 com.gutabi.bypass.android.full.MainMenuActivity -> com.gutabi.bypass.android.full.MainMenuActivity:
     void onCreate(android.os.Bundle) -> onCreate
+    void onDestroy() -> onDestroy
     void onStart() -> onStart
     void onStop() -> onStop
     void onResume() -> onResume
     void onSurfaceChanged(int,int) -> a
     void onPause() -> onPause
+    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
 com.gutabi.bypass.android.geom.GeometryPathImpl -> com.gutabi.bypass.android.a.a:
     android.graphics.Path p -> a
     void reset() -> a
@@ -997,6 +137,7 @@ com.gutabi.bypass.android.level.BypassWorldActivity -> com.gutabi.bypass.android
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
 com.gutabi.bypass.android.menu.LevelMenuActivity -> com.gutabi.bypass.android.menu.LevelMenuActivity:
     void onCreate(android.os.Bundle) -> onCreate
+    void onDestroy() -> onDestroy
     void onStart() -> onStart
     void onStop() -> onStop
     void onResume() -> onResume
@@ -1045,8 +186,10 @@ com.gutabi.bypass.android.ui.paint.RenderingContextImpl -> com.gutabi.bypass.and
     void setAlpha(double) -> c
     void paintString(double,double,double,java.lang.String) -> a
     void setStroke(double,com.gutabi.capsloc.ui.paint.Cap,com.gutabi.capsloc.ui.paint.Join) -> a
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$ui$paint$Cap() -> g
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$ui$paint$Join() -> h
+    void setAntialiasing() -> g
+    void clearAntialiasing() -> h
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$ui$paint$Cap() -> i
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$ui$paint$Join() -> j
 com.gutabi.bypass.level.BypassCar -> com.gutabi.bypass.a.a:
     char boardLetter -> a
     double coastingVel -> b
@@ -1076,9 +219,11 @@ com.gutabi.bypass.level.BypassCarTool -> com.gutabi.bypass.a.b:
     boolean $assertionsDisabled -> l
     int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum -> n
     void pressed(com.gutabi.capsloc.ui.InputEvent) -> a
+    void releasedOrCanceled() -> b
     void released(com.gutabi.capsloc.ui.InputEvent) -> b
+    void canceled(com.gutabi.capsloc.ui.InputEvent) -> c
     void determineCoasting(com.gutabi.capsloc.world.graph.GraphPositionPathPosition,com.gutabi.capsloc.world.graph.GraphPositionPathPosition,boolean) -> a
-    void dragged(com.gutabi.capsloc.ui.InputEvent) -> c
+    void dragged(com.gutabi.capsloc.ui.InputEvent) -> d
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
     int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum() -> a
 com.gutabi.bypass.level.BypassDriver -> com.gutabi.bypass.a.c:
@@ -1087,32 +232,35 @@ com.gutabi.bypass.level.BypassDriver -> com.gutabi.bypass.a.c:
     void postStep(double) -> a
     int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum() -> a
 com.gutabi.bypass.level.BypassWorld -> com.gutabi.bypass.a.d:
-    java.util.concurrent.locks.Lock lock -> a
+    java.util.concurrent.locks.ReentrantLock lock -> a
     boolean rendered -> b
     com.gutabi.bypass.level.BypassWorld BYPASSWORLD -> c
     com.gutabi.bypass.level.LevelDB levelDB -> d
     com.gutabi.bypass.level.Level curLevel -> e
     com.gutabi.bypass.level.WinnerMenu winnerMenu -> f
-    com.gutabi.capsloc.world.graph.BypassBoard bypassBoard -> g
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Side -> C
-    boolean $assertionsDisabled -> h
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Axis -> D
+    com.gutabi.capsloc.ui.Label infoLab -> g
+    com.gutabi.capsloc.world.graph.BypassBoard bypassBoard -> h
+    boolean showInfo -> i
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Side -> B
+    boolean $assertionsDisabled -> j
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Axis -> C
     void create(com.gutabi.bypass.level.LevelDB,int) -> a
-    void start() -> a
+    void start() -> a_
     void stop() -> b
     void resume() -> c
     void surfaceChanged(int,int) -> a
-    void pause() -> a_
+    void pause() -> d
     void reset() -> e
     com.gutabi.bypass.level.BypassWorld createBypassWorld(com.gutabi.bypass.level.LevelDB,int) -> b
     void addBypassCars(com.gutabi.capsloc.world.graph.BypassBoard) -> a
     void addNewCar(com.gutabi.capsloc.world.graph.BypassBoard,int,int,com.gutabi.capsloc.world.graph.Axis,com.gutabi.capsloc.world.sprites.CarSheet$CarType,int,char) -> a
     com.gutabi.capsloc.ui.Menu getMenu() -> f
     void handlePanning(com.gutabi.capsloc.world.cars.Car,com.gutabi.capsloc.math.Point) -> a
+    boolean integrate(double) -> a
     void winner() -> g
-    void panelPostDisplay(int,int) -> b
-    void render_worldPanel() -> h
-    void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
+    void postDisplay(int,int) -> b
+    void render() -> h
+    void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
     int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Side() -> i
     int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Axis() -> j
 com.gutabi.bypass.level.Level -> com.gutabi.bypass.a.e:
@@ -1125,16 +273,18 @@ com.gutabi.bypass.level.Level -> com.gutabi.bypass.a.e:
     boolean isWon -> g
     java.lang.String grade -> h
 com.gutabi.bypass.level.LevelDB -> com.gutabi.bypass.a.f:
-    java.lang.String name -> a
-    int firstUnwon -> b
-    com.gutabi.capsloc.math.Point loc -> c
-    java.util.Map levelMap -> g
-    com.gutabi.capsloc.Resource res -> d
-    int levelCount -> e
-    boolean $assertionsDisabled -> f
+    java.lang.String resourceName -> a
+    java.lang.String title -> b
+    int firstUnwon -> c
+    double percentage -> d
+    java.util.Map levelMap -> h
+    com.gutabi.capsloc.Resource res -> e
+    int levelCount -> f
+    boolean $assertionsDisabled -> g
     void setFirstUnwon() -> a
+    void computePercentageComplete() -> b
     com.gutabi.bypass.level.Level getLevel(int) -> a
-    void clearLevels() -> b
+    void clearLevels() -> c
 com.gutabi.bypass.level.WinnerMenu -> com.gutabi.bypass.a.g:
     boolean ready -> a
     void action() -> a
@@ -1151,70 +301,91 @@ com.gutabi.bypass.level.WinnerMenu$3 -> com.gutabi.bypass.a.j:
 com.gutabi.bypass.level.WinnerMenu$4 -> com.gutabi.bypass.a.k:
     com.gutabi.bypass.level.WinnerMenu this$0 -> a
     void action() -> a
-com.gutabi.bypass.level.WinnerMenu$5 -> com.gutabi.bypass.a.l:
-    com.gutabi.bypass.level.WinnerMenu this$0 -> a
-    void action() -> a
 com.gutabi.bypass.menu.BypassMenu -> com.gutabi.bypass.b.a:
-    com.gutabi.bypass.menu.BypassMenu BYPASSMENU -> a
-    void create() -> a
-    void start() -> b
-    void stop() -> c
+    java.util.concurrent.locks.ReentrantLock lock -> a
+    boolean rendered -> b
+    com.gutabi.bypass.menu.BypassMenu BYPASSMENU -> c
+    java.util.concurrent.atomic.AtomicBoolean simThreadTrigger -> d
+    java.lang.Thread simThread -> e
     com.gutabi.capsloc.ui.Menu getMenu() -> f
-    double getTime() -> d
+    double getTime() -> a
+    void resume() -> b
+    void surfaceChanged(int,int) -> b
+    void pause() -> c
     boolean integrate(double) -> a
+    void postDisplay(int,int) -> a
+    void render() -> d
 com.gutabi.bypass.menu.BypassMenuPanel -> com.gutabi.bypass.b.b:
+    com.gutabi.capsloc.ui.Image logo -> a
+    com.gutabi.capsloc.ui.Image copyright -> b
+    double logoAdjustedWidth -> c
+    double logoAdjustedHeight -> d
+    double copyAdjustedWidth -> e
+    double copyAdjustedHeight -> f
     void postDisplay(int,int) -> a
     void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
 com.gutabi.bypass.menu.LevelMenu -> com.gutabi.bypass.b.c:
-    com.gutabi.bypass.level.LevelDB levelDB -> b
-    boolean showInfo -> c
-    java.util.concurrent.atomic.AtomicBoolean simThreadTrigger -> d
-    java.lang.Thread simThread -> e
-    void resume() -> e
-    void surfaceChanged(int,int) -> b
-    void pause() -> g
+    java.lang.String levelDBName -> f
+    com.gutabi.bypass.level.LevelDB levelDB -> g
+    boolean showInfo -> h
+    java.util.Map map -> i
+    void updateFirstUnwon() -> e
+    void create() -> g
+    void destroy() -> h
+    void start() -> i
+    void stop() -> j
 com.gutabi.bypass.menu.LevelMenu$1 -> com.gutabi.bypass.b.d:
-    int val$ii -> n
+    com.gutabi.bypass.menu.LevelMenu this$0 -> a
+    int val$ii -> o
     void action() -> a
 com.gutabi.bypass.menu.LevelMenuItem -> com.gutabi.bypass.b.e:
-    int index -> a
+    int index -> b
     void render() -> b
 com.gutabi.bypass.menu.MainMenu -> com.gutabi.bypass.b.f:
-    java.util.concurrent.atomic.AtomicBoolean simThreadTrigger -> b
-    java.lang.Thread simThread -> c
-    void resume() -> e
-    void surfaceChanged(int,int) -> b
-    void pause() -> g
-com.gutabi.bypass.menu.MainMenu$1 -> com.gutabi.bypass.b.g:
-    com.gutabi.bypass.menu.MainMenu this$0 -> a
+    com.gutabi.bypass.menu.MainMenu MAINMENU -> f
+    void updateFirstUnplayed() -> e
+    void create() -> g
+    void destroy() -> h
+    void start() -> i
+    void stop() -> j
+com.gutabi.bypass.menu.MainMenuFull -> com.gutabi.bypass.b.g:
+    com.gutabi.capsloc.ui.MenuItem episode1MenuItem -> g
+    com.gutabi.capsloc.ui.MenuItem episode2MenuItem -> h
+    com.gutabi.capsloc.ui.MenuItem tutorialMenuItem -> i
+    void updateFirstUnplayed() -> e
+com.gutabi.bypass.menu.MainMenuFull$1 -> com.gutabi.bypass.b.h:
+    com.gutabi.bypass.menu.MainMenuFull this$0 -> a
     void action() -> a
-com.gutabi.bypass.menu.MainMenu$2 -> com.gutabi.bypass.b.h:
-    com.gutabi.bypass.menu.MainMenu this$0 -> a
+com.gutabi.bypass.menu.MainMenuFull$2 -> com.gutabi.bypass.b.i:
+    com.gutabi.bypass.menu.MainMenuFull this$0 -> a
     void action() -> a
-com.gutabi.bypass.menu.MainMenu$3 -> com.gutabi.bypass.b.i:
-    com.gutabi.bypass.menu.MainMenu this$0 -> a
+com.gutabi.bypass.menu.MainMenuFull$3 -> com.gutabi.bypass.b.j:
+    com.gutabi.bypass.menu.MainMenuFull this$0 -> a
     void action() -> a
+com.gutabi.bypass.menu.MainMenuItem -> com.gutabi.bypass.b.k:
+    com.gutabi.bypass.level.LevelDB levelDB -> b
+    void render() -> b
 com.gutabi.capsloc.AppScreen -> com.gutabi.a.a:
     com.gutabi.capsloc.ui.ContentPane contentPane -> a
     void postDisplay(int,int) -> a
 com.gutabi.capsloc.CapslocApplication -> com.gutabi.a.b:
-    com.gutabi.capsloc.world.sprites.Sheet carSheet -> h
-    com.gutabi.capsloc.world.sprites.Sheet spriteSheet -> i
-    com.gutabi.capsloc.AppScreen appScreen -> j
-    com.gutabi.capsloc.Model model -> k
-    com.gutabi.capsloc.Tool tool -> l
-    com.gutabi.capsloc.Platform platform -> m
-    boolean NORMALCAR -> n
-    boolean FASTCAR -> o
-    boolean REALLYCAR -> p
-    boolean TRUCK -> q
-    boolean FPS_DRAW -> r
-    boolean STOPSIGN_DRAW -> s
-    boolean CARTEXTURE_DRAW -> t
-    boolean EXPLOSIONS_DRAW -> u
-    boolean DEBUG_DRAW -> v
-    java.util.Random RANDOM -> w
-    com.gutabi.capsloc.CapslocApplication APP -> x
+    com.gutabi.capsloc.world.sprites.Sheet carSheet -> c
+    com.gutabi.capsloc.world.sprites.Sheet spriteSheet -> d
+    com.gutabi.capsloc.AppScreen appScreen -> e
+    com.gutabi.capsloc.Model model -> f
+    com.gutabi.capsloc.Tool tool -> g
+    com.gutabi.capsloc.Platform platform -> h
+    boolean NORMALCAR -> i
+    boolean FASTCAR -> j
+    boolean REALLYCAR -> k
+    boolean TRUCK -> l
+    boolean FPS_DRAW -> m
+    boolean STOPSIGN_DRAW -> n
+    boolean CARTEXTURE_DRAW -> o
+    boolean EXPLOSIONS_DRAW -> p
+    boolean DEBUG_DRAW -> q
+    java.util.Random RANDOM -> r
+    com.gutabi.capsloc.CapslocApplication APP -> s
     void setAppScreen(com.gutabi.capsloc.AppScreen) -> a
 com.gutabi.capsloc.Entity -> com.gutabi.a.c:
     boolean isUserDeleteable() -> c
@@ -1223,29 +394,28 @@ com.gutabi.capsloc.Entity -> com.gutabi.a.c:
     boolean postStep(double) -> c
 com.gutabi.capsloc.Integratable -> com.gutabi.a.d:
     boolean integrate(double) -> a
-    double getTime() -> d
+    double getTime() -> a
 com.gutabi.capsloc.Model -> com.gutabi.a.e:
     com.gutabi.capsloc.ui.Menu getMenu() -> f
 com.gutabi.capsloc.Platform -> com.gutabi.a.f:
-    com.gutabi.capsloc.ui.paint.RenderingContext createRenderingContext() -> a
+    com.gutabi.capsloc.ui.paint.RenderingContext createRenderingContext() -> b
     void setRenderingContextFields1(com.gutabi.capsloc.ui.paint.RenderingContext,java.lang.Object) -> a
     void setRenderingContextFields2(com.gutabi.capsloc.ui.paint.RenderingContext,java.lang.Object,java.lang.Object) -> a
     com.gutabi.capsloc.geom.AABB bounds(java.lang.String,com.gutabi.capsloc.Resource,com.gutabi.capsloc.ui.paint.FontStyle,int) -> a
     com.gutabi.capsloc.ui.Image readImage(com.gutabi.capsloc.Resource) -> a
     com.gutabi.capsloc.ui.Image createImage(int,int) -> a
     com.gutabi.capsloc.ui.Image createTransparentImage(int,int) -> b
-    com.gutabi.capsloc.ui.PlatformContentPane createPlatformContentPane() -> b
+    com.gutabi.capsloc.ui.PlatformContentPane createPlatformContentPane() -> c
     void setupAppScreen(java.lang.Object[]) -> a
-    void showAppScreen() -> c
-    com.gutabi.capsloc.Resource imageResource(java.lang.String) -> b
-    com.gutabi.capsloc.Resource fontResource(java.lang.String) -> a
-    com.gutabi.capsloc.Resource levelDBResource(java.lang.String) -> c
+    void showAppScreen() -> d
+    com.gutabi.capsloc.Resource imageResource(java.lang.String) -> c
+    com.gutabi.capsloc.Resource fontResource(java.lang.String) -> b
     java.lang.String resourceName(com.gutabi.capsloc.Resource) -> c
     java.io.InputStream openResourceInputStream(com.gutabi.capsloc.Resource) -> b
-    com.gutabi.capsloc.geom.GeometryPath createGeometryPath() -> f
+    com.gutabi.capsloc.geom.GeometryPath createGeometryPath() -> g
     void action(java.lang.Class,java.lang.Object[]) -> a
-    void finishAction() -> d
-    long monotonicClockMillis() -> e
+    void finishAction() -> e
+    long monotonicClockMillis() -> f
 com.gutabi.capsloc.Resource -> com.gutabi.a.g:
 com.gutabi.capsloc.SimulationRunnable -> com.gutabi.a.h:
     java.util.concurrent.atomic.AtomicBoolean trigger -> a
@@ -1253,7 +423,8 @@ com.gutabi.capsloc.SimulationRunnable -> com.gutabi.a.h:
 com.gutabi.capsloc.Tool -> com.gutabi.a.i:
     void pressed(com.gutabi.capsloc.ui.InputEvent) -> a
     void released(com.gutabi.capsloc.ui.InputEvent) -> b
-    void dragged(com.gutabi.capsloc.ui.InputEvent) -> c
+    void dragged(com.gutabi.capsloc.ui.InputEvent) -> d
+    void canceled(com.gutabi.capsloc.ui.InputEvent) -> c
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
 com.gutabi.capsloc.geom.AABB -> com.gutabi.a.a.a:
     com.gutabi.capsloc.math.Dim dim -> a
@@ -1710,56 +881,58 @@ com.gutabi.capsloc.ui.Label -> com.gutabi.a.c.d:
     com.gutabi.capsloc.ui.paint.Color color -> e
     com.gutabi.capsloc.geom.AABB localAABB -> f
     com.gutabi.capsloc.geom.AABB aabb -> g
+    void setLocation(double,double) -> a
     void renderLocal() -> a
     void render() -> b
     void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
 com.gutabi.capsloc.ui.Menu -> com.gutabi.a.c.e:
-    boolean rendered -> f
-    java.util.concurrent.locks.Lock lock -> g
-    java.util.List tree -> h
-    java.util.List colAABBs -> i
-    com.gutabi.capsloc.ui.MenuItem hilited -> j
-    com.gutabi.capsloc.ui.MenuItem firstMenuItem -> k
-    com.gutabi.capsloc.ui.MenuItem shimmeringMenuItem -> l
-    int rows -> m
-    int cols -> n
-    double[] columnWidth -> o
-    double[] columnHeight -> p
-    com.gutabi.capsloc.geom.AABB aabb -> q
-    com.gutabi.capsloc.geom.AABB marginAABB -> r
-    int parWidth -> s
-    int parHeight -> t
-    double widthFraction -> u
-    double scale -> v
-    double menuWidth -> w
-    double menuHeight -> x
-    boolean hScrollable -> y
-    boolean vScrollable -> z
-    com.gutabi.capsloc.ui.Shimmer shimmer -> A
+    java.util.List tree -> j
+    java.util.List colAABBs -> k
+    com.gutabi.capsloc.ui.MenuItem hilited -> l
+    com.gutabi.capsloc.ui.MenuItem firstMenuItem -> m
+    com.gutabi.capsloc.ui.MenuItem shimmeringMenuItem -> n
+    int rows -> o
+    int cols -> p
+    double[] columnWidth -> q
+    double[] columnHeight -> r
+    com.gutabi.capsloc.geom.AABB aabb -> s
+    com.gutabi.capsloc.geom.AABB marginAABB -> t
+    com.gutabi.capsloc.math.Point panelOffset -> u
+    int parWidth -> v
+    int parHeight -> w
+    double widthFraction -> x
+    double scale -> y
+    double menuWidth -> z
+    double menuHeight -> A
+    boolean hScrollable -> B
+    boolean vScrollable -> C
+    com.gutabi.capsloc.ui.Shimmer shimmer -> D
     void setLocation(double,double) -> a
     void setLocation(com.gutabi.capsloc.math.Point) -> a
     void add(com.gutabi.capsloc.ui.MenuItem,int,int) -> a
     void pressed(com.gutabi.capsloc.ui.InputEvent) -> a
     void released(com.gutabi.capsloc.ui.InputEvent) -> b
+    void canceled(com.gutabi.capsloc.ui.InputEvent) -> c
     void dragToNewLocation(com.gutabi.capsloc.math.Point) -> b
     com.gutabi.capsloc.ui.MenuItem hitTest(com.gutabi.capsloc.math.Point) -> c
+    boolean integrate(double) -> a
     void postDisplay(int,int) -> a
-    void render() -> h
+    void render() -> d
     void setAABBAndScrolling() -> a
-    void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
+    void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
 com.gutabi.capsloc.ui.MenuItem -> com.gutabi.a.c.f:
-    com.gutabi.capsloc.ui.Menu menu -> b
-    com.gutabi.capsloc.ui.Label lab -> c
-    com.gutabi.capsloc.ui.Label auxLab0 -> d
-    com.gutabi.capsloc.ui.Label auxLab1 -> e
-    com.gutabi.capsloc.ui.Label auxLab2 -> f
-    boolean border -> g
-    com.gutabi.capsloc.geom.AABB localAABB -> h
-    com.gutabi.capsloc.geom.AABB aabb -> i
-    boolean active -> j
-    int r -> k
-    int c -> l
-    com.gutabi.capsloc.ui.MenuItem minimumWidth -> m
+    com.gutabi.capsloc.ui.Menu menu -> c
+    com.gutabi.capsloc.ui.Label lab -> d
+    com.gutabi.capsloc.ui.Label auxLab0 -> e
+    com.gutabi.capsloc.ui.Label auxLab1 -> f
+    com.gutabi.capsloc.ui.Label auxLab2 -> g
+    boolean border -> h
+    com.gutabi.capsloc.geom.AABB localAABB -> i
+    com.gutabi.capsloc.geom.AABB aabb -> j
+    boolean active -> k
+    int r -> l
+    int c -> m
+    com.gutabi.capsloc.ui.MenuItem minimumWidth -> n
     boolean hitTest(com.gutabi.capsloc.math.Point) -> a
     void action() -> a
     void render() -> b
@@ -1771,19 +944,21 @@ com.gutabi.capsloc.ui.MenuTool -> com.gutabi.a.c.h:
     com.gutabi.capsloc.math.Point origMenuUL -> a
     com.gutabi.capsloc.math.Point origPressed -> b
     void pressed(com.gutabi.capsloc.ui.InputEvent) -> a
-    void dragged(com.gutabi.capsloc.ui.InputEvent) -> c
+    void dragged(com.gutabi.capsloc.ui.InputEvent) -> d
     void released(com.gutabi.capsloc.ui.InputEvent) -> b
+    void canceled(com.gutabi.capsloc.ui.InputEvent) -> c
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
 com.gutabi.capsloc.ui.Paintable -> com.gutabi.a.c.i:
     void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
 com.gutabi.capsloc.ui.Panel -> com.gutabi.a.c.j:
-    com.gutabi.capsloc.geom.AABB aabb -> a
-    com.gutabi.capsloc.math.Point lastMovedOrDraggedPanelPoint -> b
-    com.gutabi.capsloc.math.Point lastPressedPanelPoint -> c
-    com.gutabi.capsloc.math.Point lastDraggedPanelPoint -> d
+    com.gutabi.capsloc.geom.AABB aabb -> g
+    com.gutabi.capsloc.math.Point lastMovedOrDraggedPanelPoint -> h
+    com.gutabi.capsloc.math.Point lastPressedPanelPoint -> i
+    com.gutabi.capsloc.math.Point lastDraggedPanelPoint -> j
     void pressed(com.gutabi.capsloc.ui.InputEvent) -> a
     void released(com.gutabi.capsloc.ui.InputEvent) -> b
     void dragged(com.gutabi.capsloc.ui.InputEvent) -> c
+    void canceled(com.gutabi.capsloc.ui.InputEvent) -> d
     void postDisplay(int,int) -> a
     void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
 com.gutabi.capsloc.ui.PlatformContentPane -> com.gutabi.a.c.k:
@@ -1793,6 +968,7 @@ com.gutabi.capsloc.ui.PlatformContentPane -> com.gutabi.a.c.k:
     java.util.List getChildren() -> b
     void pressedDriver(com.gutabi.capsloc.math.Point) -> a
     void releasedDriver(com.gutabi.capsloc.math.Point) -> b
+    void canceledDriver() -> c
     void draggedDriver(com.gutabi.capsloc.math.Point) -> c
     void postDisplay(int,int) -> a
     void repaint() -> a
@@ -1885,15 +1061,16 @@ com.gutabi.capsloc.ui.paint.RenderingContext -> com.gutabi.a.c.a.e:
     void drawAABB(com.gutabi.capsloc.geom.MutableAABB) -> a
     void drawLine(com.gutabi.capsloc.geom.Line) -> a
     void paintCircle(com.gutabi.capsloc.geom.Circle) -> a
+    void setAntialiasing() -> g
+    void clearAntialiasing() -> h
 com.gutabi.capsloc.world.CarMap -> com.gutabi.a.d.a:
     com.gutabi.capsloc.world.World world -> a
     java.util.List cars -> b
-    java.util.List toBeRemoved -> c
-    boolean $assertionsDisabled -> d
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum -> e
+    com.gutabi.capsloc.world.cars.Car redCar -> c
+    java.util.List toBeRemoved -> d
+    boolean $assertionsDisabled -> e
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum -> f
     void addCar(com.gutabi.capsloc.world.cars.Car) -> a
-    int size() -> a
-    com.gutabi.capsloc.world.cars.Car findRedCar() -> b
     com.gutabi.capsloc.world.cars.Car carHitTest(com.gutabi.capsloc.math.Point) -> a
     void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
     boolean preStep(double) -> a
@@ -1901,7 +1078,7 @@ com.gutabi.capsloc.world.CarMap -> com.gutabi.a.d.a:
     void findDeadlockCycles(double) -> c
     com.gutabi.capsloc.world.cars.DrivingEvent findDeadlockEvent(com.gutabi.capsloc.world.cars.AutonomousDriver) -> a
     com.gutabi.capsloc.world.cars.AutonomousDriver findDeadlockCause(com.gutabi.capsloc.world.cars.AutonomousDriver) -> b
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum() -> c
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$cars$CarStateEnum() -> a
 com.gutabi.capsloc.world.GrassMap -> com.gutabi.a.d.b:
     java.util.List grass -> a
     java.util.List toRemove -> b
@@ -1920,35 +1097,33 @@ com.gutabi.capsloc.world.Quadrant -> com.gutabi.a.d.c:
     com.gutabi.capsloc.world.Quadrant right -> g
     com.gutabi.capsloc.world.Quadrant down -> h
     com.gutabi.capsloc.world.Quadrant rightDown -> i
-    boolean grid -> j
-    com.gutabi.capsloc.geom.AABB aabb -> k
-    double gridSpacing -> l
+    com.gutabi.capsloc.world.GrassMap grassMap -> j
+    boolean grid -> k
+    com.gutabi.capsloc.geom.AABB aabb -> l
+    double gridSpacing -> m
     void init() -> a
+    void preStart() -> b
+    boolean step(double) -> a
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
+    void paintScene(com.gutabi.capsloc.ui.paint.RenderingContext) -> b
 com.gutabi.capsloc.world.QuadrantMap -> com.gutabi.a.d.d:
     com.gutabi.capsloc.geom.AABB worldAABB -> a
     int quadrantCols -> b
     int quadrantRows -> c
     int[][] ini -> d
-    com.gutabi.capsloc.world.Quadrant[][] quadrants -> i
+    com.gutabi.capsloc.world.Quadrant[][] quadrants -> g
     com.gutabi.capsloc.ui.Image quadrantGrass -> e
-    com.gutabi.capsloc.world.GrassMap grassMap -> f
-    com.gutabi.capsloc.ui.paint.RenderingContext ctxt -> g
-    boolean $assertionsDisabled -> h
+    com.gutabi.capsloc.ui.paint.RenderingContext ctxt -> f
     com.gutabi.capsloc.world.Quadrant[][] initQuadrants(int[][]) -> a
     void panelPostDisplay(com.gutabi.capsloc.world.WorldCamera) -> a
     boolean contains(java.lang.Object) -> a
+    void mowGrass(java.lang.Object) -> b
     void preStart() -> a
     boolean step(double) -> a
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
     void paintScene(com.gutabi.capsloc.ui.paint.RenderingContext) -> b
 com.gutabi.capsloc.world.Stats -> com.gutabi.a.d.e:
     com.gutabi.capsloc.world.World world -> a
-    long lastTime -> b
-    long curTime -> c
-    int frameCount -> d
-    int fps -> e
-    void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
 com.gutabi.capsloc.world.Stroke -> com.gutabi.a.d.f:
     double STROKE_RADIUS -> a
     com.gutabi.capsloc.world.World world -> b
@@ -1970,30 +1145,26 @@ com.gutabi.capsloc.world.Stroke -> com.gutabi.a.d.f:
     void computeAABB() -> d
     int[] $SWITCH_TABLE$com$gutabi$capsloc$geom$SweepEventType() -> c
 com.gutabi.capsloc.world.World -> com.gutabi.a.d.g:
-    com.gutabi.capsloc.world.WorldCamera worldCamera -> i
-    java.util.concurrent.atomic.AtomicBoolean simThreadTrigger -> j
-    java.lang.Thread simThread -> k
-    com.gutabi.capsloc.world.WorldBackground background -> l
-    com.gutabi.capsloc.world.QuadrantMap quadrantMap -> m
-    com.gutabi.capsloc.world.graph.Graph graph -> n
-    com.gutabi.capsloc.world.CarMap carMap -> o
-    com.gutabi.capsloc.world.Stats stats -> p
-    com.gutabi.capsloc.ui.Shimmer shimmer -> q
-    com.gutabi.capsloc.math.Point lastPressedWorldPoint -> r
-    com.gutabi.capsloc.math.Point lastDraggedWorldPoint -> s
-    com.gutabi.capsloc.math.Point lastReleasedWorldPoint -> t
-    com.gutabi.capsloc.math.Point penDraggedWorldPoint -> u
-    boolean lastDraggedWorldPointWasNull -> v
-    com.gutabi.capsloc.math.Point lastMovedOrDraggedWorldPoint -> w
-    com.gutabi.capsloc.ui.paint.RenderingContext ctxt -> x
+    com.gutabi.capsloc.world.WorldCamera worldCamera -> k
+    java.util.concurrent.atomic.AtomicBoolean simThreadTrigger -> l
+    java.lang.Thread simThread -> m
+    com.gutabi.capsloc.world.WorldBackground background -> n
+    com.gutabi.capsloc.world.QuadrantMap quadrantMap -> o
+    com.gutabi.capsloc.world.graph.Graph graph -> p
+    com.gutabi.capsloc.world.CarMap carMap -> q
+    com.gutabi.capsloc.world.Stats stats -> r
+    com.gutabi.capsloc.ui.Shimmer shimmer -> s
+    com.gutabi.capsloc.math.Point lastPressedWorldPoint -> t
+    com.gutabi.capsloc.math.Point lastDraggedWorldPoint -> u
+    com.gutabi.capsloc.math.Point penDraggedWorldPoint -> v
+    boolean lastDraggedWorldPointWasNull -> w
+    com.gutabi.capsloc.math.Point lastMovedOrDraggedWorldPoint -> x
     com.gutabi.capsloc.geom.MutableAABB shimmerTmp -> y
-    boolean $assertionsDisabled -> z
-    void panelPostDisplay(int,int) -> b
     void preStart() -> k
     boolean integrate(double) -> a
-    boolean preStep() -> a
+    boolean preStep() -> b
     boolean step() -> l
-    void postStep() -> b
+    void postStep() -> c
     java.util.Set addFixture(com.gutabi.capsloc.world.graph.Fixture) -> a
     java.util.Set addIntersection(com.gutabi.capsloc.world.graph.Intersection) -> a
     com.gutabi.capsloc.world.graph.Intersection splitRoad(com.gutabi.capsloc.world.graph.RoadPosition) -> a
@@ -2001,10 +1172,11 @@ com.gutabi.capsloc.world.World -> com.gutabi.a.d.g:
     com.gutabi.capsloc.world.graph.BypassBoard createBypassBoard(com.gutabi.capsloc.math.Point,char[][]) -> a
     void pressed(com.gutabi.capsloc.ui.InputEvent) -> a
     void released(com.gutabi.capsloc.ui.InputEvent) -> b
-    void dragged(com.gutabi.capsloc.ui.InputEvent) -> c
-    void render_worldPanel() -> h
-    void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
-    void paintStats(com.gutabi.capsloc.ui.paint.RenderingContext) -> b
+    void canceled(com.gutabi.capsloc.ui.InputEvent) -> c
+    void dragged(com.gutabi.capsloc.ui.InputEvent) -> d
+    void postDisplay(int,int) -> b
+    void render() -> h
+    void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
 com.gutabi.capsloc.world.WorldBackground -> com.gutabi.a.d.h:
     com.gutabi.capsloc.world.WorldBackground$RenderMethod method -> a
     com.gutabi.capsloc.world.World world -> b
@@ -2032,8 +1204,8 @@ com.gutabi.capsloc.world.WorldCamera -> com.gutabi.a.d.j:
     double origPixelsPerMeter -> b
     com.gutabi.capsloc.geom.MutableAABB worldViewport -> c
     com.gutabi.capsloc.geom.AABB origWorldViewport -> d
-    com.gutabi.capsloc.geom.AABB previewAABB -> e
-    com.gutabi.capsloc.geom.AABB panelAABB -> f
+    com.gutabi.capsloc.geom.AABB panelAABB -> e
+    void zoomAbsolute(double) -> a
     void panAbsolute(double,double) -> a
 com.gutabi.capsloc.world.WorldPanel -> com.gutabi.a.d.k:
     void postDisplay(int,int) -> a
@@ -2207,25 +1379,26 @@ com.gutabi.capsloc.world.graph.BypassBoard -> com.gutabi.a.d.b.c:
     com.gutabi.capsloc.geom.AABB allStudsAABB -> m
     com.gutabi.capsloc.geom.AABB gridAABB -> n
     com.gutabi.capsloc.geom.AABB gridFudgeAABB -> o
-    com.gutabi.capsloc.geom.AABB zoomingAABB -> p
-    int jStudCount -> q
-    com.gutabi.capsloc.world.graph.BorderStud[] jStuds -> r
-    int kStudCount -> s
-    com.gutabi.capsloc.world.graph.BorderStud[] kStuds -> t
-    com.gutabi.capsloc.world.graph.BorderStud yStud -> u
-    com.gutabi.capsloc.world.graph.Vertex exitVertex -> v
-    java.util.Map rowTracks -> w
-    java.util.Map colTracks -> x
-    java.util.Map rowPaths -> D
-    java.util.Map colPaths -> E
-    com.gutabi.capsloc.ui.Image img -> y
-    com.gutabi.capsloc.geom.MutableAABB test -> z
-    com.gutabi.capsloc.geom.MutableAABB testFloor -> A
-    com.gutabi.capsloc.geom.MutableAABB testCeil -> B
-    boolean $assertionsDisabled -> C
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Side -> F
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Axis -> G
-    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod -> H
+    com.gutabi.capsloc.geom.AABB backAABB -> p
+    com.gutabi.capsloc.geom.AABB zoomingAABB -> q
+    int jStudCount -> r
+    com.gutabi.capsloc.world.graph.BorderStud[] jStuds -> s
+    int kStudCount -> t
+    com.gutabi.capsloc.world.graph.BorderStud[] kStuds -> u
+    com.gutabi.capsloc.world.graph.BorderStud yStud -> v
+    com.gutabi.capsloc.world.graph.Vertex exitVertex -> w
+    java.util.Map rowTracks -> x
+    java.util.Map colTracks -> y
+    java.util.Map rowPaths -> E
+    java.util.Map colPaths -> F
+    com.gutabi.capsloc.ui.Image img -> z
+    com.gutabi.capsloc.geom.MutableAABB test -> A
+    com.gutabi.capsloc.geom.MutableAABB testFloor -> B
+    com.gutabi.capsloc.geom.MutableAABB testCeil -> C
+    boolean $assertionsDisabled -> D
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Side -> G
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Axis -> H
+    int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod -> I
     void addExitRoad(com.gutabi.capsloc.world.graph.BorderStud) -> a
     void addExitRoadToTrack(java.util.List,com.gutabi.capsloc.world.graph.BorderStud) -> a
     void addJointRoad(com.gutabi.capsloc.world.graph.BorderStud[]) -> a
@@ -2390,9 +1563,8 @@ com.gutabi.capsloc.world.graph.Graph -> com.gutabi.a.d.b.l:
     void merge(com.gutabi.capsloc.world.graph.Vertex) -> f
     void render() -> b
     void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
-    void paintStats(com.gutabi.capsloc.ui.paint.RenderingContext) -> b
-    void paintScene(com.gutabi.capsloc.ui.paint.RenderingContext) -> c
-    void paintIDs(com.gutabi.capsloc.ui.paint.RenderingContext) -> d
+    void paintScene(com.gutabi.capsloc.ui.paint.RenderingContext) -> b
+    void paintIDs(com.gutabi.capsloc.ui.paint.RenderingContext) -> c
     int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$Direction() -> c
     int[] $SWITCH_TABLE$com$gutabi$capsloc$world$WorldBackground$RenderMethod() -> d
 com.gutabi.capsloc.world.graph.GraphPosition -> com.gutabi.a.d.b.m:
@@ -2491,7 +1663,6 @@ com.gutabi.capsloc.world.graph.GraphPositionPathPosition -> com.gutabi.a.d.b.p:
     double firstCollisionParam(com.gutabi.capsloc.world.cars.Car,com.gutabi.capsloc.geom.MutableSweptOBB) -> a
     int movesDistance(com.gutabi.capsloc.world.graph.GraphPositionPathPosition,com.gutabi.capsloc.world.cars.Car) -> a
 com.gutabi.capsloc.world.graph.Intersection -> com.gutabi.a.d.b.q:
-    boolean $assertionsDisabled -> a
     boolean isUserDeleteable() -> c
     boolean supportsStopSigns() -> b
     void preStart() -> d
@@ -2758,12 +1929,11 @@ com.gutabi.capsloc.world.physics.PhysicsBody -> com.gutabi.a.d.c.a:
     void applyCancelingLateralImpulse(double) -> e
     void applyCancelingAngularImpulse(double) -> f
 com.gutabi.capsloc.world.physics.PhysicsWorld -> com.gutabi.a.d.c.b:
-    double t -> A
-    boolean $assertionsDisabled -> B
+    double t -> z
+    boolean $assertionsDisabled -> A
     boolean step() -> l
-    double getTime() -> d
-    int getBodyCount() -> m
-    void drawPhysicsDebug(com.gutabi.capsloc.ui.paint.RenderingContext) -> c
+    double getTime() -> a
+    void drawPhysicsDebug(com.gutabi.capsloc.ui.paint.RenderingContext) -> b
     boolean intersectsPhysicsBodies(com.gutabi.capsloc.geom.AABB) -> a
     boolean intersectsPhysicsBodies(com.gutabi.capsloc.geom.MutableAABB) -> a
 com.gutabi.capsloc.world.sprites.AnimatedGrass -> com.gutabi.a.d.d.a:
@@ -2774,7 +1944,6 @@ com.gutabi.capsloc.world.sprites.AnimatedGrass -> com.gutabi.a.d.d.a:
     double phase -> e
     int startFrame -> f
     com.gutabi.capsloc.geom.AABB aabb -> g
-    boolean xor -> h
     void preStart() -> a
     boolean step(double) -> a
     void paint(com.gutabi.capsloc.ui.paint.RenderingContext) -> a
@@ -3031,11 +2200,13 @@ com.gutabi.capsloc.world.tools.Motion -> com.gutabi.a.d.e.a:
     com.gutabi.capsloc.world.tools.Motion PRESSED -> a
     com.gutabi.capsloc.world.tools.Motion DRAGGED -> b
     com.gutabi.capsloc.world.tools.Motion RELEASED -> c
-    com.gutabi.capsloc.world.tools.Motion[] ENUM$VALUES -> d
+    com.gutabi.capsloc.world.tools.Motion CANCELED -> d
+    com.gutabi.capsloc.world.tools.Motion[] ENUM$VALUES -> e
     com.gutabi.capsloc.world.tools.Motion[] values() -> values
     com.gutabi.capsloc.world.tools.Motion valueOf(java.lang.String) -> valueOf
 com.gutabi.capsloc.world.tools.WorldToolBase -> com.gutabi.a.d.e.b:
     com.gutabi.capsloc.world.tools.Motion lastMotion -> m
     void pressed(com.gutabi.capsloc.ui.InputEvent) -> a
-    void dragged(com.gutabi.capsloc.ui.InputEvent) -> c
+    void dragged(com.gutabi.capsloc.ui.InputEvent) -> d
     void released(com.gutabi.capsloc.ui.InputEvent) -> b
+    void canceled(com.gutabi.capsloc.ui.InputEvent) -> c
