@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     tools:context=".BypassWorldActivity" >
     
-    <com.gutabi.bypass.android.BypassView android:id="@+id/view_bypassworld"
+    <com.brentonbostick.bypass.android.BypassView android:id="@+id/view_bypassworld"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:layout_weight="1"/> 

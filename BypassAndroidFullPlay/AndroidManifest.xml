@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.gutabi.bypass.android.full"
+    package="com.brentonbostick.bypass.android.full"
     android:versionCode="1"
     android:versionName="1.0" >
     
@@ -17,7 +17,7 @@
         android:label="@string/app_name" >
         
         <activity
-            android:name="com.gutabi.bypass.android.full.MainMenuActivity"
+            android:name="com.brentonbostick.bypass.android.full.MainMenuActivity"
             android:theme="@style/Theme.BypassMainMenu"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
@@ -28,13 +28,13 @@
         </activity>
         
         <activity
-            android:name="com.gutabi.bypass.android.menu.LevelMenuActivity"
+            android:name="com.brentonbostick.bypass.android.menu.LevelMenuActivity"
             android:theme="@style/Theme.BypassLevelMenu"
             android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
         
         <activity
-            android:name="com.gutabi.bypass.android.level.BypassWorldActivity"
+            android:name="com.brentonbostick.bypass.android.level.BypassWorldActivity"
             android:theme="@style/Theme.BypassWorld"
             android:windowSoftInputMode="stateAlwaysHidden">
         </activity>

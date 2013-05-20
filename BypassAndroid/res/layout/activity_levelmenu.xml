@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     tools:context=".LevelMenuActivity" >
     
-    <com.gutabi.bypass.android.BypassView android:id="@+id/view_levelmenu"
+    <com.brentonbostick.bypass.android.BypassView android:id="@+id/view_levelmenu"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/> 
