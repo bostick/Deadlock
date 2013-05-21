@@ -1,81 +1,81 @@
-com.gutabi.bypass.BypassControlPanel
-com.gutabi.bypass.BypassPlatform:
-    public abstract com.gutabi.capsloc.Resource levelDBResource(java.lang.String)
-    public abstract void loadScores(com.gutabi.bypass.level.LevelDB)
-com.gutabi.bypass.android.BypassAndroidPlatform:
+com.brentonbostick.bypass.BypassControlPanel
+com.brentonbostick.bypass.BypassPlatform:
+    public abstract com.brentonbostick.capsloc.Resource levelDBResource(java.lang.String)
+    public abstract void loadScores(com.brentonbostick.bypass.level.LevelDB)
+com.brentonbostick.bypass.android.BypassAndroidPlatform:
     266:266:public void unshowAppScreen()
     280:280:public void exit()
-com.gutabi.bypass.android.R:
+com.brentonbostick.bypass.android.R:
     9:9:public R()
-com.gutabi.bypass.android.R$color
-com.gutabi.bypass.android.R$drawable
-com.gutabi.bypass.android.R$id:
+com.brentonbostick.bypass.android.R$color
+com.brentonbostick.bypass.android.R$drawable
+com.brentonbostick.bypass.android.R$id:
     16:16:public R$id()
-com.gutabi.bypass.android.R$layout:
+com.brentonbostick.bypass.android.R$layout:
     24:24:public R$layout()
-com.gutabi.bypass.android.R$menu:
+com.brentonbostick.bypass.android.R$menu:
     28:28:public R$menu()
-com.gutabi.bypass.android.R$string
-com.gutabi.bypass.android.R$style
-com.gutabi.bypass.android.ResourceImpl:
+com.brentonbostick.bypass.android.R$string
+com.brentonbostick.bypass.android.R$style
+com.brentonbostick.bypass.android.ResourceImpl:
     public java.net.URL url
     26:28:public ResourceImpl(java.net.URL)
-com.gutabi.bypass.android.full.BuildConfig
-com.gutabi.bypass.android.full.R
-com.gutabi.bypass.android.full.R$attr
-com.gutabi.bypass.android.full.R$color
-com.gutabi.bypass.android.full.R$drawable
-com.gutabi.bypass.android.full.R$id
-com.gutabi.bypass.android.full.R$layout
-com.gutabi.bypass.android.full.R$menu
-com.gutabi.bypass.android.full.R$raw
-com.gutabi.bypass.android.full.R$string
-com.gutabi.bypass.android.full.R$style
-com.gutabi.bypass.android.geom.GeometryPathImpl:
-    30:32:public void add(com.gutabi.capsloc.geom.QuadCurve)
-    35:37:public void add(com.gutabi.capsloc.geom.CubicCurve)
-    40:41:public void add(com.gutabi.capsloc.geom.Ellipse)
-    71:79:public void add(com.gutabi.capsloc.geom.Polygon)
-    93:101:public void add(com.gutabi.capsloc.geom.Polyline)
-    113:116:public void draw(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.bypass.android.ui.paint.RenderingContextImpl:
-    46:47:public void rotate(double,com.gutabi.capsloc.math.Point)
-    50:51:public void rotate(double,com.gutabi.capsloc.math.Dim)
-    164:166:public void paintAABB(com.gutabi.capsloc.geom.MutableAABB)
-    170:179:public void drawPath(com.gutabi.capsloc.geom.GeometryPath)
-    201:209:public void drawCircle(com.gutabi.capsloc.geom.Circle)
-    236:237:public void translate(com.gutabi.capsloc.math.Point)
-    292:299:public com.gutabi.capsloc.ui.paint.Color getColor()
-com.gutabi.bypass.level.BypassCarTool:
-    30:30:public void setPoint(com.gutabi.capsloc.math.Point)
+com.brentonbostick.bypass.android.full.BuildConfig
+com.brentonbostick.bypass.android.full.R
+com.brentonbostick.bypass.android.full.R$attr
+com.brentonbostick.bypass.android.full.R$color
+com.brentonbostick.bypass.android.full.R$drawable
+com.brentonbostick.bypass.android.full.R$id
+com.brentonbostick.bypass.android.full.R$layout
+com.brentonbostick.bypass.android.full.R$menu
+com.brentonbostick.bypass.android.full.R$raw
+com.brentonbostick.bypass.android.full.R$string
+com.brentonbostick.bypass.android.full.R$style
+com.brentonbostick.bypass.android.geom.GeometryPathImpl:
+    30:32:public void add(com.brentonbostick.capsloc.geom.QuadCurve)
+    35:37:public void add(com.brentonbostick.capsloc.geom.CubicCurve)
+    40:41:public void add(com.brentonbostick.capsloc.geom.Ellipse)
+    71:79:public void add(com.brentonbostick.capsloc.geom.Polygon)
+    93:101:public void add(com.brentonbostick.capsloc.geom.Polyline)
+    113:116:public void draw(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.bypass.android.ui.paint.RenderingContextImpl:
+    46:47:public void rotate(double,com.brentonbostick.capsloc.math.Point)
+    50:51:public void rotate(double,com.brentonbostick.capsloc.math.Dim)
+    164:166:public void paintAABB(com.brentonbostick.capsloc.geom.MutableAABB)
+    170:179:public void drawPath(com.brentonbostick.capsloc.geom.GeometryPath)
+    201:209:public void drawCircle(com.brentonbostick.capsloc.geom.Circle)
+    236:237:public void translate(com.brentonbostick.capsloc.math.Point)
+    292:299:public com.brentonbostick.capsloc.ui.paint.Color getColor()
+com.brentonbostick.bypass.level.BypassCarTool:
+    30:30:public void setPoint(com.brentonbostick.capsloc.math.Point)
     33:33:public java.lang.Object getShape()
     38:39:public void escKey()
-com.gutabi.bypass.level.BypassWorld:
+com.brentonbostick.bypass.level.BypassWorld:
     73:76:public static void destroy()
-com.gutabi.bypass.level.WinnerMenu:
+com.brentonbostick.bypass.level.WinnerMenu:
     114:115:public void escape()
-com.gutabi.bypass.menu.LevelMenu:
+com.brentonbostick.bypass.menu.LevelMenu:
     91:92:public void escape()
-com.gutabi.bypass.menu.MainMenu:
-    public static com.gutabi.capsloc.math.Point tmpMainMenuLoc
+com.brentonbostick.bypass.menu.MainMenu:
+    public static com.brentonbostick.capsloc.math.Point tmpMainMenuLoc
     46:46:public void escape()
-com.gutabi.bypass.menu.MainMenuLite
-com.gutabi.bypass.menu.MainMenuLite$1
-com.gutabi.bypass.menu.MainMenuLite$2
-com.gutabi.capsloc.CapslocApplication:
-    public com.gutabi.capsloc.world.sprites.Sheet explosionSheet
-    public com.gutabi.capsloc.AppScreen debuggerScreen
-com.gutabi.capsloc.Entity:
-    public abstract com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
+com.brentonbostick.bypass.menu.MainMenuLite
+com.brentonbostick.bypass.menu.MainMenuLite$1
+com.brentonbostick.bypass.menu.MainMenuLite$2
+com.brentonbostick.capsloc.CapslocApplication:
+    public com.brentonbostick.capsloc.world.sprites.Sheet explosionSheet
+    public com.brentonbostick.capsloc.AppScreen debuggerScreen
+com.brentonbostick.capsloc.Entity:
+    public abstract com.brentonbostick.capsloc.Entity hitTest(com.brentonbostick.capsloc.math.Point)
     public abstract void postStop()
-    public abstract void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.Integratable:
+    public abstract void paintHilite(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.Integratable:
     public static final double DT
-com.gutabi.capsloc.Platform:
+com.brentonbostick.capsloc.Platform:
     public abstract void unshowAppScreen()
     public abstract void exit()
-com.gutabi.capsloc.Tool:
-    public com.gutabi.capsloc.math.Point p
+com.brentonbostick.capsloc.Tool:
+    public com.brentonbostick.capsloc.math.Point p
     11:11:public void qKey()
     15:15:public void wKey()
     19:19:public void aKey()
@@ -96,423 +96,423 @@ com.gutabi.capsloc.Tool:
     75:75:public void ctrlSKey()
     79:79:public void ctrlOKey()
     83:83:public void enterKey()
-    111:111:public void moved(com.gutabi.capsloc.ui.InputEvent)
-    118:118:public void clicked(com.gutabi.capsloc.ui.InputEvent)
-    public abstract void setPoint(com.gutabi.capsloc.math.Point)
-    132:132:public com.gutabi.capsloc.math.Point getPoint()
-com.gutabi.capsloc.geom.AABB:
+    111:111:public void moved(com.brentonbostick.capsloc.ui.InputEvent)
+    118:118:public void clicked(com.brentonbostick.capsloc.ui.InputEvent)
+    public abstract void setPoint(com.brentonbostick.capsloc.math.Point)
+    132:132:public com.brentonbostick.capsloc.math.Point getPoint()
+com.brentonbostick.capsloc.geom.AABB:
     private static final long serialVersionUID
-    250:250:public boolean completelyWithin(com.gutabi.capsloc.geom.AABB)
-    347:347:public com.gutabi.capsloc.geom.AABB plus(com.gutabi.capsloc.math.Point)
-    351:351:public com.gutabi.capsloc.geom.AABB plus(double,double)
-    355:355:public com.gutabi.capsloc.geom.AABB minus(com.gutabi.capsloc.math.Point)
-com.gutabi.capsloc.geom.Capsule:
+    250:250:public boolean completelyWithin(com.brentonbostick.capsloc.geom.AABB)
+    347:347:public com.brentonbostick.capsloc.geom.AABB plus(com.brentonbostick.capsloc.math.Point)
+    351:351:public com.brentonbostick.capsloc.geom.AABB plus(double,double)
+    355:355:public com.brentonbostick.capsloc.geom.AABB minus(com.brentonbostick.capsloc.math.Point)
+com.brentonbostick.capsloc.geom.Capsule:
     121:121:public double getRadius()
-    125:125:public com.gutabi.capsloc.geom.Capsule plus(com.gutabi.capsloc.math.Point)
-    129:138:public boolean hitTest(com.gutabi.capsloc.math.Point)
-    142:142:public com.gutabi.capsloc.geom.AABB getAABB()
-    150:153:public double skeletonHitTest(com.gutabi.capsloc.math.Point)
-    172:178:public static boolean contains(com.gutabi.capsloc.geom.Capsule,com.gutabi.capsloc.geom.Capsule)
-    201:212:public void paint(com.gutabi.capsloc.ui.paint.RenderingContext)
-    229:230:public void draw(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.geom.CapsuleSequence:
-    112:116:public com.gutabi.capsloc.geom.CapsuleSequence plus(com.gutabi.capsloc.math.Point)
-    120:125:public boolean hitTest(com.gutabi.capsloc.math.Point)
-    241:242:public void draw(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.geom.Circle:
+    125:125:public com.brentonbostick.capsloc.geom.Capsule plus(com.brentonbostick.capsloc.math.Point)
+    129:138:public boolean hitTest(com.brentonbostick.capsloc.math.Point)
+    142:142:public com.brentonbostick.capsloc.geom.AABB getAABB()
+    150:153:public double skeletonHitTest(com.brentonbostick.capsloc.math.Point)
+    172:178:public static boolean contains(com.brentonbostick.capsloc.geom.Capsule,com.brentonbostick.capsloc.geom.Capsule)
+    201:212:public void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    229:230:public void draw(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.geom.CapsuleSequence:
+    112:116:public com.brentonbostick.capsloc.geom.CapsuleSequence plus(com.brentonbostick.capsloc.math.Point)
+    120:125:public boolean hitTest(com.brentonbostick.capsloc.math.Point)
+    241:242:public void draw(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.geom.Circle:
     51:51:public double getRadius()
-    55:55:public com.gutabi.capsloc.geom.Circle plus(com.gutabi.capsloc.math.Point)
-    59:59:public boolean hitTest(com.gutabi.capsloc.math.Point)
-    70:71:public com.gutabi.capsloc.math.Point getPoint(double)
-    75:76:public void draw(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.geom.Ellipse
-com.gutabi.capsloc.geom.Geom:
+    55:55:public com.brentonbostick.capsloc.geom.Circle plus(com.brentonbostick.capsloc.math.Point)
+    59:59:public boolean hitTest(com.brentonbostick.capsloc.math.Point)
+    70:71:public com.brentonbostick.capsloc.math.Point getPoint(double)
+    75:76:public void draw(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.geom.Ellipse
+com.brentonbostick.capsloc.geom.Geom:
     6:6:public Geom()
-    13:13:public static com.gutabi.capsloc.math.Point rotate(double,com.gutabi.capsloc.math.Point)
+    13:13:public static com.brentonbostick.capsloc.math.Point rotate(double,com.brentonbostick.capsloc.math.Point)
     99:103:public static void rotationMatrix(double,double[][])
-com.gutabi.capsloc.geom.GeometryPath:
-    public abstract void add(com.gutabi.capsloc.geom.QuadCurve)
-    public abstract void add(com.gutabi.capsloc.geom.CubicCurve)
-    public abstract void add(com.gutabi.capsloc.geom.Ellipse)
-    public abstract void add(com.gutabi.capsloc.geom.Polygon)
-    public abstract void add(com.gutabi.capsloc.geom.Polyline)
-    public abstract void draw(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.geom.Line:
-    111:112:public void paint(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.geom.MutableAABB:
+com.brentonbostick.capsloc.geom.GeometryPath:
+    public abstract void add(com.brentonbostick.capsloc.geom.QuadCurve)
+    public abstract void add(com.brentonbostick.capsloc.geom.CubicCurve)
+    public abstract void add(com.brentonbostick.capsloc.geom.Ellipse)
+    public abstract void add(com.brentonbostick.capsloc.geom.Polygon)
+    public abstract void add(com.brentonbostick.capsloc.geom.Polyline)
+    public abstract void draw(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.geom.Line:
+    111:112:public void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.geom.MutableAABB:
     private static final long serialVersionUID
     39:44:public void setLocation(double,double)
     47:52:public void setDimension(double,double)
-    264:265:public void paint(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.geom.MutableOBB:
-    131:131:public com.gutabi.capsloc.geom.OBB copy()
-    207:207:public com.gutabi.capsloc.geom.OBB plus(com.gutabi.capsloc.math.Point)
-    301:304:public com.gutabi.capsloc.geom.Line getP0P1Line()
-    308:311:public com.gutabi.capsloc.geom.Line getP1P2Line()
-    315:318:public com.gutabi.capsloc.geom.Line getP2P3Line()
-    322:325:public com.gutabi.capsloc.geom.Line getP3P0Line()
-com.gutabi.capsloc.geom.MutablePolygon:
-    14:22:public void setPoints(com.gutabi.capsloc.math.Point,com.gutabi.capsloc.math.Point,com.gutabi.capsloc.math.Point,com.gutabi.capsloc.math.Point)
-com.gutabi.capsloc.geom.OBB:
-    com.gutabi.capsloc.geom.Line p0p1Line
-    com.gutabi.capsloc.geom.Line p1p2Line
-    com.gutabi.capsloc.geom.Line p2p3Line
-    com.gutabi.capsloc.geom.Line p3p0Line
-    125:125:public com.gutabi.capsloc.geom.OBB plus(com.gutabi.capsloc.math.Point)
-    130:142:public boolean hitTest(com.gutabi.capsloc.math.Point)
-    219:222:public com.gutabi.capsloc.geom.Line getP0P1Line()
-    226:229:public com.gutabi.capsloc.geom.Line getP1P2Line()
-    233:236:public com.gutabi.capsloc.geom.Line getP2P3Line()
-    240:243:public com.gutabi.capsloc.geom.Line getP3P0Line()
-com.gutabi.capsloc.geom.Polygon
-com.gutabi.capsloc.geom.Polyline
-com.gutabi.capsloc.geom.QuadCurve
-com.gutabi.capsloc.geom.ShapeUtils:
-    394:425:public static boolean intersectOO(com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.geom.MutableOBB)
-    435:435:public static boolean intersectAreaAA(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.AABB)
-    539:570:public static boolean intersectAreaAO(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.MutableOBB)
-    608:639:public static boolean intersectAreaOO(com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.geom.OBB)
-com.gutabi.capsloc.geom.SweepUtils:
-    27:91:public static java.util.List sweepCSoverA(java.lang.Object,com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.geom.CapsuleSequence,int,int)
-    189:379:public static java.util.List sweepCSoverCap(java.lang.Object,com.gutabi.capsloc.geom.Capsule,com.gutabi.capsloc.geom.CapsuleSequence,int,int)
-    699:705:public static java.util.List sweepStartCSoverO(java.lang.Object,com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.geom.CapsuleSequence,int)
-    710:774:public static java.util.List sweepCSoverO(java.lang.Object,com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.geom.CapsuleSequence,int,int)
-com.gutabi.capsloc.math.DMath:
+    264:265:public void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.geom.MutableOBB:
+    131:131:public com.brentonbostick.capsloc.geom.OBB copy()
+    207:207:public com.brentonbostick.capsloc.geom.OBB plus(com.brentonbostick.capsloc.math.Point)
+    301:304:public com.brentonbostick.capsloc.geom.Line getP0P1Line()
+    308:311:public com.brentonbostick.capsloc.geom.Line getP1P2Line()
+    315:318:public com.brentonbostick.capsloc.geom.Line getP2P3Line()
+    322:325:public com.brentonbostick.capsloc.geom.Line getP3P0Line()
+com.brentonbostick.capsloc.geom.MutablePolygon:
+    14:22:public void setPoints(com.brentonbostick.capsloc.math.Point,com.brentonbostick.capsloc.math.Point,com.brentonbostick.capsloc.math.Point,com.brentonbostick.capsloc.math.Point)
+com.brentonbostick.capsloc.geom.OBB:
+    com.brentonbostick.capsloc.geom.Line p0p1Line
+    com.brentonbostick.capsloc.geom.Line p1p2Line
+    com.brentonbostick.capsloc.geom.Line p2p3Line
+    com.brentonbostick.capsloc.geom.Line p3p0Line
+    125:125:public com.brentonbostick.capsloc.geom.OBB plus(com.brentonbostick.capsloc.math.Point)
+    130:142:public boolean hitTest(com.brentonbostick.capsloc.math.Point)
+    219:222:public com.brentonbostick.capsloc.geom.Line getP0P1Line()
+    226:229:public com.brentonbostick.capsloc.geom.Line getP1P2Line()
+    233:236:public com.brentonbostick.capsloc.geom.Line getP2P3Line()
+    240:243:public com.brentonbostick.capsloc.geom.Line getP3P0Line()
+com.brentonbostick.capsloc.geom.Polygon
+com.brentonbostick.capsloc.geom.Polyline
+com.brentonbostick.capsloc.geom.QuadCurve
+com.brentonbostick.capsloc.geom.ShapeUtils:
+    394:425:public static boolean intersectOO(com.brentonbostick.capsloc.geom.OBB,com.brentonbostick.capsloc.geom.MutableOBB)
+    435:435:public static boolean intersectAreaAA(com.brentonbostick.capsloc.geom.AABB,com.brentonbostick.capsloc.geom.AABB)
+    539:570:public static boolean intersectAreaAO(com.brentonbostick.capsloc.geom.AABB,com.brentonbostick.capsloc.geom.MutableOBB)
+    608:639:public static boolean intersectAreaOO(com.brentonbostick.capsloc.geom.OBB,com.brentonbostick.capsloc.geom.OBB)
+com.brentonbostick.capsloc.geom.SweepUtils:
+    27:91:public static java.util.List sweepCSoverA(java.lang.Object,com.brentonbostick.capsloc.geom.AABB,com.brentonbostick.capsloc.geom.CapsuleSequence,int,int)
+    189:379:public static java.util.List sweepCSoverCap(java.lang.Object,com.brentonbostick.capsloc.geom.Capsule,com.brentonbostick.capsloc.geom.CapsuleSequence,int,int)
+    699:705:public static java.util.List sweepStartCSoverO(java.lang.Object,com.brentonbostick.capsloc.geom.OBB,com.brentonbostick.capsloc.geom.CapsuleSequence,int)
+    710:774:public static java.util.List sweepCSoverO(java.lang.Object,com.brentonbostick.capsloc.geom.OBB,com.brentonbostick.capsloc.geom.CapsuleSequence,int,int)
+com.brentonbostick.capsloc.math.DMath:
     public static final double RIGHT_ANGLE_TOLERANCE
     5:5:public DMath()
     71:76:public static double clip(double)
     143:158:public static boolean rangesTouch(double[],double[])
-com.gutabi.capsloc.math.Dim:
+com.brentonbostick.capsloc.math.Dim:
     private static final long serialVersionUID
-    51:51:public com.gutabi.capsloc.math.Dim multiply(double)
-com.gutabi.capsloc.math.Point:
+    51:51:public com.brentonbostick.capsloc.math.Dim multiply(double)
+com.brentonbostick.capsloc.math.Point:
     private static final long serialVersionUID
     62:62:public java.lang.String toFileString()
-    66:72:public static com.gutabi.capsloc.math.Point fromFileString(java.lang.String)
-    476:478:public static boolean equalDistances(com.gutabi.capsloc.math.Point,com.gutabi.capsloc.math.Point,com.gutabi.capsloc.math.Point)
-    633:633:public com.gutabi.capsloc.math.Point plus(double,double)
-    645:645:public com.gutabi.capsloc.math.Point minus(com.gutabi.capsloc.math.Dim)
-    674:674:public static com.gutabi.capsloc.math.Point panelToWorld(double,double,com.gutabi.capsloc.world.WorldCamera)
-    678:680:public static com.gutabi.capsloc.geom.AABB panelToWorld(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.world.WorldCamera)
-    702:704:public static com.gutabi.capsloc.geom.AABB worldToPanel(com.gutabi.capsloc.geom.AABB,com.gutabi.capsloc.world.WorldCamera)
-com.gutabi.capsloc.ui.Button
-com.gutabi.capsloc.ui.Checkbox
-com.gutabi.capsloc.ui.ContentPane:
+    66:72:public static com.brentonbostick.capsloc.math.Point fromFileString(java.lang.String)
+    476:478:public static boolean equalDistances(com.brentonbostick.capsloc.math.Point,com.brentonbostick.capsloc.math.Point,com.brentonbostick.capsloc.math.Point)
+    633:633:public com.brentonbostick.capsloc.math.Point plus(double,double)
+    645:645:public com.brentonbostick.capsloc.math.Point minus(com.brentonbostick.capsloc.math.Dim)
+    674:674:public static com.brentonbostick.capsloc.math.Point panelToWorld(double,double,com.brentonbostick.capsloc.world.WorldCamera)
+    678:680:public static com.brentonbostick.capsloc.geom.AABB panelToWorld(com.brentonbostick.capsloc.geom.AABB,com.brentonbostick.capsloc.world.WorldCamera)
+    702:704:public static com.brentonbostick.capsloc.geom.AABB worldToPanel(com.brentonbostick.capsloc.geom.AABB,com.brentonbostick.capsloc.world.WorldCamera)
+com.brentonbostick.capsloc.ui.Button
+com.brentonbostick.capsloc.ui.Checkbox
+com.brentonbostick.capsloc.ui.ContentPane:
     18:18:public java.util.List getChildren()
-    30:30:public com.gutabi.capsloc.math.Point getLastMovedContentPanePoint()
-com.gutabi.capsloc.ui.DLSFileChooser
-com.gutabi.capsloc.ui.Label:
+    30:30:public com.brentonbostick.capsloc.math.Point getLastMovedContentPanePoint()
+com.brentonbostick.capsloc.ui.DLSFileChooser
+com.brentonbostick.capsloc.ui.Label:
     29:32:public Label(java.lang.String,double,double)
-    34:37:public Label(java.lang.String,com.gutabi.capsloc.math.Point)
+    34:37:public Label(java.lang.String,com.brentonbostick.capsloc.math.Point)
     44:45:public void setDimension(double,double)
-com.gutabi.capsloc.ui.Menu:
-    139:139:public void moved(com.gutabi.capsloc.ui.InputEvent)
-    143:143:public void clicked(com.gutabi.capsloc.ui.InputEvent)
+com.brentonbostick.capsloc.ui.Menu:
+    139:139:public void moved(com.brentonbostick.capsloc.ui.InputEvent)
+    143:143:public void clicked(com.brentonbostick.capsloc.ui.InputEvent)
     public abstract void escape()
-com.gutabi.capsloc.ui.MenuTool:
+com.brentonbostick.capsloc.ui.MenuTool:
     12:15:public void escKey()
-    18:21:public void moved(com.gutabi.capsloc.ui.InputEvent)
-    24:27:public void clicked(com.gutabi.capsloc.ui.InputEvent)
-    123:123:public void setPoint(com.gutabi.capsloc.math.Point)
-com.gutabi.capsloc.ui.Panel:
-    public com.gutabi.capsloc.math.Point lastMovedPanelPoint
-    public com.gutabi.capsloc.math.Point lastMovedMenuPoint
-    com.gutabi.capsloc.math.Point lastClickedPanelPoint
+    18:21:public void moved(com.brentonbostick.capsloc.ui.InputEvent)
+    24:27:public void clicked(com.brentonbostick.capsloc.ui.InputEvent)
+    123:123:public void setPoint(com.brentonbostick.capsloc.math.Point)
+com.brentonbostick.capsloc.ui.Panel:
+    public com.brentonbostick.capsloc.math.Point lastMovedPanelPoint
+    public com.brentonbostick.capsloc.math.Point lastMovedMenuPoint
+    com.brentonbostick.capsloc.math.Point lastClickedPanelPoint
     14:15:public void setLocation(double,double)
-    38:42:public void moved(com.gutabi.capsloc.ui.InputEvent)
-    54:57:public void clicked(com.gutabi.capsloc.ui.InputEvent)
-com.gutabi.capsloc.ui.PlatformContentPane:
-    private com.gutabi.capsloc.math.Point lastMovedContentPanePoint
-    26:26:public com.gutabi.capsloc.math.Point getLastMovedContentPanePoint()
-    30:37:public void movedDriver(com.gutabi.capsloc.math.Point)
-    40:46:public void clickedDriver(com.gutabi.capsloc.math.Point)
-com.gutabi.capsloc.ui.paint.RenderingContext:
-    public abstract com.gutabi.capsloc.ui.paint.Color getColor()
-    public abstract void translate(com.gutabi.capsloc.math.Point)
-    public abstract void rotate(double,com.gutabi.capsloc.math.Point)
-    public abstract void rotate(double,com.gutabi.capsloc.math.Dim)
-    public abstract void paintAABB(com.gutabi.capsloc.geom.MutableAABB)
-    public abstract void paintPath(com.gutabi.capsloc.geom.GeometryPath)
-    public abstract void drawPath(com.gutabi.capsloc.geom.GeometryPath)
-    public abstract void drawCircle(com.gutabi.capsloc.geom.Circle)
-com.gutabi.capsloc.world.CarMap:
-    45:48:public void destroyCar(com.gutabi.capsloc.world.cars.Car)
+    38:42:public void moved(com.brentonbostick.capsloc.ui.InputEvent)
+    54:57:public void clicked(com.brentonbostick.capsloc.ui.InputEvent)
+com.brentonbostick.capsloc.ui.PlatformContentPane:
+    private com.brentonbostick.capsloc.math.Point lastMovedContentPanePoint
+    26:26:public com.brentonbostick.capsloc.math.Point getLastMovedContentPanePoint()
+    30:37:public void movedDriver(com.brentonbostick.capsloc.math.Point)
+    40:46:public void clickedDriver(com.brentonbostick.capsloc.math.Point)
+com.brentonbostick.capsloc.ui.paint.RenderingContext:
+    public abstract com.brentonbostick.capsloc.ui.paint.Color getColor()
+    public abstract void translate(com.brentonbostick.capsloc.math.Point)
+    public abstract void rotate(double,com.brentonbostick.capsloc.math.Point)
+    public abstract void rotate(double,com.brentonbostick.capsloc.math.Dim)
+    public abstract void paintAABB(com.brentonbostick.capsloc.geom.MutableAABB)
+    public abstract void paintPath(com.brentonbostick.capsloc.geom.GeometryPath)
+    public abstract void drawPath(com.brentonbostick.capsloc.geom.GeometryPath)
+    public abstract void drawCircle(com.brentonbostick.capsloc.geom.Circle)
+com.brentonbostick.capsloc.world.CarMap:
+    45:48:public void destroyCar(com.brentonbostick.capsloc.world.cars.Car)
     51:51:public int size()
     80:84:public void postStop()
-com.gutabi.capsloc.world.ExplosionMap
-com.gutabi.capsloc.world.GrassMarkMap
-com.gutabi.capsloc.world.ProgressMeter
-com.gutabi.capsloc.world.Quadrant:
-    79:79:public com.gutabi.capsloc.math.Point center()
+com.brentonbostick.capsloc.world.ExplosionMap
+com.brentonbostick.capsloc.world.GrassMarkMap
+com.brentonbostick.capsloc.world.ProgressMeter
+com.brentonbostick.capsloc.world.Quadrant:
+    79:79:public com.brentonbostick.capsloc.math.Point center()
     83:84:public void toggleGrid()
-    90:99:public void computeGridSpacing(com.gutabi.capsloc.world.WorldCamera)
-    102:116:public com.gutabi.capsloc.math.Point getPoint(com.gutabi.capsloc.math.Point)
+    90:99:public void computeGridSpacing(com.brentonbostick.capsloc.world.WorldCamera)
+    102:116:public com.brentonbostick.capsloc.math.Point getPoint(com.brentonbostick.capsloc.math.Point)
     129:132:public java.lang.String toFileString()
-com.gutabi.capsloc.world.QuadrantMap:
+com.brentonbostick.capsloc.world.QuadrantMap:
     public static final double QUADRANT_WIDTH
     public static final double QUADRANT_HEIGHT
-    129:140:public com.gutabi.capsloc.world.Quadrant findQuadrant(com.gutabi.capsloc.math.Point)
-    146:150:public com.gutabi.capsloc.math.Point getPoint(com.gutabi.capsloc.math.Point)
-    155:164:public com.gutabi.capsloc.world.Quadrant upFixPoint(com.gutabi.capsloc.world.Quadrant)
-    168:177:public com.gutabi.capsloc.world.Quadrant leftFixPoint(com.gutabi.capsloc.world.Quadrant)
-    181:190:public com.gutabi.capsloc.world.Quadrant rightFixPoint(com.gutabi.capsloc.world.Quadrant)
-    194:203:public com.gutabi.capsloc.world.Quadrant downFixPoint(com.gutabi.capsloc.world.Quadrant)
+    129:140:public com.brentonbostick.capsloc.world.Quadrant findQuadrant(com.brentonbostick.capsloc.math.Point)
+    146:150:public com.brentonbostick.capsloc.math.Point getPoint(com.brentonbostick.capsloc.math.Point)
+    155:164:public com.brentonbostick.capsloc.world.Quadrant upFixPoint(com.brentonbostick.capsloc.world.Quadrant)
+    168:177:public com.brentonbostick.capsloc.world.Quadrant leftFixPoint(com.brentonbostick.capsloc.world.Quadrant)
+    181:190:public com.brentonbostick.capsloc.world.Quadrant rightFixPoint(com.brentonbostick.capsloc.world.Quadrant)
+    194:203:public com.brentonbostick.capsloc.world.Quadrant downFixPoint(com.brentonbostick.capsloc.world.Quadrant)
     233:239:public void toggleGrid()
-    242:248:public void computeGridSpacing(com.gutabi.capsloc.world.WorldCamera)
-com.gutabi.capsloc.world.RoadMarkMap
-com.gutabi.capsloc.world.Stats:
+    242:248:public void computeGridSpacing(com.brentonbostick.capsloc.world.WorldCamera)
+com.brentonbostick.capsloc.world.RoadMarkMap
+com.brentonbostick.capsloc.world.Stats:
     long lastTime
     long curTime
     int frameCount
     int fps
-com.gutabi.capsloc.world.Stroke:
-    56:56:public final com.gutabi.capsloc.geom.AABB getAABB()
-    779:782:public void paint(com.gutabi.capsloc.ui.paint.RenderingContext)
-    786:801:private void paintStroke(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.world.World:
-    public com.gutabi.capsloc.math.Point lastMovedWorldPoint
-    public com.gutabi.capsloc.math.Point lastPressPreviewPoint
-    public com.gutabi.capsloc.math.Point lastDragPreviewPoint
-    public com.gutabi.capsloc.math.Point penDragPreviewPoint
+com.brentonbostick.capsloc.world.Stroke:
+    56:56:public final com.brentonbostick.capsloc.geom.AABB getAABB()
+    779:782:public void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    786:801:private void paintStroke(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.world.World:
+    public com.brentonbostick.capsloc.math.Point lastMovedWorldPoint
+    public com.brentonbostick.capsloc.math.Point lastPressPreviewPoint
+    public com.brentonbostick.capsloc.math.Point lastDragPreviewPoint
+    public com.brentonbostick.capsloc.math.Point penDragPreviewPoint
     93:102:public void postStop()
-    158:158:public void carCrash(com.gutabi.capsloc.math.Point)
-    162:172:public com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
-    209:217:public java.util.Set createMerger(com.gutabi.capsloc.math.Point)
+    158:158:public void carCrash(com.brentonbostick.capsloc.math.Point)
+    162:172:public com.brentonbostick.capsloc.Entity hitTest(com.brentonbostick.capsloc.math.Point)
+    209:217:public java.util.Set createMerger(com.brentonbostick.capsloc.math.Point)
     235:242:public void startRunning()
     246:257:public void stopRunning()
     261:269:public void pauseRunning()
     273:277:public void unpauseRunning()
-    386:389:public void moved(com.gutabi.capsloc.ui.InputEvent)
-    393:393:public void clicked(com.gutabi.capsloc.ui.InputEvent)
-com.gutabi.capsloc.world.WorldCamera:
+    386:389:public void moved(com.brentonbostick.capsloc.ui.InputEvent)
+    393:393:public void clicked(com.brentonbostick.capsloc.ui.InputEvent)
+com.brentonbostick.capsloc.world.WorldCamera:
     private static final long serialVersionUID
     29:37:public void zoomRelative(double)
-    53:58:public void panRelative(com.gutabi.capsloc.math.Point)
-    62:67:public void panAbsolute(com.gutabi.capsloc.math.Point)
-com.gutabi.capsloc.world.cars.AutonomousCar:
+    53:58:public void panRelative(com.brentonbostick.capsloc.math.Point)
+    62:67:public void panAbsolute(com.brentonbostick.capsloc.math.Point)
+com.brentonbostick.capsloc.world.cars.AutonomousCar:
     public static final double SINK_EPSILON
     70:72:public void crash()
-com.gutabi.capsloc.world.cars.AutonomousDriver:
+com.brentonbostick.capsloc.world.cars.AutonomousDriver:
     public static final double COMPLETE_STOP_WAIT_TIME
-com.gutabi.capsloc.world.cars.Car:
+com.brentonbostick.capsloc.world.cars.Car:
     public static final double METERS_PER_CARLENGTH
     public double crashingTime
     120:120:public java.lang.Object getShape()
     133:133:public void postStop()
-    136:138:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.world.graph.Axis:
-    9:15:public static com.gutabi.capsloc.world.graph.Axis fromFileString(java.lang.String)
-com.gutabi.capsloc.world.graph.BypassBoard:
+    136:138:public void paintHilite(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.world.graph.Axis:
+    9:15:public static com.brentonbostick.capsloc.world.graph.Axis fromFileString(java.lang.String)
+com.brentonbostick.capsloc.world.graph.BypassBoard:
     public static final double STRAIGHTEXTENSION
     public static final double CONTROLEXTENSION
     public static final double EXITROADLENGTH
-    1182:1188:public com.gutabi.capsloc.world.graph.BypassStud stud(com.gutabi.capsloc.world.graph.BypassBoardPosition)
+    1182:1188:public com.brentonbostick.capsloc.world.graph.BypassStud stud(com.brentonbostick.capsloc.world.graph.BypassBoardPosition)
     1197:1197:public void postStop()
-    1228:1233:public com.gutabi.capsloc.world.graph.BypassBoard hitTest(com.gutabi.capsloc.math.Point)
-    1406:1409:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    1413:1413:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
-    1:1:public bridge synthetic com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
-com.gutabi.capsloc.world.graph.BypassStud:
+    1228:1233:public com.brentonbostick.capsloc.world.graph.BypassBoard hitTest(com.brentonbostick.capsloc.math.Point)
+    1406:1409:public void paint_preview(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    1413:1413:public void paintHilite(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    1:1:public bridge synthetic com.brentonbostick.capsloc.Entity hitTest(com.brentonbostick.capsloc.math.Point)
+com.brentonbostick.capsloc.world.graph.BypassStud:
     public static final double SIZE
-    55:64:public boolean isFree(com.gutabi.capsloc.world.cars.Car)
-    68:68:public boolean hitTest(com.gutabi.capsloc.math.Point)
-com.gutabi.capsloc.world.graph.Direction:
-    9:17:public static com.gutabi.capsloc.world.graph.Direction fromFileString(java.lang.String)
-com.gutabi.capsloc.world.graph.Edge:
-    public abstract void setDirection(com.gutabi.capsloc.world.graph.Axis,com.gutabi.capsloc.world.graph.Direction)
+    55:64:public boolean isFree(com.brentonbostick.capsloc.world.cars.Car)
+    68:68:public boolean hitTest(com.brentonbostick.capsloc.math.Point)
+com.brentonbostick.capsloc.world.graph.Direction:
+    9:17:public static com.brentonbostick.capsloc.world.graph.Direction fromFileString(java.lang.String)
+com.brentonbostick.capsloc.world.graph.Edge:
+    public abstract void setDirection(com.brentonbostick.capsloc.world.graph.Axis,com.brentonbostick.capsloc.world.graph.Direction)
     public abstract void enterDistancesMatrix(double[][])
-    public abstract boolean canTravelFromTo(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex)
-    public abstract com.gutabi.capsloc.Entity decorationsHitTest(com.gutabi.capsloc.math.Point)
-    public abstract com.gutabi.capsloc.Entity decorationsIntersect(java.lang.Object)
-    public abstract void paintBorders(com.gutabi.capsloc.ui.paint.RenderingContext)
-    public abstract void paint_panel(com.gutabi.capsloc.ui.paint.RenderingContext)
-    public abstract void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    public abstract void paintDecorations(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.world.graph.Fixture:
+    public abstract boolean canTravelFromTo(com.brentonbostick.capsloc.world.graph.Vertex,com.brentonbostick.capsloc.world.graph.Vertex)
+    public abstract com.brentonbostick.capsloc.Entity decorationsHitTest(com.brentonbostick.capsloc.math.Point)
+    public abstract com.brentonbostick.capsloc.Entity decorationsIntersect(java.lang.Object)
+    public abstract void paintBorders(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    public abstract void paint_panel(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    public abstract void paint_preview(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    public abstract void paintDecorations(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.world.graph.Fixture:
     public int matchID
-    52:60:public void setType(com.gutabi.capsloc.world.graph.FixtureType)
-    63:63:public com.gutabi.capsloc.world.graph.FixtureType getType()
+    52:60:public void setType(com.brentonbostick.capsloc.world.graph.FixtureType)
+    63:63:public com.brentonbostick.capsloc.world.graph.FixtureType getType()
     98:111:public void postStop()
-    147:151:public com.gutabi.capsloc.world.graph.GraphPositionPath getRandomPathToMatch()
-    453:455:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.world.graph.FixtureType:
-    private static synthetic int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$FixtureType
-    9:15:public com.gutabi.capsloc.world.graph.FixtureType other()
-    19:25:public static com.gutabi.capsloc.world.graph.FixtureType fromFileString(java.lang.String)
-    3:3:static synthetic int[] $SWITCH_TABLE$com$gutabi$capsloc$world$graph$FixtureType()
-com.gutabi.capsloc.world.graph.Graph:
+    147:151:public com.brentonbostick.capsloc.world.graph.GraphPositionPath getRandomPathToMatch()
+    453:455:public void paintHilite(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.world.graph.FixtureType:
+    private static synthetic int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$graph$FixtureType
+    9:15:public com.brentonbostick.capsloc.world.graph.FixtureType other()
+    19:25:public static com.brentonbostick.capsloc.world.graph.FixtureType fromFileString(java.lang.String)
+    3:3:static synthetic int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$graph$FixtureType()
+com.brentonbostick.capsloc.world.graph.Graph:
     88:93:public void postStop()
     115:131:public void computeVertexRadii(java.util.Set)
-    173:192:public java.util.Set insertMergerTop(com.gutabi.capsloc.world.graph.Merger)
-    205:238:public java.util.Set removeVertexTop(com.gutabi.capsloc.world.graph.Vertex)
-    243:264:public java.util.Set removeRoadTop(com.gutabi.capsloc.world.graph.Road)
-    269:290:public java.util.Set removeMergerTop(com.gutabi.capsloc.world.graph.Merger)
-    365:369:private void destroyMerger(com.gutabi.capsloc.world.graph.Merger)
-    396:412:public java.util.List shortestPath(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex)
-    441:560:public com.gutabi.capsloc.world.graph.Vertex randomPathChoice(com.gutabi.capsloc.world.graph.Edge,com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex)
-    573:573:public boolean isDeadEnd(com.gutabi.capsloc.world.graph.Edge,com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex)
-    580:629:private boolean isDeadEnd(com.gutabi.capsloc.world.graph.Edge,com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex,java.util.List)
-    639:665:public com.gutabi.capsloc.Entity graphHitTest(com.gutabi.capsloc.math.Point)
-    669:684:public com.gutabi.capsloc.Entity pureGraphIntersect(java.lang.Object)
-    688:703:public com.gutabi.capsloc.Entity pureGraphIntersectOBB(com.gutabi.capsloc.geom.OBB)
+    173:192:public java.util.Set insertMergerTop(com.brentonbostick.capsloc.world.graph.Merger)
+    205:238:public java.util.Set removeVertexTop(com.brentonbostick.capsloc.world.graph.Vertex)
+    243:264:public java.util.Set removeRoadTop(com.brentonbostick.capsloc.world.graph.Road)
+    269:290:public java.util.Set removeMergerTop(com.brentonbostick.capsloc.world.graph.Merger)
+    365:369:private void destroyMerger(com.brentonbostick.capsloc.world.graph.Merger)
+    396:412:public java.util.List shortestPath(com.brentonbostick.capsloc.world.graph.Vertex,com.brentonbostick.capsloc.world.graph.Vertex)
+    441:560:public com.brentonbostick.capsloc.world.graph.Vertex randomPathChoice(com.brentonbostick.capsloc.world.graph.Edge,com.brentonbostick.capsloc.world.graph.Vertex,com.brentonbostick.capsloc.world.graph.Vertex)
+    573:573:public boolean isDeadEnd(com.brentonbostick.capsloc.world.graph.Edge,com.brentonbostick.capsloc.world.graph.Vertex,com.brentonbostick.capsloc.world.graph.Vertex)
+    580:629:private boolean isDeadEnd(com.brentonbostick.capsloc.world.graph.Edge,com.brentonbostick.capsloc.world.graph.Vertex,com.brentonbostick.capsloc.world.graph.Vertex,java.util.List)
+    639:665:public com.brentonbostick.capsloc.Entity graphHitTest(com.brentonbostick.capsloc.math.Point)
+    669:684:public com.brentonbostick.capsloc.Entity pureGraphIntersect(java.lang.Object)
+    688:703:public com.brentonbostick.capsloc.Entity pureGraphIntersectOBB(com.brentonbostick.capsloc.geom.OBB)
     871:876:private void refreshMergerIDs()
-    923:937:private java.util.List intermediateVertices(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex)
+    923:937:private java.util.List intermediateVertices(com.brentonbostick.capsloc.world.graph.Vertex,com.brentonbostick.capsloc.world.graph.Vertex)
     1439:1523:public boolean checkConsistency()
-com.gutabi.capsloc.world.graph.GraphPositionPath:
-    501:523:public com.gutabi.capsloc.Entity pureGraphIntersectOBB(com.gutabi.capsloc.geom.OBB,com.gutabi.capsloc.world.graph.GraphPositionPathPosition)
-com.gutabi.capsloc.world.graph.GraphPositionPathFactory:
-    42:59:public com.gutabi.capsloc.world.graph.GraphPositionPath createRandomVertexPath(java.util.List)
-    147:225:private void calculateRandomVertexPath(java.util.List,com.gutabi.capsloc.world.graph.VertexPosition,com.gutabi.capsloc.world.graph.VertexPosition)
-com.gutabi.capsloc.world.graph.GraphPositionPathPosition:
+com.brentonbostick.capsloc.world.graph.GraphPositionPath:
+    501:523:public com.brentonbostick.capsloc.Entity pureGraphIntersectOBB(com.brentonbostick.capsloc.geom.OBB,com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition)
+com.brentonbostick.capsloc.world.graph.GraphPositionPathFactory:
+    42:59:public com.brentonbostick.capsloc.world.graph.GraphPositionPath createRandomVertexPath(java.util.List)
+    147:225:private void calculateRandomVertexPath(java.util.List,com.brentonbostick.capsloc.world.graph.VertexPosition,com.brentonbostick.capsloc.world.graph.VertexPosition)
+com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition:
     private static final long serialVersionUID
     141:141:public boolean isBound()
     145:145:public boolean isStartOfPath()
-    395:401:public com.gutabi.capsloc.world.graph.GraphPositionPathPosition round()
-com.gutabi.capsloc.world.graph.Intersection:
+    395:401:public com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition round()
+com.brentonbostick.capsloc.world.graph.Intersection:
     31:32:public void postStop()
-    116:120:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    128:133:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.world.graph.Merger:
+    116:120:public void paint_preview(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    128:133:public void paintHilite(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.world.graph.Merger:
     public static final double MERGER_WIDTH
     public static final double MERGER_HEIGHT
-    public final com.gutabi.capsloc.math.Point center
-    40:61:public Merger(com.gutabi.capsloc.math.Point,com.gutabi.capsloc.world.graph.Fixture,com.gutabi.capsloc.world.graph.Fixture,com.gutabi.capsloc.world.graph.Fixture,com.gutabi.capsloc.world.graph.Fixture)
-    65:83:public static com.gutabi.capsloc.world.graph.Merger createMergerAndFixtures(com.gutabi.capsloc.world.World,com.gutabi.capsloc.math.Point)
+    public final com.brentonbostick.capsloc.math.Point center
+    40:61:public Merger(com.brentonbostick.capsloc.math.Point,com.brentonbostick.capsloc.world.graph.Fixture,com.brentonbostick.capsloc.world.graph.Fixture,com.brentonbostick.capsloc.world.graph.Fixture,com.brentonbostick.capsloc.world.graph.Fixture)
+    65:83:public static com.brentonbostick.capsloc.world.graph.Merger createMergerAndFixtures(com.brentonbostick.capsloc.world.World,com.brentonbostick.capsloc.math.Point)
     87:91:public void destroy()
-    128:135:public void setDirection(com.gutabi.capsloc.world.graph.Axis,com.gutabi.capsloc.world.graph.Direction)
-    148:160:public boolean canTravelFromTo(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex)
-    165:168:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
-    198:198:public com.gutabi.capsloc.Entity decorationsHitTest(com.gutabi.capsloc.math.Point)
-    202:202:public com.gutabi.capsloc.Entity decorationsIntersect(java.lang.Object)
+    128:135:public void setDirection(com.brentonbostick.capsloc.world.graph.Axis,com.brentonbostick.capsloc.world.graph.Direction)
+    148:160:public boolean canTravelFromTo(com.brentonbostick.capsloc.world.graph.Vertex,com.brentonbostick.capsloc.world.graph.Vertex)
+    165:168:public final com.brentonbostick.capsloc.Entity hitTest(com.brentonbostick.capsloc.math.Point)
+    198:198:public com.brentonbostick.capsloc.Entity decorationsHitTest(com.brentonbostick.capsloc.math.Point)
+    202:202:public com.brentonbostick.capsloc.Entity decorationsIntersect(java.lang.Object)
     215:215:public void postStop()
     256:274:private void computeLengths()
     277:294:public java.lang.String toFileString()
-    298:298:public static com.gutabi.capsloc.world.graph.Merger fromFileString(java.lang.String)
-    319:322:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    325:328:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
-    342:342:public void paintBorders(com.gutabi.capsloc.ui.paint.RenderingContext)
-    346:346:public void paintDecorations(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.world.graph.MergerPosition:
-    127:127:public com.gutabi.capsloc.Entity getEntity()
-    131:141:public double distanceToConnectedVertex(com.gutabi.capsloc.world.graph.Vertex)
-com.gutabi.capsloc.world.graph.Road:
+    298:298:public static com.brentonbostick.capsloc.world.graph.Merger fromFileString(java.lang.String)
+    319:322:public void paint_preview(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    325:328:public void paintHilite(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    342:342:public void paintBorders(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    346:346:public void paintDecorations(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.world.graph.MergerPosition:
+    127:127:public com.brentonbostick.capsloc.Entity getEntity()
+    131:141:public double distanceToConnectedVertex(com.brentonbostick.capsloc.world.graph.Vertex)
+com.brentonbostick.capsloc.world.graph.Road:
     public static final double ROAD_RADIUS
     public static final double borderPointRadius
     126:126:public boolean isLoop()
-    150:150:public com.gutabi.capsloc.geom.Capsule getCapsule(int)
-    227:230:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
-    235:241:public boolean canTravelFromTo(com.gutabi.capsloc.world.graph.Vertex,com.gutabi.capsloc.world.graph.Vertex)
+    150:150:public com.brentonbostick.capsloc.geom.Capsule getCapsule(int)
+    227:230:public final com.brentonbostick.capsloc.Entity hitTest(com.brentonbostick.capsloc.math.Point)
+    235:241:public boolean canTravelFromTo(com.brentonbostick.capsloc.world.graph.Vertex,com.brentonbostick.capsloc.world.graph.Vertex)
     253:253:public void postStop()
-    286:292:public void removeStopSignTop(com.gutabi.capsloc.world.graph.StopSign)
-    306:320:public com.gutabi.capsloc.Entity decorationsHitTest(com.gutabi.capsloc.math.Point)
-    325:337:public com.gutabi.capsloc.Entity decorationsIntersect(java.lang.Object)
-    823:825:public void paint_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    828:831:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
-    854:857:private void paintPath_preview(com.gutabi.capsloc.ui.paint.RenderingContext)
-    860:861:private void drawPath(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.world.graph.RoadPosition:
-    102:102:public com.gutabi.capsloc.Entity getEntity()
-    130:130:public com.gutabi.capsloc.world.graph.GraphPosition nextBoundBackward()
-    134:134:public com.gutabi.capsloc.world.graph.GraphPosition nextBoundForward()
+    286:292:public void removeStopSignTop(com.brentonbostick.capsloc.world.graph.StopSign)
+    306:320:public com.brentonbostick.capsloc.Entity decorationsHitTest(com.brentonbostick.capsloc.math.Point)
+    325:337:public com.brentonbostick.capsloc.Entity decorationsIntersect(java.lang.Object)
+    823:825:public void paint_preview(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    828:831:public void paintHilite(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    854:857:private void paintPath_preview(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+    860:861:private void drawPath(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.world.graph.RoadPosition:
+    102:102:public com.brentonbostick.capsloc.Entity getEntity()
+    130:130:public com.brentonbostick.capsloc.world.graph.GraphPosition nextBoundBackward()
+    134:134:public com.brentonbostick.capsloc.world.graph.GraphPosition nextBoundForward()
     146:146:public double distanceToStartOfRoad()
-    150:150:protected double distanceForward(com.gutabi.capsloc.world.graph.RoadPosition)
-    154:154:protected double distanceBackward(com.gutabi.capsloc.world.graph.RoadPosition)
-com.gutabi.capsloc.world.graph.Side:
-    public abstract com.gutabi.capsloc.world.graph.Side other()
+    150:150:protected double distanceForward(com.brentonbostick.capsloc.world.graph.RoadPosition)
+    154:154:protected double distanceBackward(com.brentonbostick.capsloc.world.graph.RoadPosition)
+com.brentonbostick.capsloc.world.graph.Side:
+    public abstract com.brentonbostick.capsloc.world.graph.Side other()
     public abstract double getAngle()
     16:16:public boolean isRightOrBottom()
-    20:29:public static com.gutabi.capsloc.world.graph.Side angleToSide(double)
-    34:44:public static com.gutabi.capsloc.world.graph.Side fromFileString(java.lang.String)
-com.gutabi.capsloc.world.graph.Side$1:
-    7:7:public com.gutabi.capsloc.world.graph.Side other()
+    20:29:public static com.brentonbostick.capsloc.world.graph.Side angleToSide(double)
+    34:44:public static com.brentonbostick.capsloc.world.graph.Side fromFileString(java.lang.String)
+com.brentonbostick.capsloc.world.graph.Side$1:
+    7:7:public com.brentonbostick.capsloc.world.graph.Side other()
     7:7:public double getAngle()
-com.gutabi.capsloc.world.graph.Side$2:
-    8:8:public com.gutabi.capsloc.world.graph.Side other()
+com.brentonbostick.capsloc.world.graph.Side$2:
+    8:8:public com.brentonbostick.capsloc.world.graph.Side other()
     8:8:public double getAngle()
-com.gutabi.capsloc.world.graph.Side$3:
-    9:9:public com.gutabi.capsloc.world.graph.Side other()
+com.brentonbostick.capsloc.world.graph.Side$3:
+    9:9:public com.brentonbostick.capsloc.world.graph.Side other()
     9:9:public double getAngle()
-com.gutabi.capsloc.world.graph.Side$4:
-    10:10:public com.gutabi.capsloc.world.graph.Side other()
+com.brentonbostick.capsloc.world.graph.Side$4:
+    10:10:public com.brentonbostick.capsloc.world.graph.Side other()
     10:10:public double getAngle()
-com.gutabi.capsloc.world.graph.StopSign:
+com.brentonbostick.capsloc.world.graph.StopSign:
     public static final double STOPSIGN_SIZE
-    46:46:public com.gutabi.capsloc.math.Point getPoint()
-    62:65:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
+    46:46:public com.brentonbostick.capsloc.math.Point getPoint()
+    62:65:public final com.brentonbostick.capsloc.Entity hitTest(com.brentonbostick.capsloc.math.Point)
     75:75:public void postStop()
     97:107:public java.lang.String toFileString()
-    111:111:public static com.gutabi.capsloc.world.graph.StopSign fromFileString(java.lang.String)
-    139:148:public void paintHilite(com.gutabi.capsloc.ui.paint.RenderingContext)
-com.gutabi.capsloc.world.graph.Vertex:
+    111:111:public static com.brentonbostick.capsloc.world.graph.StopSign fromFileString(java.lang.String)
+    139:148:public void paintHilite(com.brentonbostick.capsloc.ui.paint.RenderingContext)
+com.brentonbostick.capsloc.world.graph.Vertex:
     63:68:public java.util.List getEdges()
-    128:131:public final com.gutabi.capsloc.Entity hitTest(com.gutabi.capsloc.math.Point)
-    138:141:public com.gutabi.capsloc.world.graph.VertexPosition skeletonHitTest(com.gutabi.capsloc.math.Point)
+    128:131:public final com.brentonbostick.capsloc.Entity hitTest(com.brentonbostick.capsloc.math.Point)
+    138:141:public com.brentonbostick.capsloc.world.graph.VertexPosition skeletonHitTest(com.brentonbostick.capsloc.math.Point)
     146:232:public void computeRadius(double)
-com.gutabi.capsloc.world.graph.VertexPosition:
-    27:27:public com.gutabi.capsloc.Entity getEntity()
-com.gutabi.capsloc.world.physics.PhysicsBody:
+com.brentonbostick.capsloc.world.graph.VertexPosition:
+    27:27:public com.brentonbostick.capsloc.Entity getEntity()
+com.brentonbostick.capsloc.world.physics.PhysicsBody:
     float mass
     float momentOfInertia
-    protected com.gutabi.capsloc.math.Point prevWorldPoint0
-    protected com.gutabi.capsloc.math.Point prevWorldPoint3
-com.gutabi.capsloc.world.physics.PhysicsWorld:
+    protected com.brentonbostick.capsloc.math.Point prevWorldPoint0
+    protected com.brentonbostick.capsloc.math.Point prevWorldPoint3
+com.brentonbostick.capsloc.world.physics.PhysicsWorld:
     25:26:public int getBodyCount()
-    public abstract void carCrash(com.gutabi.capsloc.math.Point)
-com.gutabi.capsloc.world.sprites.AnimatedExplosion
-com.gutabi.capsloc.world.sprites.AnimatedGrass:
+    public abstract void carCrash(com.brentonbostick.capsloc.math.Point)
+com.brentonbostick.capsloc.world.sprites.AnimatedExplosion
+com.brentonbostick.capsloc.world.sprites.AnimatedGrass:
     public boolean xor
-com.gutabi.capsloc.world.sprites.ExplosionSheet
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$1
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$10
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$11
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$12
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$13
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$14
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$15
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$16
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$2
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$3
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$4
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$5
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$6
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$7
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$8
-com.gutabi.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$9
-com.gutabi.capsloc.world.tools.CircleTool
-com.gutabi.capsloc.world.tools.CircleTool$1
-com.gutabi.capsloc.world.tools.CircleTool$2
-com.gutabi.capsloc.world.tools.CircleTool$CircleToolMode
-com.gutabi.capsloc.world.tools.CircleToolShape
-com.gutabi.capsloc.world.tools.CubicTool
-com.gutabi.capsloc.world.tools.CubicTool$1
-com.gutabi.capsloc.world.tools.CubicTool$2
-com.gutabi.capsloc.world.tools.CubicTool$3
-com.gutabi.capsloc.world.tools.CubicTool$4
-com.gutabi.capsloc.world.tools.CubicTool$CubicToolMode
-com.gutabi.capsloc.world.tools.CubicToolShape
-com.gutabi.capsloc.world.tools.FixtureTool
-com.gutabi.capsloc.world.tools.FixtureToolShape
-com.gutabi.capsloc.world.tools.Knob
-com.gutabi.capsloc.world.tools.MergerTool
-com.gutabi.capsloc.world.tools.MergerToolShape
-com.gutabi.capsloc.world.tools.QuadTool
-com.gutabi.capsloc.world.tools.QuadTool$1
-com.gutabi.capsloc.world.tools.QuadTool$2
-com.gutabi.capsloc.world.tools.QuadTool$3
-com.gutabi.capsloc.world.tools.QuadTool$QuadToolMode
-com.gutabi.capsloc.world.tools.QuadToolShape
-com.gutabi.capsloc.world.tools.RegularTool
-com.gutabi.capsloc.world.tools.RegularTool$RegularToolMode
-com.gutabi.capsloc.world.tools.StraightEdgeTool
-com.gutabi.capsloc.world.tools.StraightEdgeTool$1
-com.gutabi.capsloc.world.tools.StraightEdgeTool$2
-com.gutabi.capsloc.world.tools.StraightEdgeTool$StraightEdgeToolMode
-com.gutabi.capsloc.world.tools.StraightEdgeToolShape
-com.gutabi.capsloc.world.tools.WorldToolBase:
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$1
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$10
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$11
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$12
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$13
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$14
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$15
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$16
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$2
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$3
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$4
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$5
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$6
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$7
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$8
+com.brentonbostick.capsloc.world.sprites.ExplosionSheet$ExplosionSheetSprite$9
+com.brentonbostick.capsloc.world.tools.CircleTool
+com.brentonbostick.capsloc.world.tools.CircleTool$1
+com.brentonbostick.capsloc.world.tools.CircleTool$2
+com.brentonbostick.capsloc.world.tools.CircleTool$CircleToolMode
+com.brentonbostick.capsloc.world.tools.CircleToolShape
+com.brentonbostick.capsloc.world.tools.CubicTool
+com.brentonbostick.capsloc.world.tools.CubicTool$1
+com.brentonbostick.capsloc.world.tools.CubicTool$2
+com.brentonbostick.capsloc.world.tools.CubicTool$3
+com.brentonbostick.capsloc.world.tools.CubicTool$4
+com.brentonbostick.capsloc.world.tools.CubicTool$CubicToolMode
+com.brentonbostick.capsloc.world.tools.CubicToolShape
+com.brentonbostick.capsloc.world.tools.FixtureTool
+com.brentonbostick.capsloc.world.tools.FixtureToolShape
+com.brentonbostick.capsloc.world.tools.Knob
+com.brentonbostick.capsloc.world.tools.MergerTool
+com.brentonbostick.capsloc.world.tools.MergerToolShape
+com.brentonbostick.capsloc.world.tools.QuadTool
+com.brentonbostick.capsloc.world.tools.QuadTool$1
+com.brentonbostick.capsloc.world.tools.QuadTool$2
+com.brentonbostick.capsloc.world.tools.QuadTool$3
+com.brentonbostick.capsloc.world.tools.QuadTool$QuadToolMode
+com.brentonbostick.capsloc.world.tools.QuadToolShape
+com.brentonbostick.capsloc.world.tools.RegularTool
+com.brentonbostick.capsloc.world.tools.RegularTool$RegularToolMode
+com.brentonbostick.capsloc.world.tools.StraightEdgeTool
+com.brentonbostick.capsloc.world.tools.StraightEdgeTool$1
+com.brentonbostick.capsloc.world.tools.StraightEdgeTool$2
+com.brentonbostick.capsloc.world.tools.StraightEdgeTool$StraightEdgeToolMode
+com.brentonbostick.capsloc.world.tools.StraightEdgeToolShape
+com.brentonbostick.capsloc.world.tools.WorldToolBase:
     public abstract java.lang.Object getShape()
     19:30:public void gKey()
     33:44:public void plusKey()
     47:58:public void minusKey()
-    101:107:public void moved(com.gutabi.capsloc.ui.InputEvent)
-    110:116:public void clicked(com.gutabi.capsloc.ui.InputEvent)
+    101:107:public void moved(com.brentonbostick.capsloc.ui.InputEvent)
+    110:116:public void clicked(com.brentonbostick.capsloc.ui.InputEvent)
