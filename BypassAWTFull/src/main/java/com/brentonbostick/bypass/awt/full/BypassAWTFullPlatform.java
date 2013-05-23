@@ -3,6 +3,8 @@ package com.brentonbostick.bypass.awt.full;
 import static com.brentonbostick.bypass.BypassApplication.BYPASSAPP;
 import static com.brentonbostick.capsloc.CapslocApplication.APP;
 
+import javax.imageio.ImageIO;
+
 import com.brentonbostick.bypass.BypassApplication;
 import com.brentonbostick.bypass.awt.BypassAWTPlatform;
 import com.brentonbostick.bypass.level.BypassWorld;
@@ -63,6 +65,8 @@ public class BypassAWTFullPlatform extends BypassAWTPlatform {
 			LevelMenu.map.put("tutorial", new LevelMenu("tutorial"));
 			LevelMenu.map.put("episode1", new LevelMenu("episode1"));
 			LevelMenu.map.put("episode2", new LevelMenu("episode2"));
+			
+			titleBarIcon = ImageIO.read(this.getClass().getResource("/icon72x72.png"));
 			
 			APP.platform.showAppScreen();
 			

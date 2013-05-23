@@ -51,6 +51,7 @@
 		<copy tofile="${buildDir}/bin/visitor1.ttf" file="${bypassResDir}/static/visitor1.ttf"/>
 		<copy tofile="${buildDir}/bin/logo.png" file="${bypassResDir}/static/logo.png"/>
 		<copy tofile="${buildDir}/bin/icon256x256.ico" file="${bypassResDir}/static/icon256x256.ico"/>
+		<copy tofile="${buildDir}/bin/icon72x72.png" file="${bypassResDir}/static/icon72x72.png"/>
 		
 		<copy tofile="${buildDir}/bin/tutorial.zip" file="${bypassResDir}/gen/tutorial.zip"/>
 		<copy tofile="${buildDir}/bin/episode1.zip" file="${bypassResDir}/gen/episode1.zip"/>

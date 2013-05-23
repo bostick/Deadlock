@@ -48,6 +48,8 @@ public class Main {
 			}
 		}
 		
+		mainFrame.setIconImage(((BypassAWTPlatform)APP.platform).titleBarIcon);
+		
 		APP.DEBUG_DRAW = false;
 		
 		APP.platform.action(MainMenuLite.class);

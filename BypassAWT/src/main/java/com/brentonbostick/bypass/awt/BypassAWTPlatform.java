@@ -43,6 +43,7 @@ public abstract class BypassAWTPlatform implements BypassPlatform {
 	public static final int CONTROLPANEL_WIDTH = 200;
 	public static final int CONTROLPANEL_HEIGHT = 600;
 	
+	public java.awt.Image titleBarIcon;
 	
 	public RootPaneContainer appContainer;
 	public RootPaneContainer debuggerContainer;
