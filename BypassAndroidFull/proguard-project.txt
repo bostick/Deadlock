@@ -12,6 +12,11 @@
 
 # Add any project specific keep options here:
 
+-keep public class com.brentonbostick.bypass.android.full.BypassAndroidFullPlatform
+
+-renamesourcefileattribute SourceFile    
+-keepattributes SourceFile,LineNumberTable
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
