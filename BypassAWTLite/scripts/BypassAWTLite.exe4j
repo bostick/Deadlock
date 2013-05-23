@@ -12,9 +12,7 @@
   </executable>
   <java mainClass="com.brentonbostick.bypass.awt.lite.Main" vmParameters="" arguments="@ARGUMENTS@" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="1.6" maxVersion="" allowBetaVM="false" jdkOnly="false">
     <searchSequence>
-      <registry />
-      <envVar name="JAVA_HOME" />
-      <envVar name="JDK_HOME" />
+      <directory location="./jre" />
     </searchSequence>
     <classPath>
       <archive location="./lib/@BYPASSJAR@" failOnError="true" />

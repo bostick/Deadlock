@@ -31,6 +31,7 @@
 		<mkdir dir="${buildDir}/copied/src" />
 		<mkdir dir="${buildDir}/copied/lib" />
 		<mkdir dir="${buildDir}/copied/classes" />
+		<mkdir dir="${buildDir}/copied/jre" />
 		<mkdir dir="${buildDir}/dist" />
 		
 		<copy todir="${buildDir}/copied/src">
@@ -54,6 +55,10 @@
 		<copy tofile="${buildDir}/bin/tutorial.zip" file="${bypassResDir}/gen/tutorial.zip"/>
 		<copy tofile="${buildDir}/bin/episode1.zip" file="${bypassResDir}/gen/episode1.zip"/>
 		<copy tofile="${buildDir}/bin/episode2.zip" file="${bypassResDir}/gen/episode2.zip"/>
+		
+		<copy todir="${buildDir}/copied/jre">
+			<fileset dir="C:\\Program Files\\Java\\jre7"/>
+		</copy>
 		
 		<javac srcdir="${buildDir}/copied/src"
 			destdir="${buildDir}/bin"
@@ -83,13 +88,18 @@
 		<mkdir dir="${distDir}" />
 		<mkdir dir="${distDir}/lib" />
 		<mkdir dir="${distDir}/classes" />
+		<mkdir dir="${distDir}/jre" />
 		
 		<copy todir="${distDir}/lib">
 			<fileset dir="${buildDir}/copied/lib">
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
-
+		
+		<copy todir="${distDir}/jre">
+			<fileset dir="${buildDir}/copied/jre"/>
+		</copy>
+		
 		<copy tofile="${buildDir}/copied/BypassAWTFull.exe4j" file="BypassAWTFull.exe4j">
 			<filterset>
 				<filter token="VERSIONINFO" value="&lt;versionInfo include=&quot;true&quot; fileVersion=&quot;${version.major} ${version.minor} ${version.revision} ${DATE}&quot; fileDescription=&quot;Gutabi Studios Bypass&quot; legalCopyright=&quot;Copyright 2013 Gutabi Studios&quot; internalName=&quot;Bypass&quot; productName=&quot;Bypass&quot; companyName=&quot;Gutabi Studios&quot; productVersion=&quot;${version.major} ${version.minor} ${version.revision} ${DATE}&quot; /&gt;"/>
