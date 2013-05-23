@@ -74,19 +74,19 @@ public class MenuTool extends Tool {
 		if (h) {
 			
 			double newX = origMenuUL.x + motionDiff.x;
-			if (newX - menu.panelOffset.x > 0) {
+			if (newX  > menu.panelOffset.x) {
 				newX = menu.panelOffset.x;
-			} else if (newX + menu.aabb.width < ignore.panel.aabb.width) {
-				newX = ignore.panel.aabb.width - menu.aabb.width;
+			} else if (newX + menu.aabb.width < menu.panelOffsetBR.x) {
+				newX = menu.panelOffsetBR.x - menu.aabb.width;
 			}
 			newLoc = new Point(newX, menu.aabb.y);
 			
 		} else {
 			double newY = origMenuUL.y + motionDiff.y;
-			if (newY - menu.panelOffset.y > 0) {
+			if (newY > menu.panelOffset.y) {
 				newY = menu.panelOffset.y;
-			} else if (newY + menu.aabb.height < ignore.panel.aabb.height) {
-				newY = ignore.panel.aabb.height - menu.aabb.height;
+			} else if (newY + menu.aabb.height < menu.panelOffsetBR.y) {
+				newY = menu.panelOffsetBR.y - menu.aabb.height;
 			}
 			newLoc = new Point(menu.aabb.x, newY);
 		}

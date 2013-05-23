@@ -48,6 +48,7 @@ public class BypassMenuPanel extends Panel {
 		copyAdjustedHeight = (copyAdjustedWidth * copyright.getHeight()) / copyright.getWidth();
 		
 		menu.panelOffset = new Point(0.0, logoAdjustedHeight);
+		menu.panelOffsetBR = new Point(0.0 + width, logoAdjustedHeight + ((height - copyAdjustedHeight) - logoAdjustedHeight));
 		menu.postDisplay(width, (int)((height - copyAdjustedHeight) - logoAdjustedHeight));
 	}
 	

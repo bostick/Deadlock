@@ -28,6 +28,7 @@ public abstract class Menu {
 	public AABB aabb = new AABB();
 	public AABB marginAABB = new AABB();
 	public Point panelOffset = new Point(0, 0);
+	public Point panelOffsetBR = new Point(0, 0);
 	
 	int parWidth;
 	int parHeight;
@@ -251,8 +252,8 @@ public abstract class Menu {
 	
 	private void setAABBAndScrolling() {
 		
-		double x = aabb.x;
-		double y = aabb.y;
+		double x = panelOffset.x;
+		double y = panelOffset.y;
 		
 		double s = (widthFraction * parWidth) / menuWidth;
 		
@@ -275,9 +276,6 @@ public abstract class Menu {
 			 */
 			
 			hScrollable = true;
-			
-			panelOffset = new Point(0, panelOffset.y);
-			
 		}
 		
 		if (DMath.lessThanEquals(aabb.height, parHeight)) {
@@ -295,9 +293,6 @@ public abstract class Menu {
 			 */
 			
 			vScrollable = true;
-			
-			panelOffset = new Point(panelOffset.x, 0);
-			
 		}
 		
 		setLocation(x, y);
