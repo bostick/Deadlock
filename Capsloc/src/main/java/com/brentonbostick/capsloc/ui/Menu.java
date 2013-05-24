@@ -27,8 +27,8 @@ public abstract class Menu {
 	
 	public AABB aabb = new AABB();
 	public AABB marginAABB = new AABB();
-	public Point panelOffset = new Point(0, 0);
-	public Point panelOffsetBR = new Point(0, 0);
+	public Point panelOffset;
+	public Point panelOffsetBR;
 	
 	int parWidth;
 	int parHeight;
@@ -252,8 +252,8 @@ public abstract class Menu {
 	
 	private void setAABBAndScrolling() {
 		
-		double x = panelOffset.x;
-		double y = panelOffset.y;
+		double x = aabb.x;
+		double y = aabb.y;
 		
 		double s = (widthFraction * parWidth) / menuWidth;
 		

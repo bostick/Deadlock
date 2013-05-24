@@ -47,8 +47,18 @@ public class BypassMenuPanel extends Panel {
 		copyAdjustedWidth = Math.min(copyright.getWidth(), aabb.width);
 		copyAdjustedHeight = (copyAdjustedWidth * copyright.getHeight()) / copyright.getWidth();
 		
-		menu.panelOffset = new Point(0.0, logoAdjustedHeight);
-		menu.panelOffsetBR = new Point(0.0 + width, logoAdjustedHeight + ((height - copyAdjustedHeight) - logoAdjustedHeight));
+		if (menu.panelOffset == null) {
+			/*
+			 * initialize panelOffset and aabb with proper values
+			 */
+			
+			menu.panelOffset = new Point(0.0, logoAdjustedHeight);
+			menu.panelOffsetBR = new Point(0.0 + width, logoAdjustedHeight + ((height - copyAdjustedHeight) - logoAdjustedHeight));
+			
+			menu.aabb = new AABB(menu.panelOffset.x, menu.panelOffset.y, menu.aabb.width, menu.aabb.height);
+			
+		}
+		
 		menu.postDisplay(width, (int)((height - copyAdjustedHeight) - logoAdjustedHeight));
 	}
 	
