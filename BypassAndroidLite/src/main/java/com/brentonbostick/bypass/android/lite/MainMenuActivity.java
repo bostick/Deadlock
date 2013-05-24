@@ -41,6 +41,18 @@ public class MainMenuActivity extends BypassActivity {
 			}
 		}
 		
+		if (savedInstanceState != null) {
+			
+			Point panelOffset = (Point)savedInstanceState.getSerializable("com.brentonbostick.bypass.menu.MainMenuPanelOffset");
+			MainMenu.MAINMENU.panelOffset = panelOffset;
+			Point panelOffsetBR = (Point)savedInstanceState.getSerializable("com.brentonbostick.bypass.menu.MainMenuPanelOffsetBR");
+			MainMenu.MAINMENU.panelOffsetBR = panelOffsetBR;
+			
+			Point loc = (Point)savedInstanceState.getSerializable("com.brentonbostick.bypass.menu.MainMenuLoc");
+			MainMenu.MAINMENU.setLocation(loc);
+			
+		}
+		
 		v = (BypassView)findViewById(R.id.view_mainmenu);
 		
 		v.ctxt = APP.platform.createRenderingContext();
@@ -93,6 +105,7 @@ public class MainMenuActivity extends BypassActivity {
 		
 		outState.putSerializable("com.brentonbostick.bypass.menu.MainMenuLoc", new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y));
 		outState.putSerializable("com.brentonbostick.bypass.menu.MainMenuPanelOffset", BypassMenu.BYPASSMENU.panelOffset);
+		outState.putSerializable("com.brentonbostick.bypass.menu.MainMenuPanelOffsetBR", BypassMenu.BYPASSMENU.panelOffsetBR);
 	}
 	
 }

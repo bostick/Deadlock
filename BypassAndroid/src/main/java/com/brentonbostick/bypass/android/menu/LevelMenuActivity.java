@@ -63,6 +63,8 @@ public class LevelMenuActivity extends BypassActivity {
 			
 			Point panelOffset = (Point)savedInstanceState.getSerializable("com.brentonbostick.bypass.menu.LevelMenuPanelOffset");
 			menu.panelOffset = panelOffset;
+			Point panelOffsetBR = (Point)savedInstanceState.getSerializable("com.brentonbostick.bypass.menu.LevelMenuPanelOffsetBR");
+			menu.panelOffsetBR = panelOffsetBR;
 			
 			Point loc = (Point)savedInstanceState.getSerializable("com.brentonbostick.bypass.menu.LevelMenuLoc");
 			menu.setLocation(loc);
@@ -120,6 +122,7 @@ public class LevelMenuActivity extends BypassActivity {
 		Point loc = new Point(BypassMenu.BYPASSMENU.aabb.x, BypassMenu.BYPASSMENU.aabb.y);
 		outState.putSerializable("com.brentonbostick.bypass.menu.LevelMenuLoc", loc);
 		outState.putSerializable("com.brentonbostick.bypass.menu.LevelMenuPanelOffset", BypassMenu.BYPASSMENU.panelOffset);
+		outState.putSerializable("com.brentonbostick.bypass.menu.LevelMenuPanelOffsetBR", BypassMenu.BYPASSMENU.panelOffsetBR);
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
