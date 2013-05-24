@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.brentonbostick.bypass.android.ActivityState;
 import com.brentonbostick.bypass.android.BypassActivity;
 import com.brentonbostick.bypass.android.BypassAndroidPlatform;
 import com.brentonbostick.bypass.android.BypassView;
@@ -104,13 +103,6 @@ public class LevelMenuActivity extends BypassActivity {
 	protected void onSurfaceChanged(int width, int height) {
 		
 		Log.d("bypassactivity", name + " surfaceChanged");
-		
-		if (state != ActivityState.RESUME) {
-			/*
-			 * locking the screen causes surface change after pause, so ignore that
-			 */
-			return;
-		}
 		
 		BypassMenu.surfaceChanged(width, height);
 	}
