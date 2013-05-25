@@ -10,6 +10,7 @@ import com.brentonbostick.bypass.menu.MainMenu;
 import com.brentonbostick.capsloc.AppScreen;
 import com.brentonbostick.capsloc.Model;
 import com.brentonbostick.capsloc.SimulationRunnable;
+import com.brentonbostick.capsloc.geom.AABB;
 import com.brentonbostick.capsloc.math.Point;
 import com.brentonbostick.capsloc.ui.ContentPane;
 import com.brentonbostick.capsloc.ui.Label;
@@ -561,6 +562,18 @@ public class BypassWorld extends World implements Model {
 		super.postDisplay(width, height);
 		
 		if (curLevel.isWon) {
+			
+			if (winnerMenu.panelOffset == null) {
+				/*
+				 * initialize panelOffset and aabb with proper values
+				 */
+				
+				winnerMenu.panelOffset = new Point(0.0, 0.0);
+				winnerMenu.panelOffsetBR = new Point(0.0 + width, 0 + height);
+				
+				winnerMenu.aabb = new AABB(winnerMenu.panelOffset.x, winnerMenu.panelOffset.y, winnerMenu.aabb.width, winnerMenu.aabb.height);
+				
+			}
 			
 			winnerMenu.postDisplay(width, height);
 		}
