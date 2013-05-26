@@ -404,8 +404,6 @@ public class World extends PhysicsWorld {
 		
 		background.panelPostDisplay(width, height);
 		
-		quadrantMap.panelPostDisplay(worldCamera);
-		
 	}
 
 	public void render() {
@@ -449,7 +447,7 @@ public class World extends PhysicsWorld {
 		
 		ctxt.pushTransform();
 		
-		ctxt.scale(worldCamera.pixelsPerMeter);
+		ctxt.scale(worldCamera.pixelsPerMeter, worldCamera.pixelsPerMeter);
 		ctxt.translate(-worldCamera.worldViewport.x, -worldCamera.worldViewport.y);
 		
 		background.paint_worldCoords(ctxt);

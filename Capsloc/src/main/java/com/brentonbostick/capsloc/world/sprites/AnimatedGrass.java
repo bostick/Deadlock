@@ -78,14 +78,14 @@ public class AnimatedGrass {
 		
 		switch (lastFrame) {
 		case 0:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
 			break;
 		case 1:
 		case 3:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS1, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS1, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
 			break;
 		case 2:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS2, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS2, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
 			break;
 		}
 		

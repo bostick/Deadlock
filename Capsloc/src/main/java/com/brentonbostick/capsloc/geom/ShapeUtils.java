@@ -128,6 +128,17 @@ public class ShapeUtils {
 				DMath.lessThanEquals(a0.y, a1.y+a1.height) && DMath.lessThanEquals(a1.y, a0.y+a0.height);
 	}
 	
+	public static boolean intersectAA(MutableAABB a0, double x0, double y0, double x1, double y1) {
+		
+//		assert !Double.isNaN(a1.x);
+//		assert !Double.isNaN(a1.y);
+//		assert !Double.isNaN(a1.width);
+//		assert !Double.isNaN(a1.height);
+		
+		return DMath.lessThanEquals(a0.x, x1) && DMath.lessThanEquals(x0, a0.x+a0.width) &&
+				DMath.lessThanEquals(a0.y, y1) && DMath.lessThanEquals(y0, a0.y+a0.height);
+	}
+	
 	public static boolean intersectACap(AABB a0, Capsule c1) {
 		
 		if (!ShapeUtils.intersectAA(a0, c1.aabb)) {

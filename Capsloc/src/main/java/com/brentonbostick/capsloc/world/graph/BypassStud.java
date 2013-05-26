@@ -70,7 +70,7 @@ public abstract class BypassStud {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		APP.spriteSheet.paint(ctxt, sprite, ctxt.cam.pixelsPerMeter, aabb.x, aabb.y, aabb.brX, aabb.brY);
+		APP.spriteSheet.paint(ctxt, sprite, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter, aabb.x, aabb.y, aabb.brX, aabb.brY);
 		
 	}
 	

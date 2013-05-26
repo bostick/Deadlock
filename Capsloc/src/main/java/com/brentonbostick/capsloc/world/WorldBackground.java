@@ -51,7 +51,7 @@ public class WorldBackground {
 			
 			ctxt.cam = world.worldCamera;
 			
-			ctxt.scale(world.worldCamera.pixelsPerMeter);
+			ctxt.scale(world.worldCamera.pixelsPerMeter, world.worldCamera.pixelsPerMeter);
 			ctxt.translate(0, 0);
 			
 			world.quadrantMap.paint_panel(ctxt);
@@ -89,10 +89,12 @@ public class WorldBackground {
 		case DYNAMIC:
 			break;
 		case RENDERED_GRAPH:
+//			world.quadrantMap.paint_panel(ctxt);
 			break;
 		case RENDERED_ROADS:
 		case RENDERED_ROADS_VERTICES:
 		case RENDERED_ROADS_VERTICES_BOARDS:
+//			world.quadrantMap.paint_panel(ctxt);
 			break;
 		}
 	}

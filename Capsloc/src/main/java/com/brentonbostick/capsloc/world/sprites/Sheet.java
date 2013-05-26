@@ -19,8 +19,8 @@ public abstract class Sheet {
 		ctxt.paintImage(img, dx1, dy1, dx2, dy2, s.xStart(), s.yStart(), s.xEnd(), s.yEnd());
 	}
 	
-	public void paint(RenderingContext ctxt, Sprite s, double orig, double dx1, double dy1, double dx2, double dy2) {
-		ctxt.paintImage(img, orig, dx1, dy1, dx2, dy2, s.xStart(), s.yStart(), s.xEnd(), s.yEnd());
+	public void paint(RenderingContext ctxt, Sprite s, double origX, double origY, double dx1, double dy1, double dx2, double dy2) {
+		ctxt.paintImage(img, origX, origY, dx1, dy1, dx2, dy2, s.xStart(), s.yStart(), s.xEnd(), s.yEnd());
 	}
 
 }

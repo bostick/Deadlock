@@ -1,16 +1,12 @@
 package com.brentonbostick.capsloc.world;
 
-import static com.brentonbostick.capsloc.CapslocApplication.APP;
-
 import com.brentonbostick.capsloc.geom.AABB;
 import com.brentonbostick.capsloc.geom.CapsuleSequence;
 import com.brentonbostick.capsloc.geom.Circle;
 import com.brentonbostick.capsloc.geom.ShapeUtils;
 import com.brentonbostick.capsloc.math.DMath;
 import com.brentonbostick.capsloc.math.Point;
-import com.brentonbostick.capsloc.ui.Image;
 import com.brentonbostick.capsloc.ui.paint.RenderingContext;
-import com.brentonbostick.capsloc.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class QuadrantMap {
 	
@@ -24,8 +20,6 @@ public class QuadrantMap {
 	
 	public final int[][] ini;
 	private Quadrant[][] quadrants;
-	
-	public Image quadrantGrass;
 
 	public QuadrantMap(int[][] ini) {
 		this.ini = ini;
@@ -99,29 +93,6 @@ public class QuadrantMap {
 		}
 		
 		return newQuads;
-	}
-	
-	
-	RenderingContext ctxt = APP.platform.createRenderingContext();
-	
-	public void panelPostDisplay(WorldCamera cam) {
-		
-		int quadrantWidthPixels = (int)Math.ceil(cam.origPixelsPerMeter * QUADRANT_WIDTH);
-		int quadrantHeightPixels = (int)Math.ceil(cam.origPixelsPerMeter * QUADRANT_HEIGHT);
-		
-		quadrantGrass = APP.platform.createImage(quadrantWidthPixels, quadrantHeightPixels);
-		
-		APP.platform.setRenderingContextFields1(ctxt, quadrantGrass);
-		
-		int maxCols = (int)Math.ceil(quadrantWidthPixels/32.0);
-		int maxRows = (int)Math.ceil(quadrantHeightPixels/32.0);
-		for (int i = 0; i < maxRows; i++) {
-			for (int j = 0; j < maxCols; j++) {
-				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASSTILE, 32 * j, 32 * i, 32 * j + 32, 32 * i + 32);
-			}
-		}
-		
-		ctxt.dispose();
 	}
 	
 	public Quadrant findQuadrant(Point p) {

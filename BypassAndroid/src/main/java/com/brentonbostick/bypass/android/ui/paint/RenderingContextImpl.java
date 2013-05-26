@@ -54,7 +54,7 @@ public class RenderingContextImpl extends RenderingContext {
 	Rect srcRect = new Rect();
 	RectF destRect = new RectF();
 	
-	public void paintImage(Image img, double orig, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
+	public void paintImage(Image img, double origX, double origY, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
 		
 		Bitmap b = ((ImageImpl)img).b;
 		
@@ -130,21 +130,6 @@ public class RenderingContextImpl extends RenderingContext {
 		canvas.restore();
 	}
 	
-	
-//	Rect fr = new Rect();
-//	
-//	public void fillRect(int x, int y, int width, int height) {
-//		
-//		fr.left = x;
-//		fr.top = y;
-//		fr.right = x+width;
-//		fr.bottom = y+height;
-//		
-//		paint.setStyle(Style.FILL);
-//		
-//		canvas.drawRect(fr, paint);
-//	}
-	
 	public void drawAABB(AABB a) {
 		paint.setStyle(Style.STROKE);
 		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
@@ -219,8 +204,8 @@ public class RenderingContextImpl extends RenderingContext {
 		paint.setFlags(fs);
 	}
 	
-	public void scale(double s) {
-		canvas.scale((float)s, (float)s);
+	public void scale(double sX, double sY) {
+		canvas.scale((float)sX, (float)sY);
 	}
 	
 	public void setColor(Color c) {

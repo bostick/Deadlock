@@ -389,7 +389,7 @@ public final class Fixture extends Vertex {
 			
 			ctxt.cam = world.worldCamera;
 			
-			ctxt.scale(world.worldCamera.pixelsPerMeter);
+			ctxt.scale(world.worldCamera.pixelsPerMeter, world.worldCamera.pixelsPerMeter);
 			ctxt.translate(-intersection.x, -intersection.y);
 			
 			ctxt.setColor(Color.FIXTURECOLOR);
@@ -423,7 +423,7 @@ public final class Fixture extends Vertex {
 			if (intersection == null) {
 				return;
 			}
-			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter,
+			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter,
 					intersection.x, intersection.y, intersection.x+intersection.width, intersection.y+intersection.height,
 					0, 0, img.getWidth(), img.getHeight());
 			break;

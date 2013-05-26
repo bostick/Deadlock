@@ -108,8 +108,8 @@ public class RenderingContextImpl extends RenderingContext {
 		
 	}
 	
-	public void scale(double s) {
-		g2.scale(s, s);
+	public void scale(double sX, double sY) {
+		g2.scale(sX, sY);
 	}
 	
 	public void translate(double tx, double ty) {
@@ -186,12 +186,12 @@ public class RenderingContextImpl extends RenderingContext {
 		popTransform();
 	}
 	
-	public void paintImage(Image img, double orig, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
+	public void paintImage(Image img, double origX, double origY, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
 		pushTransform();
 		
-		g2.scale(1 / orig, 1 / orig);
+		g2.scale(1 / origX, 1 / origY);
 		paintImage(img,
-				(int)Math.ceil(dx1 * orig), (int)Math.ceil(dy1 * orig), (int)Math.ceil(dx2 * orig), (int)Math.ceil(dy2 * orig),
+				(int)Math.ceil(dx1 * origX), (int)Math.ceil(dy1 * origY), (int)Math.ceil(dx2 * origX), (int)Math.ceil(dy2 * origY),
 				sx1, sy1, sx2, sy2);
 		
 		popTransform();

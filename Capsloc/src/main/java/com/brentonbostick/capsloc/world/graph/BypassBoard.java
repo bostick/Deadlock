@@ -1331,7 +1331,7 @@ public class BypassBoard extends Entity {
 				
 				ctxt.cam = world.worldCamera;
 				
-				ctxt.scale(world.worldCamera.pixelsPerMeter);
+				ctxt.scale(world.worldCamera.pixelsPerMeter, world.worldCamera.pixelsPerMeter);
 				ctxt.translate(-allStudsAABB.x, -allStudsAABB.y);
 				
 				paintStuds(ctxt);
@@ -1362,7 +1362,7 @@ public class BypassBoard extends Entity {
 		case RENDERED_ROADS_VERTICES:
 			break;
 		case RENDERED_ROADS_VERTICES_BOARDS:
-			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter,
+			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter,
 					allStudsAABB.x, allStudsAABB.y, allStudsAABB.x+allStudsAABB.width, allStudsAABB.y+allStudsAABB.height,
 					0, 0, img.getWidth(), img.getHeight());
 			break;

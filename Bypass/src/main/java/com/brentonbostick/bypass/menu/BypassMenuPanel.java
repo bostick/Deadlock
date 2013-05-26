@@ -9,6 +9,7 @@ import com.brentonbostick.capsloc.ui.Image;
 import com.brentonbostick.capsloc.ui.Menu;
 import com.brentonbostick.capsloc.ui.Panel;
 import com.brentonbostick.capsloc.ui.paint.RenderingContext;
+import com.brentonbostick.capsloc.world.Quadrant;
 import com.brentonbostick.capsloc.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class BypassMenuPanel extends Panel {
@@ -76,18 +77,24 @@ public class BypassMenuPanel extends Panel {
 			
 			ctxt.translate(aabb.x, aabb.y);
 			
-			for (int i = 0; i < (int)Math.ceil(aabb.height / 32); i++) {
-				for (int j = 0; j < (int)Math.ceil(aabb.width / 32); j++) {
-					APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASSTILE, 32 * j, 32 * i, 32 * j + 32, 32 * i + 32);
+			ctxt.pushTransform();
+			
+			ctxt.scale(aabb.width/Quadrant.GRASSTILES_PER_QUADRANT, aabb.height/Quadrant.GRASSTILES_PER_QUADRANT);
+			
+			for (int i = 0; i < Quadrant.GRASSTILES_PER_QUADRANT; i++) {
+				for (int j = 0; j < Quadrant.GRASSTILES_PER_QUADRANT; j++) {
+					APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASSTILE, 1.0, 1.0, j, i, j + 1, i + 1);
 				}
 			}
+			
+			ctxt.popTransform();
 			
 			ctxt.pushTransform();
 			
 			ctxt.translate(aabb.width/2 - logoAdjustedWidth/2, 0);
 			
 			ctxt.setAntialiasing();
-			ctxt.paintImage(logo, 1.0,
+			ctxt.paintImage(logo, 1.0, 1.0,
 					0, 0, logoAdjustedWidth, logoAdjustedHeight,
 					0, 0, logo.getWidth(), logo.getHeight());
 			ctxt.clearAntialiasing();
@@ -97,7 +104,7 @@ public class BypassMenuPanel extends Panel {
 			ctxt.pushTransform();
 			
 			ctxt.translate(aabb.width/2 - copyAdjustedWidth/2, aabb.height - copyAdjustedHeight);
-			ctxt.paintImage(copyright, 1.0,
+			ctxt.paintImage(copyright, 1.0, 1.0,
 					0, 0, copyAdjustedWidth, copyAdjustedHeight,
 					0, 0, copyright.getWidth(), copyright.getHeight());
 			

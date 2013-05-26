@@ -1253,7 +1253,7 @@ public class Graph {
 			
 			ctxt.cam = world.worldCamera;
 			
-			ctxt.scale(world.worldCamera.pixelsPerMeter);
+			ctxt.scale(world.worldCamera.pixelsPerMeter, world.worldCamera.pixelsPerMeter);
 			ctxt.translate(-world.graph.aabb.x, -world.graph.aabb.y);
 			
 			paint_panel(ctxt);
@@ -1315,7 +1315,7 @@ public class Graph {
 			break;
 		case RENDERED_GRAPH:
 			
-			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter,
+			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter,
 					aabb.x, aabb.y, aabb.x+aabb.width, aabb.y+aabb.height,
 					0, 0, img.getWidth(), img.getHeight());
 			

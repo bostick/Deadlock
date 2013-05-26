@@ -4,6 +4,7 @@ import static com.brentonbostick.capsloc.CapslocApplication.APP;
 
 import com.brentonbostick.capsloc.geom.AABB;
 import com.brentonbostick.capsloc.geom.Line;
+import com.brentonbostick.capsloc.geom.ShapeUtils;
 import com.brentonbostick.capsloc.math.DMath;
 import com.brentonbostick.capsloc.math.Point;
 import com.brentonbostick.capsloc.ui.paint.Cap;
@@ -11,8 +12,11 @@ import com.brentonbostick.capsloc.ui.paint.Color;
 import com.brentonbostick.capsloc.ui.paint.Join;
 import com.brentonbostick.capsloc.ui.paint.RenderingContext;
 import com.brentonbostick.capsloc.world.sprites.AnimatedGrass;
+import com.brentonbostick.capsloc.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class Quadrant {
+	
+	public static final int GRASSTILES_PER_QUADRANT = 8;
 	
 	public final QuadrantMap map;
 	public final int r;
@@ -135,9 +139,9 @@ public class Quadrant {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-//		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
-//			return;
-//		}
+		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
+			return;
+		}
 		
 		if (!active) {
 			ctxt.setColor(Color.DARK_GRAY);
@@ -146,15 +150,23 @@ public class Quadrant {
 		}
 		
 		if (!APP.DEBUG_DRAW) {
-//			ctxt.pushTransform();
 			
-//			ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
-			ctxt.paintImage(map.quadrantGrass,
-					ctxt.cam.pixelsPerMeter,
-					c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT, c * QuadrantMap.QUADRANT_WIDTH+QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT+QuadrantMap.QUADRANT_HEIGHT,
-					0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
+			ctxt.pushTransform();
 			
-//			ctxt.popTransform();
+			ctxt.translate(aabb.x, aabb.y);
+			
+			ctxt.scale(aabb.width/GRASSTILES_PER_QUADRANT, aabb.height/GRASSTILES_PER_QUADRANT);
+			
+			for (int i = 0; i < GRASSTILES_PER_QUADRANT; i++) {
+				for (int j = 0; j < GRASSTILES_PER_QUADRANT; j++) {
+					if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, aabb.x + (aabb.width/GRASSTILES_PER_QUADRANT) * j, aabb.y + (aabb.height/GRASSTILES_PER_QUADRANT) * i, aabb.x + (aabb.width/GRASSTILES_PER_QUADRANT) * (j + 1), aabb.y + (aabb.height/GRASSTILES_PER_QUADRANT) * (i + 1))) {
+						continue;
+					}
+					APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASSTILE, 1.0, 1.0, j, i, j + 1, i + 1);
+				}
+			}
+			
+			ctxt.popTransform();
 			
 		} else {
 			ctxt.setColor(Color.DARKGREEN);

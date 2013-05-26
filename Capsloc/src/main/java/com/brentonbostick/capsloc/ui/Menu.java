@@ -305,7 +305,7 @@ public abstract class Menu {
 		ctxt.paintAABB(marginAABB);
 		
 		ctxt.translate(aabb.x, aabb.y);
-		ctxt.scale(scale);
+		ctxt.scale(scale, scale);
 		
 		for (int i = 0; i < tree.size(); i++) {
 			List<MenuItem> col = tree.get(i);

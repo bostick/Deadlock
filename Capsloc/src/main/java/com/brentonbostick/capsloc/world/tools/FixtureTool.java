@@ -204,7 +204,7 @@ public class FixtureTool extends WorldToolBase {
 			
 			ctxt.pushTransform();
 			
-			ctxt.scale(world.worldCamera.pixelsPerMeter);
+			ctxt.scale(world.worldCamera.pixelsPerMeter, world.worldCamera.pixelsPerMeter);
 			ctxt.translate(-world.worldCamera.worldViewport.x, -world.worldCamera.worldViewport.y);
 			
 			shape.draw(ctxt);

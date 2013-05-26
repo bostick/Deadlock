@@ -33,7 +33,7 @@ public abstract class RenderingContext {
 	
 	public abstract void setFont(Resource fontFile, FontStyle style, int size);
 	
-	public abstract void scale(double s);
+	public abstract void scale(double sX, double sY);
 	
 	public abstract void translate(double tx, double ty);
 	
@@ -58,7 +58,7 @@ public abstract class RenderingContext {
 	
 	public abstract void paintString(double x, double y, double s, String str);
 	
-	public abstract void paintImage(Image img, double orig, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2);
+	public abstract void paintImage(Image img, double origX, double origY, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2);
 	
 	public abstract void paintImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2);
 	
