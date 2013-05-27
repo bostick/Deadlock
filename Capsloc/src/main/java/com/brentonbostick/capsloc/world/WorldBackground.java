@@ -18,7 +18,7 @@ public class WorldBackground {
 		
 	}
 	
-	public final RenderMethod method = RenderMethod.RENDERED_ROADS_VERTICES_BOARDS;
+	public final RenderMethod method = RenderMethod.DYNAMIC;
 	
 	World world;
 	

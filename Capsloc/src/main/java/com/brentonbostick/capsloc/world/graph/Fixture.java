@@ -382,6 +382,10 @@ public final class Fixture extends Vertex {
 				return;
 			}
 			
+			if (img != null) {
+				img.dispose();
+			}
+			
 			img = APP.platform.createTransparentImage((int)(intersection.width * world.worldCamera.pixelsPerMeter), (int)(intersection.height * world.worldCamera.pixelsPerMeter));
 			
 			RenderingContext ctxt = APP.platform.createRenderingContext();

@@ -6,4 +6,6 @@ public interface Image {
 	
 	int getHeight();
 	
+	void dispose();
+	
 }

@@ -1324,6 +1324,10 @@ public class BypassBoard extends Entity {
 				break;
 			case RENDERED_ROADS_VERTICES_BOARDS:
 				
+				if (img != null) {
+					img.dispose();
+				}
+				
 				img = APP.platform.createTransparentImage((int)(allStudsAABB.width * world.worldCamera.pixelsPerMeter), (int)(allStudsAABB.height * world.worldCamera.pixelsPerMeter));
 				
 				RenderingContext ctxt = APP.platform.createRenderingContext();

@@ -19,5 +19,8 @@ public class ImageImpl implements Image {
 	public int getHeight() {
 		return img.getHeight();
 	}
-
+	
+	public void dispose() {
+		img = null;
+	}
 }

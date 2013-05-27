@@ -20,4 +20,9 @@ public class ImageImpl implements Image {
 		return b.getHeight();
 	}
 	
+	public void dispose() {
+		b.recycle();
+		b = null;
+	}
+	
 }
