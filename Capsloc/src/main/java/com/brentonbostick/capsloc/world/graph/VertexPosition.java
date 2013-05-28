@@ -2,8 +2,6 @@ package com.brentonbostick.capsloc.world.graph;
 
 import com.brentonbostick.capsloc.Entity;
 import com.brentonbostick.capsloc.math.DMath;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public class VertexPosition extends GraphPosition {
 	
@@ -116,7 +114,7 @@ public class VertexPosition extends GraphPosition {
 		
 	}
 	
-	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPositionPath debugPath, GraphPositionPathPosition debugPos, double debugDist) {
+	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP) {
 		assert curPathParam == 0.0;
 		
 		if (goalGP instanceof EdgePosition) {

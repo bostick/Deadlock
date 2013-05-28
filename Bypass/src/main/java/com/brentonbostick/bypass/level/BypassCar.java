@@ -79,7 +79,7 @@ public class BypassCar extends Car {
 		if (dragVector == null) {
 			d = 0;
 		} else {
-			d = Math.max(Point.dot(dragVector, (pathForward ? driver.overallPos.pathVector() : driver.overallPos.pathVector().negate())) / driver.overallPos.pathVector().length(), 0.0);
+			d = Math.max(Point.dot(dragVector, (pathForward ? driver.overallPos.pathVector : driver.overallPos.pathVector.negate())) / driver.overallPos.pathVector.length(), 0.0);
 		}
 		
 		double vel;

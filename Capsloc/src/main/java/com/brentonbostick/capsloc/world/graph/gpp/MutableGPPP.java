@@ -1,7 +1,5 @@
 package com.brentonbostick.capsloc.world.graph.gpp;
 
-import java.io.Serializable;
-
 import com.brentonbostick.capsloc.geom.Geom;
 import com.brentonbostick.capsloc.geom.Line;
 import com.brentonbostick.capsloc.geom.MutableOBB;
@@ -17,50 +15,107 @@ import com.brentonbostick.capsloc.world.graph.BypassStud;
 import com.brentonbostick.capsloc.world.graph.GraphPosition;
 import com.brentonbostick.capsloc.world.graph.VertexPosition;
 
-public class GraphPositionPathPosition implements Serializable {
+public class MutableGPPP {
 	
-	private static final long serialVersionUID = 1L;
+	public GraphPositionPath path;
+	public int index;
+	public double param;
 	
-	public transient GraphPositionPath path;
-	public final int index;
-	public final double param;
+	public double combo;
 	
-	public final double combo;
-	public final boolean bound;
+	public boolean bound;
 	
-	public transient Point p;
-	public transient GraphPosition gp;
+	public Point p;
+	public GraphPosition gp;
 	
-	public final double lengthToStartOfPath;
-	public final double lengthToEndOfPath;
+	public double lengthToStartOfPath;
+	public double lengthToEndOfPath;
 	
-	public final Point pathVector;
-	public final double angle;
+	public Point pathVector;
+	public double angle;
 	
 	private int hash;
 	
-	private final MutableGPPP gppp = new MutableGPPP();
+	public void set(GraphPositionPath path, int preIndex, double preParam) {
+		
+		if (preIndex < 0) {
+			throw new IllegalArgumentException("preIndex < 0: " + preIndex);
+		}
+		if (preIndex >= path.size) {
+			throw new IllegalArgumentException("preIndex >= path.size: " + preIndex + " " + path.size);
+		}
+		if (DMath.lessThan(preParam, 0.0) || DMath.greaterThan(preParam, 1.0)) {
+			throw new IllegalArgumentException();
+		}
+		if (DMath.equals(preParam, 1.0) && preIndex == path.size-1) {
+			throw new IllegalArgumentException();
+		}
+		
+		this.path = path;
+		/*
+		 * allow 1.0 params to make life easier
+		 */
+		if (DMath.equals(preParam, 1.0)) {
+			this.index = preIndex+1;
+			this.param = 0.0;
+		} else {
+			this.index = preIndex;
+			this.param = preParam;
+		}
+		
+		this.combo = index+param;
+		
+		this.bound = DMath.equals(param, 0.0);
+		
+		if (bound) {
+			gp = path.get(index);
+			p = gp.p;
+		} else {
+			GraphPosition p1 = path.get(index);
+			GraphPosition p2 = path.get(index+1);			
+			double dist = Point.distance(p1.p, p2.p);
+			gp = p1.approachNeighbor(p2, dist * param);
+			p = gp.p;
+		}
+		
+		double acc = path.cumulativeDistancesFromStart[index];
+		acc += Point.distance(path.get(index).p, p);
+		
+		lengthToStartOfPath = acc;
+		lengthToEndOfPath = path.totalLength - lengthToStartOfPath;
+		
+		assert lengthToStartOfPath <= path.totalLength;
+		assert lengthToEndOfPath >= 0;
+		
+		Point a;
+		Point b;
+		if (DMath.equals(param, 0.0)) {
+			
+			if (index == 0) {
+				a = path.get(index).p;
+				b = path.get(index+1).p;
+			} else if (index == path.size-1) {
+				a = path.get(index-1).p;
+				b = path.get(index).p;
+			} else {
+				a = path.get(index-1).p;
+				b = path.get(index+1).p;
+			}
+			
+		} else {
+			a = path.get(index).p;
+			b = path.get(index+1).p;
+		}
+		
+		pathVector = new Point(b.y - a.y, b.x - a.x);
+		double ang = Math.atan2(b.y - a.y, b.x - a.x);
+		ang = DMath.tryAdjustToRightAngle(ang);
+		angle = ang;
+		
+	}
 	
-	public GraphPositionPathPosition(GraphPositionPath path, int preIndex, double preParam) {
-		
-		gppp.set(path, preIndex, preParam);
-		
-		this.path = gppp.path;
-		this.index = gppp.index;
-		this.param = gppp.param;
-		
-		this.combo = gppp.combo;
-		
-		this.bound = gppp.bound;
-		
-		this.gp = gppp.gp;
-		this.p = gppp.p;
-		
-		this.lengthToStartOfPath = gppp.lengthToStartOfPath;
-		this.lengthToEndOfPath = gppp.lengthToEndOfPath;
-		
-		this.pathVector = gppp.pathVector;
-		this.angle = gppp.angle;
+	public void set(MutableGPPP v) {
+		set(v.path, v.index, v.param);
 	}
 	
 	public int hashCode() {
@@ -85,38 +140,49 @@ public class GraphPositionPathPosition implements Serializable {
 			GraphPositionPathPosition b = (GraphPositionPathPosition)o;
 			return path == b.path && index == b.index && DMath.equals(param, b.param);
 		} else {
-			MutableGPPP b = (MutableGPPP)o;
+			final MutableGPPP b = (MutableGPPP)o;
 			return path == b.path && index == b.index && DMath.equals(param, b.param);
 		}
 	}
 	
 	public String toString() {
-		return "GPPP[...] " + index + " " + param;
+		return "MutableGPPP[...] " + index + " " + param;
 	}
+	
 	public boolean isEndOfPath() {
-		return gppp.isEndOfPath();
+		return (index == path.size-1) && DMath.equals(param, 0.0);
 	}
 	
-	public double lengthTo(GraphPositionPathPosition p) {
-		return gppp.lengthTo(p.gppp);
+	public double lengthTo(MutableGPPP p) {
+		
+		assert p.path.equals(path);
+		
+		if (DMath.equals(p.combo, combo)) {
+			return 0.0;
+		} else if (DMath.greaterThanEquals(p.combo, combo)) {
+			return p.lengthToStartOfPath - lengthToStartOfPath;
+		} else {
+			return lengthToStartOfPath - p.lengthToStartOfPath;
+		}
+		
 	}
 	
-	public GraphPositionPathPosition travelForward(double dist) {
-		return travel(dist, true);
+	public void travelForward(double dist) {
+		travel(dist, true);
 	}
 	
-	public GraphPositionPathPosition travelBackward(double dist) {
-		return travel(dist, false);
+	public void travelBackward(double dist) {
+		travel(dist, false);
 	}
 	
-	private GraphPositionPathPosition travel(double dist, boolean forward) {
-		return travelByVertex(dist, forward);
+	private void travel(double dist, boolean forward) {
+		travelByVertex(dist, forward);
 	}
 	
-	private GraphPositionPathPosition travelByVertex(double dist, boolean forward) {
+	private void travelByVertex(double dist, boolean forward) {
 		
 		if (DMath.equals(dist, 0.0)) {
-			return this;
+			return;
 		}
 		
 		assert dist > 0.0;
@@ -153,7 +219,7 @@ public class GraphPositionPathPosition implements Serializable {
 			
 			if (DMath.equals(traveled + distanceToNextVertexPosition, dist)) {
 				
-				return new GraphPositionPathPosition(path, nextVertexIndex, 0.0);
+				set(path, nextVertexIndex, 0.0);
 				
 			} else if (traveled + distanceToNextVertexPosition < dist) {
 				
@@ -168,7 +234,8 @@ public class GraphPositionPathPosition implements Serializable {
 				/* 
 				 * distanceToNextVertexPosition > toTravel == dist - traveled
 				 */
-				return new GraphPositionPathPosition(path, curPathIndex, curPathParam).travelByBound(dist-traveled, forward, null);
+				set(path, curPathIndex, curPathParam);
+				travelByBound(dist-traveled, forward, null);
 				
 			}
 			
@@ -176,17 +243,20 @@ public class GraphPositionPathPosition implements Serializable {
 		
 	}
 	
-	private GraphPositionPathPosition travelByBound(double dist, boolean forward, GPPAccumulator acc) {
+	private void travelByBound(double dist, boolean forward, MutableGPPAccumulator acc) {
 		
 		if (DMath.equals(dist, 0.0)) {
-			return this;
+			return;
 		}
 		
 		assert dist > 0.0;
 		
 		double traveled = 0.0;
 		
-		GraphPositionPathPosition cur = this;
+		final MutableGPPP cur = new MutableGPPP();
+		cur.set(path, index, param);
+		
+		final MutableGPPP next = new MutableGPPP();
 		
 		while (true) {
 			
@@ -208,7 +278,7 @@ public class GraphPositionPathPosition implements Serializable {
 				distanceToNextBound = forward ? nextBoundLengthToStartOfPath - cur.lengthToStartOfPath : cur.lengthToStartOfPath - nextBoundLengthToStartOfPath;
 			}
 			
-			GraphPositionPathPosition next = new GraphPositionPathPosition(path, nextBoundIndex, 0.0);
+			next.set(path, nextBoundIndex, 0.0);
 			
 			if (DMath.equals(traveled + distanceToNextBound, dist)) {	
 				
@@ -219,9 +289,10 @@ public class GraphPositionPathPosition implements Serializable {
 						acc.apply(next, cur);
 					}
 				}
-				cur = next;
+				cur.set(next.path, next.index, next.param);
 				
-				return cur;
+				set(cur.path, cur.index, cur.param);
+				return;
 				
 			} else if (traveled + distanceToNextBound < dist) {
 				
@@ -232,8 +303,7 @@ public class GraphPositionPathPosition implements Serializable {
 						acc.apply(next, cur);
 					}
 				}
-				
-				cur = next;
+				cur.set(next.path, next.index, next.param);
 				
 				traveled += distanceToNextBound;
 				
@@ -242,18 +312,19 @@ public class GraphPositionPathPosition implements Serializable {
 				 * distanceToNextBound > toTravel == dist - traveled
 				 */
 				
-				return cur.travelWithinBound(nextBoundGP, dist - traveled, forward, acc);
-				
+				set(cur.path, cur.index, cur.param);
+				travelWithinBound(nextBoundGP, dist - traveled, forward, acc);
+				return;
 			}
 			
 		}
 		
 	}
 	
-	private GraphPositionPathPosition travelWithinBound(GraphPosition nextBoundGP, double dist, boolean forward, GPPAccumulator acc) {
+	private void travelWithinBound(GraphPosition nextBoundGP, double dist, boolean forward, MutableGPPAccumulator acc) {
 		
 		if (DMath.equals(dist, 0.0)) {
-			return this;
+			return;
 		}
 		
 		assert dist > 0.0;
@@ -267,7 +338,8 @@ public class GraphPositionPathPosition implements Serializable {
 		int retIndex = (int)Math.floor(retCombo);
 		double retParam = retCombo - retIndex;
 		
-		GraphPositionPathPosition ret = new GraphPositionPathPosition(path, retIndex, retParam);
+		final MutableGPPP ret = new MutableGPPP();
+		ret.set(path, retIndex, retParam);
 		
 		if (acc != null) {
 			if (forward) {
@@ -279,112 +351,118 @@ public class GraphPositionPathPosition implements Serializable {
 		
 		assert DMath.equals(this.lengthTo(ret), dist);
 		
-		return ret;
-		
+		set(ret.path, ret.index, ret.param);
 	}
 	
-	public GraphPositionPathPosition nextBound() {
+	public void nextBound() {
 		assert index < path.size-1;
-		return new GraphPositionPathPosition(path, index+1, 0.0);
+		set(path, index+1, 0.0);
 	}
 	
-	public GraphPositionPathPosition prevBound() {
+	public void prevBound() {
 		if (DMath.equals(param, 0.0)) {
 			assert index > 0;
-			return new GraphPositionPathPosition(path, index-1, 0.0);
+			set(path, index-1, 0.0);
 		} else {
-			return new GraphPositionPathPosition(path, index, 0.0);
+			set(path, index, 0.0);
 		}
 	}
 	
-	public GraphPositionPathPosition floor() {
+	public void floor() {
 		if (DMath.equals(param, 0.0)) {
-			return this;
+			return;
 		} else {
-			return new GraphPositionPathPosition(path, index, 0.0);
+			set(path, index, 0.0);
 		}
 	}
 	
-	public GraphPositionPathPosition ceil() {
+	public void ceil() {
 		if (DMath.equals(param, 0.0)) {
-			return this;
+			return;
 		} else {
-			return new GraphPositionPathPosition(path, index+1, 0.0);
+			set(path, index+1, 0.0);
 		}
 	}
 	
-	public GraphPositionPathPosition round() {
+	public void round() {
 		if (DMath.equals(param, 0.0)) {
-			return this;
+			return;
 		} else {
 			if (Math.round(param) == 0) {
-				return new GraphPositionPathPosition(path, index, 0.0);
+				set(path, index, 0.0);
 			} else {
-				return new GraphPositionPathPosition(path, index+1, 0.0);
+				set(path, index+1, 0.0);
 			}
 		}
 	}
 	
-	
-	
-	
-	
-	
-	public GraphPositionPathPosition floor(double length) {
+	public void floor(double length) {
 		
 		if (DMath.lessThanEquals(length, lengthToStartOfPath)) {
 			
-			double tmpCombo = travelBackward(length).combo;
+			travelBackward(length);
+			double tmpCombo = combo;
 			
 			int tmpFloorIndex = (int)Math.floor(tmpCombo);
 			
-			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelForward(length);
+			set(path, tmpFloorIndex, 0.0);
+			travelForward(length);
 		} else {
 			
-			double tmpCombo = travelForward(length).combo;
+			travelForward(length);
+			double tmpCombo = combo;
 			
 			int tmpFloorIndex = (int)Math.floor(tmpCombo);
 			
-			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelBackward(length);
+			set(path, tmpFloorIndex, 0.0);
+			travelBackward(length);
 		}
 		
 	}
 	
-	public GraphPositionPathPosition ceil(double length) {
+	public void ceil(double length) {
 		
 		if (DMath.lessThanEquals(length, lengthToStartOfPath)) {
 			
-			double tmpCombo = travelBackward(length).combo;
+			travelBackward(length);
+			double tmpCombo = combo;
 			
 			int tmpFloorIndex = (int)Math.ceil(tmpCombo);
 			
-			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelForward(length);
+			set(path, tmpFloorIndex, 0.0);
+			travelForward(length);
 		} else {
 			
-			double tmpCombo = travelForward(length).combo;
+			travelForward(length);
+			double tmpCombo = combo;
 			
 			int tmpFloorIndex = (int)Math.ceil(tmpCombo);
 			
-			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelBackward(length);
+			set(path, tmpFloorIndex, 0.0);
+			travelBackward(length);
 		}
 	}
 	
-	public GraphPositionPathPosition round(double length) {
+	public void round(double length) {
 		
 		if (DMath.lessThanEquals(length, lengthToStartOfPath)) {
 			
-			double tmpCombo = travelBackward(length).combo;
+			travelBackward(length);
+			double tmpCombo = combo;
 			
 			int tmpFloorIndex = (int)Math.round(tmpCombo);
 			
-			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelForward(length);
+			set(path, tmpFloorIndex, 0.0);
+			travelForward(length);
 		} else {
 			
-			double tmpCombo = travelForward(length).combo;
+			travelForward(length);
+			double tmpCombo = combo;
 			
 			int tmpFloorIndex = (int)Math.round(tmpCombo);
 			
-			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelBackward(length);
+			set(path, tmpFloorIndex, 0.0);
+			travelBackward(length);
 		}
 	}
 	
@@ -397,12 +475,12 @@ public class GraphPositionPathPosition implements Serializable {
 		return path.nextVertexIndex(index, param);
 	}
 	
-	public GraphPositionPathPosition prevVertexPosition() {
-		return new GraphPositionPathPosition(path, path.prevVertexIndex(index, param), 0.0);
+	public void prevVertexPosition() {
+		set(path, path.prevVertexIndex(index, param), 0.0);
 	}
 	
-	public GraphPositionPathPosition nextVertexPosition() {
-		return new GraphPositionPathPosition(path, path.nextVertexIndex(index, param), 0.0);
+	public void nextVertexPosition() {
+		set(path, path.nextVertexIndex(index, param), 0.0);
 	}
 	
 	/**
@@ -410,14 +488,14 @@ public class GraphPositionPathPosition implements Serializable {
 	 * 
 	 * finds closest position in a graphpositionpath to p
 	 */
-	public GraphPositionPathPosition forwardSearch(final Point p, double lengthFromStart) {
+	public void forwardSearch(final Point p, double lengthFromStart) {
 		
-		GPPAccumulator forwardSearchAcc = new GPPAccumulator(this);
+		MutableGPPAccumulator forwardSearchAcc = new MutableGPPAccumulator(this);
 		forwardSearchAcc.reset(p);
 		
 		travelByBound(lengthFromStart, true, forwardSearchAcc);
 		
-		return forwardSearchAcc.result();
+		set(forwardSearchAcc.closest.path, forwardSearchAcc.closest.index, forwardSearchAcc.closest.param);
 	}
 	
 	/**
@@ -425,31 +503,36 @@ public class GraphPositionPathPosition implements Serializable {
 	 * 
 	 * finds closest position in a graphpositionpath to p
 	 */
-	public GraphPositionPathPosition backwardSearch(Point p, double lengthFromStart) {
+	public void backwardSearch(Point p, double lengthFromStart) {
 		
-		GPPAccumulator forwardSearchAcc = new GPPAccumulator(this);
+		MutableGPPAccumulator forwardSearchAcc = new MutableGPPAccumulator(this);
 		forwardSearchAcc.reset(p);
 		
 		travelByBound(lengthFromStart, false, forwardSearchAcc);
 		
-		return forwardSearchAcc.result();
+		set(forwardSearchAcc.closest.path, forwardSearchAcc.closest.index, forwardSearchAcc.closest.param);
 	}
 	
 	/**
 	 * searches both forward and backward from start position
 	 */
-	public GraphPositionPathPosition generalSearch(Point p, double radius) {
+	public void generalSearch(Point p, double radius) {
 		
-		GraphPositionPathPosition forwardPos = forwardSearch(p, Math.min(radius, this.lengthToEndOfPath));
-		GraphPositionPathPosition backwardPos = backwardSearch(p, Math.min(radius, this.lengthToStartOfPath));
+		final MutableGPPP forwardPos = new MutableGPPP();
+		forwardPos.set(this);
+		forwardPos.forwardSearch(p, Math.min(radius, this.lengthToEndOfPath));
+		
+		final MutableGPPP backwardPos = new MutableGPPP();
+		backwardPos.set(this);
+		backwardPos.backwardSearch(p, Math.min(radius, this.lengthToStartOfPath));
 		
 		if (this.equals(backwardPos)) {
 			
-			return forwardPos;
+			set(forwardPos);
 			
 		} else if (this.equals(forwardPos)) {
 			
-			return backwardPos;
+			set(backwardPos);
 			
 		} else {
 			
@@ -458,10 +541,10 @@ public class GraphPositionPathPosition implements Serializable {
 			
 			if (DMath.lessThan(backwardDist, forwardDist)) {
 				
-				return backwardPos;
+				set(backwardPos);
 			} else {
 				
-				return forwardPos;
+				set(forwardPos);
 			}
 			
 		}
@@ -471,13 +554,17 @@ public class GraphPositionPathPosition implements Serializable {
 	/**
 	 * from start, move along path until either a collision or reach end. return the position
 	 */
-	public GraphPositionPathPosition furthestAllowablePosition(Car car, GraphPositionPathPosition end) {
+	public void furthestAllowablePosition(Car car, MutableGPPP end) {
 		
 		if (this.equals(end)) {
-			return this;
+			return;
 		}
 		
-		return (combo < end.combo) ? furthestAllowablePositionForward(car, end) : furthestAllowablePositionBackward(car, end);		
+		if (combo < end.combo) {
+			furthestAllowablePositionForward(car, end);		
+		} else {
+			furthestAllowablePositionBackward(car, end);
+		}
 	}
 	
 	
@@ -489,18 +576,22 @@ public class GraphPositionPathPosition implements Serializable {
 	 * 
 	 * returns end upon finding first non-right angle,
 	 */
-	public GraphPositionPathPosition furthestAllowablePositionForward(Car car, GraphPositionPathPosition end) {
+	public void furthestAllowablePositionForward(Car car, MutableGPPP end) {
 		
-		GraphPositionPathPosition start = findFirstRightAngleForwardOrEnd(end);
+		final MutableGPPP start = new MutableGPPP();
+		start.set(this);
+		start.findFirstRightAngleForwardOrEnd(end);
 		
 		if (start.equals(end)) {
 			
-			return end;
+			set(end);
+			return;
 			
 		} else if (start.index == end.index) {
 			
 			if (!DMath.isRightAngle(end.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
 			Geom.localToWorld(car.localAABB, start.angle, start.p, mao);
@@ -510,14 +601,18 @@ public class GraphPositionPathPosition implements Serializable {
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
 				param = DMath.lerp(start.param, end.param, param);
-				return new GraphPositionPathPosition(car.driver.overallPath, start.index, param);
+				set(car.driver.overallPath, start.index, param);
+				return;
 			}
 			
-			return end;
+			set(end);
+			return;
+			
 		} else if (end.index == start.index+1 && DMath.equals(end.param, 0.0)) {
 			
 			if (!DMath.isRightAngle(end.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
 			Geom.localToWorld(car.localAABB, start.angle, start.p, mao);
@@ -528,26 +623,34 @@ public class GraphPositionPathPosition implements Serializable {
 			if (param != -1) {
 				param = DMath.lerp(start.param, 1.0, param);
 				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, end.index, 0.0);
+					set(car.driver.overallPath, end.index, 0.0);
+					return;
 				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, start.index, param);
+					set(car.driver.overallPath, start.index, param);
+					return;
 				}
 			}
 			
-			return end;
-			
+			set(end);
+			return;
 		}
 		
-		GraphPositionPathPosition a = start;
-		GraphPositionPathPosition b;
-		GraphPositionPathPosition startCeiling = start.ceil();
-		GraphPositionPathPosition endFloor = end.floor();
+		final MutableGPPP a = new MutableGPPP();
+		a.set(start);
+		final MutableGPPP b = new MutableGPPP();
+		final MutableGPPP startCeiling = new MutableGPPP();
+		startCeiling.set(start);
+		startCeiling.ceil();
+		final MutableGPPP endFloor = new MutableGPPP();
+		endFloor.set(end);
+		endFloor.floor();
 		
 		if (!startCeiling.equals(start)) {
-			b = startCeiling;
+			b.set(startCeiling);
 			
 			if (!DMath.isRightAngle(b.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
@@ -558,13 +661,15 @@ public class GraphPositionPathPosition implements Serializable {
 			if (param != -1) {
 				param = DMath.lerp(a.param, 1.0, param);
 				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
+					set(car.driver.overallPath, a.index+1, 0.0);
+					return;
 				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+					set(car.driver.overallPath, a.index, param);
+					return;
 				}
 			}
 			
-			a = b;
+			a.set(b);
 		}
 		while (true) {
 			
@@ -572,10 +677,12 @@ public class GraphPositionPathPosition implements Serializable {
 				break;
 			}
 			
-			b = a.nextBound();
+			b.set(a);
+			b.nextBound();
 			
 			if (!DMath.isRightAngle(b.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
@@ -587,19 +694,22 @@ public class GraphPositionPathPosition implements Serializable {
 				// identity
 				param = DMath.lerp(0.0, 1.0, param);
 				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
+					set(car.driver.overallPath, a.index+1, 0.0);
+					return;
 				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+					set(car.driver.overallPath, a.index, param);
+					return;
 				}
 			}
 			
-			a = b;
+			a.set(b);
 		}
 		if (!endFloor.equals(end)) {
-			b = end;
+			b.set(end);
 			
 			if (!DMath.isRightAngle(b.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
@@ -609,29 +719,35 @@ public class GraphPositionPathPosition implements Serializable {
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
 				param = DMath.lerp(0.0, b.param, param);
-				return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+				set(car.driver.overallPath, a.index, param);
+				return;
 			}
 		}
 		
-		return end;
+		set(end);
+		return;
 	}
 	
 	/**
 	 * 
 	 * returns end upon finding first non-right angle,
 	 */
-	public GraphPositionPathPosition furthestAllowablePositionBackward(Car car, GraphPositionPathPosition end) {
+	public void furthestAllowablePositionBackward(Car car, MutableGPPP end) {
 		
-		GraphPositionPathPosition start = findFirstRightAngleBackwardOrEnd(end);
+		final MutableGPPP start = new MutableGPPP();
+		start.set(this);
+		start.findFirstRightAngleBackwardOrEnd(end);
 		
 		if (start.equals(end)) {
 			
-			return end;
+			set(end);
+			return;
 			
 		} else if (start.index == end.index) {
 			
 			if (!DMath.isRightAngle(end.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
 			Geom.localToWorld(car.localAABB, start.angle, start.p, mao);
@@ -641,15 +757,18 @@ public class GraphPositionPathPosition implements Serializable {
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
 				param = DMath.lerp(start.param, end.param, param);
-				return new GraphPositionPathPosition(car.driver.overallPath, start.index, param);
+				set(car.driver.overallPath, start.index, param);
+				return;
 			}
 			
-			return end;
+			set(end);
+			return;
 			
 		} else if (end.index == start.index-1 && DMath.equals(start.param, 0.0)) {
 			
 			if (!DMath.isRightAngle(end.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
 			Geom.localToWorld(car.localAABB, start.angle, start.p, mao);
@@ -660,25 +779,34 @@ public class GraphPositionPathPosition implements Serializable {
 			if (param != -1) {
 				param = DMath.lerp(1.0, end.param, param);
 				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, start.index, 0.0);
+					set(car.driver.overallPath, start.index, 0.0);
+					return;
 				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, end.index, param);
+					set(car.driver.overallPath, end.index, param);
+					return;
 				}
 			}
 			
-			return end;
+			set(end);
+			return;
 		}
 		
-		GraphPositionPathPosition b = start;
-		GraphPositionPathPosition a;
-		GraphPositionPathPosition startFloor = start.floor();
-		GraphPositionPathPosition endCeil = end.ceil();
+		final MutableGPPP b = new MutableGPPP();
+		b.set(start);
+		final MutableGPPP a = new MutableGPPP();
+		final MutableGPPP startFloor = new MutableGPPP();
+		startFloor.set(start);
+		startFloor.floor();
+		final MutableGPPP endCeil = new MutableGPPP();
+		endCeil.set(end);
+		endCeil.ceil();
 		
 		if (!startFloor.equals(start)) {
-			a = startFloor;
+			a.set(startFloor);
 			
 			if (!DMath.isRightAngle(a.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
@@ -689,13 +817,15 @@ public class GraphPositionPathPosition implements Serializable {
 			if (param != -1) {
 				param = DMath.lerp(b.param, 0.0, param);
 				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
+					set(car.driver.overallPath, a.index+1, 0.0);
+					return;
 				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+					set(car.driver.overallPath, a.index, param);
+					return;
 				}
 			}
 			
-			b = a;
+			b.set(a);
 		}
 		while (true) {
 			
@@ -703,10 +833,12 @@ public class GraphPositionPathPosition implements Serializable {
 				break;
 			}
 			
-			a = b.prevBound();
+			a.set(b);
+			a.prevBound();
 			
 			if (!DMath.isRightAngle(a.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
@@ -717,19 +849,22 @@ public class GraphPositionPathPosition implements Serializable {
 			if (param != -1) {
 				param = DMath.lerp(1.0, 0.0, param);
 				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
+					set(car.driver.overallPath, a.index+1, 0.0);
+					return;
 				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+					set(car.driver.overallPath, a.index, param);
+					return;
 				}
 			}
 			
-			b = a;
+			b.set(a);
 		}
 		if (!endCeil.equals(end)) {
-			a = end;
+			a.set(end);
 			
 			if (!DMath.isRightAngle(a.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
@@ -739,50 +874,62 @@ public class GraphPositionPathPosition implements Serializable {
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
 				param = DMath.lerp(1.0, a.param, param);
-				return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+				set(car.driver.overallPath, a.index, param);
+				return;
 			}
 		}
 		
-		return end;
+		set(end);
+		return;
 	}
 	
-	public GraphPositionPathPosition findFirstRightAngleForwardOrEnd(GraphPositionPathPosition end) {
+	public void findFirstRightAngleForwardOrEnd(MutableGPPP end) {
 		
 		if (DMath.isRightAngle(this.angle)) {
 			
-			return this;
+			return;
 			
 		} else if (this.index == end.index) {
 			
 			if (DMath.isRightAngle(end.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
-			return end;
+			set(end);
+			return;
 			
 		} else if (end.index == this.index+1 && DMath.equals(end.param, 0.0)) {
 			
 			if (DMath.isRightAngle(end.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
-			return end;
+			set(end);
+			return;
 			
 		}
 		
-		GraphPositionPathPosition a = this;
-		GraphPositionPathPosition b;
-		GraphPositionPathPosition startCeiling = this.ceil();
-		GraphPositionPathPosition endFloor = end.floor();
+		final MutableGPPP a = new MutableGPPP();
+		a.set(this);
+		final MutableGPPP b = new MutableGPPP();
+		final MutableGPPP startCeiling = new MutableGPPP();
+		startCeiling.set(this);
+		startCeiling.ceil();
+		final MutableGPPP endFloor = new MutableGPPP();
+		endFloor.set(end);
+		endFloor.floor();
 		
 		if (!startCeiling.equals(this)) {
-			b = startCeiling;
+			b.set(startCeiling);
 			
 			if (DMath.isRightAngle(b.angle)) {
-				return b;
+				set(b);
+				return;
 			}
 			
-			a = b;
+			a.set(b);
 		}
 		while (true) {
 			
@@ -790,62 +937,76 @@ public class GraphPositionPathPosition implements Serializable {
 				break;
 			}
 			
-			b = a.nextBound();
+			b.set(a);
+			b.nextBound();
 			
 			if (DMath.isRightAngle(b.angle)) {
-				return b;
+				set(b);
+				return;
 			}
 			
-			a = b;
+			a.set(b);
 		}
 		if (!endFloor.equals(end)) {
-			b = end;
+			b.set(end);
 			
 			if (DMath.isRightAngle(b.angle)) {
-				return b;
+				set(b);
+				return;
 			}
 			
 		}
 		
-		return end;
+		set(end);
+		return;
 	}
 	
-	public GraphPositionPathPosition findFirstRightAngleBackwardOrEnd(GraphPositionPathPosition end) {
+	public void findFirstRightAngleBackwardOrEnd(MutableGPPP end) {
 		
 		if (DMath.isRightAngle(this.angle)) {
 			
-			return this;
+			return;
 			
 		} else if (this.index == end.index) {
 			
 			if (DMath.isRightAngle(end.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
-			return end;
+			set(end);
+			return;
 			
 		} else if (end.index == this.index-1 && DMath.equals(this.param, 0.0)) {
 			
 			if (DMath.isRightAngle(end.angle)) {
-				return end;
+				set(end);
+				return;
 			}
 			
-			return end;
+			set(end);
+			return;
 		}
 		
-		GraphPositionPathPosition b = this;
-		GraphPositionPathPosition a;
-		GraphPositionPathPosition startFloor = this.floor();
-		GraphPositionPathPosition endCeil = end.ceil();
+		final MutableGPPP b = new MutableGPPP();
+		b.set(this);
+		final MutableGPPP a = new MutableGPPP();
+		final MutableGPPP startFloor = new MutableGPPP();
+		startFloor.set(this);
+		startFloor.floor();
+		final MutableGPPP endCeil = new MutableGPPP();
+		endCeil.set(end);
+		endCeil.ceil();
 		
 		if (!startFloor.equals(this)) {
-			a = startFloor;
+			a.set(startFloor);
 			
 			if (DMath.isRightAngle(a.angle)) {
-				return a;
+				set(a);
+				return;
 			}
 			
-			b = a;
+			b.set(a);
 		}
 		while (true) {
 			
@@ -853,24 +1014,28 @@ public class GraphPositionPathPosition implements Serializable {
 				break;
 			}
 			
-			a = b.prevBound();
+			a.set(b);
+			a.prevBound();
 			
 			if (DMath.isRightAngle(a.angle)) {
-				return a;
+				set(a);
+				return;
 			}
 			
-			b = a;
+			b.set(a);
 		}
 		if (!endCeil.equals(end)) {
-			a = end;
+			a.set(end);
 			
 			if (DMath.isRightAngle(a.angle)) {
-				return a;
+				set(a);
+				return;
 			}
 			
 		}
 		
-		return end;
+		set(end);
+		return;
 	}
 	
 	/**
@@ -937,7 +1102,7 @@ public class GraphPositionPathPosition implements Serializable {
 			forward = false;
 		}
 		
-		GraphPositionPathPosition start = this;
+		final MutableGPPP start = this;
 		
 		assert start.gp instanceof BypassBoardPosition;
 		BypassBoard board = (BypassBoard)((BypassBoardPosition)start.gp).entity;
@@ -949,8 +1114,9 @@ public class GraphPositionPathPosition implements Serializable {
 		
 		int m = 0;
 		
-		GraphPositionPathPosition a = start;
-		GraphPositionPathPosition b;
+		final MutableGPPP a = new MutableGPPP();
+		a.set(start);
+		final MutableGPPP b = new MutableGPPP();
 		
 		while (true) {
 			
@@ -958,7 +1124,8 @@ public class GraphPositionPathPosition implements Serializable {
 				break;
 			}
 			
-			b = a.travel(BypassStud.SIZE, forward);
+			b.set(a);
+			b.travel(BypassStud.SIZE, forward);
 			
 			assert b.gp instanceof BypassBoardPosition;
 			if (board.withinGrid(c, b.angle, b.p)) {
@@ -967,14 +1134,22 @@ public class GraphPositionPathPosition implements Serializable {
 				
 				// find first vertex
 				while (true) {
-					b = forward ? b.nextBound() : b.prevBound();
+					if (forward) {
+						b.nextBound();
+					} else {
+						b.prevBound();
+					}
 					if (b.gp instanceof VertexPosition) {
 						break;
 					}
 				}
 				//go through road, find next vertex
 				while (true) {
-					b = forward ? b.nextBound() : b.prevBound();
+					if (forward) {
+						b.nextBound();
+					} else {
+						b.prevBound();
+					}
 					if (b.gp instanceof VertexPosition) {
 						break;
 					}
@@ -986,7 +1161,7 @@ public class GraphPositionPathPosition implements Serializable {
 					
 				} else {
 					
-					b = b.travel(BypassStud.SIZE + c.length/2, forward);
+					b.travel(BypassStud.SIZE + c.length/2, forward);
 					
 					assert b.gp instanceof BypassBoardPosition;
 					assert board.withinGrid(c, b.angle, b.p);
@@ -997,7 +1172,7 @@ public class GraphPositionPathPosition implements Serializable {
 				
 			}
 			
-			a = b;
+			a.set(b);
 		}
 		
 		return m;

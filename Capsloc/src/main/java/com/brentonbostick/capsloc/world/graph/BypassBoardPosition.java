@@ -1,8 +1,6 @@
 package com.brentonbostick.capsloc.world.graph;
 
 import com.brentonbostick.capsloc.math.DMath;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public class BypassBoardPosition extends GraphPosition {
 	
@@ -182,7 +180,7 @@ public class BypassBoardPosition extends GraphPosition {
 		
 	}
 	
-	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPositionPath debugPath, GraphPositionPathPosition debugPos, double debugDist) {
+	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP) {
 		
 		BypassBoardPosition goalBP = (BypassBoardPosition)goalGP;
 		

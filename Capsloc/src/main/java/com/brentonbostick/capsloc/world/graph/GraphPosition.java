@@ -2,8 +2,6 @@ package com.brentonbostick.capsloc.world.graph;
 
 import com.brentonbostick.capsloc.Entity;
 import com.brentonbostick.capsloc.math.Point;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public abstract class GraphPosition {
 	
@@ -28,6 +26,6 @@ public abstract class GraphPosition {
 	 * mainly the params, which may be the gp's param or may be 1-gp's param
 	 * 
 	 */
-	public abstract double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPositionPath debugPath, GraphPositionPathPosition debugPos, double debugDist);
+	public abstract double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP);
 	
 }

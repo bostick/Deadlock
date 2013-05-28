@@ -2,8 +2,6 @@ package com.brentonbostick.capsloc.world.graph;
 
 import com.brentonbostick.capsloc.math.DMath;
 import com.brentonbostick.capsloc.math.Point;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public abstract class EdgePosition extends GraphPosition {
 	
@@ -65,7 +63,7 @@ public abstract class EdgePosition extends GraphPosition {
 		
 	}
 	
-	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPositionPath debugPath, GraphPositionPathPosition debugPos, double debugDist) {
+	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP) {
 		
 		EdgePosition goalEP = (EdgePosition)goalGP;
 		
@@ -74,9 +72,9 @@ public abstract class EdgePosition extends GraphPosition {
 			int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
 			double retParam = goalEP.getParam();
 			
-			GraphPositionPathPosition ret = new GraphPositionPathPosition(debugPath, retIndex, retParam);
-			double distToRet = debugPos.lengthTo(ret);
-			assert DMath.equals(distToRet, debugDist);
+//			GraphPositionPathPosition ret = new GraphPositionPathPosition(debugPath, retIndex, retParam);
+//			double distToRet = debugPos.lengthTo(ret);
+//			assert DMath.equals(distToRet, debugDist);
 			
 			return retIndex+retParam;
 			
@@ -84,9 +82,9 @@ public abstract class EdgePosition extends GraphPosition {
 			int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
 			double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? 1-goalEP.getParam() : 1-goalEP.getParam()) : DMath.equals(curPathParam, 0.0) ? 1-goalEP.getParam() : 1-goalEP.getParam();
 			
-			GraphPositionPathPosition ret = new GraphPositionPathPosition(debugPath, retIndex, retParam);
-			double distToRet = debugPos.lengthTo(ret);
-			assert DMath.equals(distToRet, debugDist);
+//			GraphPositionPathPosition ret = new GraphPositionPathPosition(debugPath, retIndex, retParam);
+//			double distToRet = debugPos.lengthTo(ret);
+//			assert DMath.equals(distToRet, debugDist);
 			
 			return retIndex+retParam;
 		}
