@@ -205,29 +205,29 @@ public class BypassCar extends Car {
 	
 	public boolean postStep(double t) {
 			
-			switch (state) {
-			case IDLE:
-				return true;
-			case DRAGGING:
-				
-				/*
-				 * setting of overallPos and physics is handled in CarTool
-				 */
-				
-				return true;
-			case COASTING_FORWARD:
-			case COASTING_BACKWARD:
-				
-				computeDynamicPropertiesAlways();
-				computeDynamicPropertiesMoving();
-				((BypassDriver)driver).postStep(t);
-				
-				return true;
-				
-			default:
-				assert false;
-				return true;
-			}
+		switch (state) {
+		case IDLE:
+			return true;
+		case DRAGGING:
+			
+			/*
+			 * setting of overallPos and physics is handled in CarTool
+			 */
+			
+			return true;
+		case COASTING_FORWARD:
+		case COASTING_BACKWARD:
+			
+			computeDynamicPropertiesAlways();
+			computeDynamicPropertiesMoving();
+			((BypassDriver)driver).postStep(t);
+			
+			return true;
+			
+		default:
+			assert false;
+			return true;
+		}
 	}
 	
 	public void paint(RenderingContext ctxt) {
