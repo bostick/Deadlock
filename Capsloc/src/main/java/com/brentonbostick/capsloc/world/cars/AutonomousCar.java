@@ -13,7 +13,7 @@ import com.brentonbostick.capsloc.ui.paint.RenderingContext;
 import com.brentonbostick.capsloc.world.World;
 import com.brentonbostick.capsloc.world.graph.Fixture;
 import com.brentonbostick.capsloc.world.graph.Merger;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP;
 import com.brentonbostick.capsloc.world.sprites.CarSheet.CarType;
 
 public class AutonomousCar extends Car {
@@ -53,7 +53,9 @@ public class AutonomousCar extends Car {
 		 */
 		if (Double.isNaN(angle)) {
 			
-			GraphPositionPathPosition next = ((AutonomousDriver)driver).overallPos.nextBound();
+			MutableGPPP next = new MutableGPPP();
+			next.set(((AutonomousDriver)driver).overallPos);
+			next.nextBound();
 			
 			Point nextDTGoalPoint = next.p;
 			

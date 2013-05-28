@@ -16,7 +16,8 @@ public final class BypassDriver extends Driver {
 			
 		case COASTING_FORWARD:
 			
-			setOverallPos(overallPos.forwardSearch(c.center, overallPos.lengthToEndOfPath));
+			this.prevOverallPos.set(this.overallPos);
+			overallPos.forwardSearch(c.center, overallPos.lengthToEndOfPath);
 			if (!c.driver.toolCoastingGoal.isEndOfPath()) {
 				((BypassWorld)c.world).handlePanning(c, c.center);
 			}
@@ -25,7 +26,8 @@ public final class BypassDriver extends Driver {
 			
 		case COASTING_BACKWARD:
 			
-			setOverallPos(overallPos.backwardSearch(c.center, overallPos.lengthToStartOfPath));
+			this.prevOverallPos.set(this.overallPos);
+			overallPos.backwardSearch(c.center, overallPos.lengthToStartOfPath);
 			((BypassWorld)c.world).handlePanning(c, c.center);
 			
 			break;

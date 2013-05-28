@@ -15,6 +15,7 @@ import com.brentonbostick.capsloc.world.graph.GraphPosition;
 import com.brentonbostick.capsloc.world.graph.RoadPosition;
 import com.brentonbostick.capsloc.world.graph.VertexPosition;
 import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP;
 import com.brentonbostick.capsloc.world.tools.WorldToolBase;
 
 public class BypassCarTool extends WorldToolBase {
@@ -68,7 +69,7 @@ public class BypassCarTool extends WorldToolBase {
 			car.toolOrigCenter = car.center;
 			car.shape.copy(car.toolOrigShape);
 			
-			car.driver.toolOrigOverallPos = car.driver.overallPos;
+			car.driver.toolOrigOverallPos.set(car.driver.overallPos);
 			
 			car.state = CarStateEnum.DRAGGING;
 			
@@ -130,7 +131,7 @@ public class BypassCarTool extends WorldToolBase {
 			if (car.state != CarStateEnum.DRAGGING) {
 				return;
 			}
-			if (car.driver.prevOverallPos == null) {
+			if (car.driver.prevOverallPos.isCleared()) {
 				/*
 				 * nothing dragged, so this is only press, release
 				 */
@@ -143,7 +144,7 @@ public class BypassCarTool extends WorldToolBase {
 			
 			if (world.curLevel.isWon) {
 				
-				car.driver.toolCoastingGoal = car.driver.overallPath.endPos;
+				car.driver.toolCoastingGoal.set(car.driver.overallPath.endPos);
 				car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
 				car.state = CarStateEnum.COASTING_FORWARD;
 			
@@ -156,9 +157,15 @@ public class BypassCarTool extends WorldToolBase {
 					assert car.driver.toolLastExitingVertexPos != null;
 					
 					if (car.driver.overallPos.combo < car.driver.prevOverallPos.combo) {
-						determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.overallPos.prevVertexPosition(), true);
+						MutableGPPP prevVertexPos = new MutableGPPP();
+						prevVertexPos.set(car.driver.overallPos);
+						prevVertexPos.prevVertexPosition();
+						determineCoasting(car.driver.toolLastExitingVertexPos, prevVertexPos, true);
 					} else {
-						determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.overallPos.nextVertexPosition(), true);
+						MutableGPPP nextVertexPos = new MutableGPPP();
+						nextVertexPos.set(car.driver.overallPos);
+						nextVertexPos.nextVertexPosition();
+						determineCoasting(car.driver.toolLastExitingVertexPos, nextVertexPos, true);
 					}
 					
 				} else if (gpos instanceof VertexPosition) {
@@ -167,13 +174,19 @@ public class BypassCarTool extends WorldToolBase {
 					if (car.driver.overallPos.combo == car.driver.toolLastExitingVertexPos.combo) {
 						
 						if (car.driver.overallPath.get(car.driver.overallPos.index+1) instanceof RoadPosition) {
-							determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.nextVertexPosition(), true);
+							MutableGPPP nextVertexPos = new MutableGPPP();
+							nextVertexPos.set(car.driver.toolLastExitingVertexPos);
+							nextVertexPos.nextVertexPosition();
+							determineCoasting(car.driver.toolLastExitingVertexPos, nextVertexPos, true);
 						} else {
-							determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.prevVertexPosition(), true);
+							MutableGPPP prevVertexPos = new MutableGPPP();
+							prevVertexPos.set(car.driver.toolLastExitingVertexPos);
+							prevVertexPos.prevVertexPosition();
+							determineCoasting(car.driver.toolLastExitingVertexPos, prevVertexPos, true);
 						}
 						
 					} else {
-						assert false;
+						throw new AssertionError();
 					}
 					
 				} else {
@@ -184,17 +197,29 @@ public class BypassCarTool extends WorldToolBase {
 					if (prevGPos instanceof RoadPosition) {
 						
 						if (car.driver.overallPos.combo < car.driver.toolLastExitingVertexPos.combo) {
-							determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.nextVertexPosition(), true);
+							MutableGPPP nextVertexPos = new MutableGPPP();
+							nextVertexPos.set(car.driver.toolLastExitingVertexPos);
+							nextVertexPos.nextVertexPosition();
+							determineCoasting(car.driver.toolLastExitingVertexPos, nextVertexPos, true);
 						} else {
-							determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.prevVertexPosition(), true);
+							MutableGPPP prevVertexPos = new MutableGPPP();
+							prevVertexPos.set(car.driver.toolLastExitingVertexPos);
+							prevVertexPos.prevVertexPosition();
+							determineCoasting(car.driver.toolLastExitingVertexPos, prevVertexPos, true);
 						}
 						
 					} else if (prevGPos instanceof VertexPosition) {
 						
 						if (car.driver.overallPos.combo < car.driver.toolLastExitingVertexPos.combo) {
-							determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.nextVertexPosition(), true);
+							MutableGPPP nextVertexPos = new MutableGPPP();
+							nextVertexPos.set(car.driver.toolLastExitingVertexPos);
+							nextVertexPos.nextVertexPosition();
+							determineCoasting(car.driver.toolLastExitingVertexPos, nextVertexPos, true);
 						} else {
-							determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.prevVertexPosition(), true);
+							MutableGPPP prevVertexPos = new MutableGPPP();
+							prevVertexPos.set(car.driver.toolLastExitingVertexPos);
+							prevVertexPos.prevVertexPosition();
+							determineCoasting(car.driver.toolLastExitingVertexPos, prevVertexPos, true);
 						}
 						
 					} else if (prevGPos instanceof BypassBoardPosition) {
@@ -208,44 +233,70 @@ public class BypassCarTool extends WorldToolBase {
 								// arbitrarily choose leaving
 								
 								if (car.driver.overallPos.combo < car.driver.toolLastExitingVertexPos.combo) {
-									determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.nextVertexPosition(), true);
+									MutableGPPP nextVertexPos = new MutableGPPP();
+									nextVertexPos.set(car.driver.toolLastExitingVertexPos);
+									nextVertexPos.nextVertexPosition();
+									determineCoasting(car.driver.toolLastExitingVertexPos, nextVertexPos, true);
 								} else {
-									determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.prevVertexPosition(), true);
+									MutableGPPP prevVertexPos = new MutableGPPP();
+									prevVertexPos.set(car.driver.toolLastExitingVertexPos);
+									prevVertexPos.prevVertexPosition();
+									determineCoasting(car.driver.toolLastExitingVertexPos, prevVertexPos, true);
 								}
 								
 							} else if (b.enteringBoard(prevBpos, bpos)) {
 								if (car.driver.overallPos.combo < car.driver.toolLastExitingVertexPos.combo) {
-									determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.nextVertexPosition(), false);
+									MutableGPPP nextVertexPos = new MutableGPPP();
+									nextVertexPos.set(car.driver.toolLastExitingVertexPos);
+									nextVertexPos.nextVertexPosition();
+									determineCoasting(car.driver.toolLastExitingVertexPos, nextVertexPos, false);
 								} else {
-									determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.prevVertexPosition(), false);
+									MutableGPPP prevVertexPos = new MutableGPPP();
+									prevVertexPos.set(car.driver.toolLastExitingVertexPos);
+									prevVertexPos.prevVertexPosition();
+									determineCoasting(car.driver.toolLastExitingVertexPos, prevVertexPos, false);
 								}
 							} else {
 								// leaving
 								
 								if (car.driver.overallPos.combo < car.driver.toolLastExitingVertexPos.combo) {
-									determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.nextVertexPosition(), true);
+									MutableGPPP nextVertexPos = new MutableGPPP();
+									nextVertexPos.set(car.driver.toolLastExitingVertexPos);
+									nextVertexPos.nextVertexPosition();
+									determineCoasting(car.driver.toolLastExitingVertexPos, nextVertexPos, true);
 								} else {
-									determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.prevVertexPosition(), true);
+									MutableGPPP prevVertexPos = new MutableGPPP();
+									prevVertexPos.set(car.driver.toolLastExitingVertexPos);
+									prevVertexPos.prevVertexPosition();
+									determineCoasting(car.driver.toolLastExitingVertexPos, prevVertexPos, true);
 								}
 							}
 							
 						} else {
 							
-							GraphPositionPathPosition tmpFloorPos = car.driver.overallPos.floor(car.length/2);
-							GraphPositionPathPosition tmpCeilPos = car.driver.overallPos.ceil(car.length/2);
-							GraphPositionPathPosition tmpRoundPos = car.driver.overallPos.round(car.length/2);
+							MutableGPPP tmpFloorPos = new MutableGPPP();
+							tmpFloorPos.set(car.driver.overallPos);
+							tmpFloorPos.floor(car.length/2);
+							
+							MutableGPPP tmpCeilPos = new MutableGPPP();
+							tmpCeilPos.set(car.driver.overallPos);
+							tmpCeilPos.ceil(car.length/2);
+							
+							MutableGPPP tmpRoundPos = new MutableGPPP();
+							tmpRoundPos.set(car.driver.overallPos);
+							tmpRoundPos.round(car.length/2);
 							
 							if (car.driver.overallPos.combo - tmpFloorPos.combo < 0.15) {
-								car.driver.toolCoastingGoal = tmpFloorPos;
+								car.driver.toolCoastingGoal.set(tmpFloorPos);
 							} else if (tmpCeilPos.combo - car.driver.overallPos.combo < 0.15) {
-								car.driver.toolCoastingGoal = tmpCeilPos;
+								car.driver.toolCoastingGoal.set(tmpCeilPos);
 							} else {
-								if (car.driver.prevOverallPos == null) {
-									car.driver.toolCoastingGoal = tmpRoundPos;
+								if (car.driver.prevOverallPos.isCleared()) {
+									car.driver.toolCoastingGoal.set(tmpRoundPos);
 								} else if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
-									car.driver.toolCoastingGoal = tmpCeilPos;
+									car.driver.toolCoastingGoal.set(tmpCeilPos);
 								} else {
-									car.driver.toolCoastingGoal = tmpFloorPos;
+									car.driver.toolCoastingGoal.set(tmpFloorPos);
 								}
 							}
 							
@@ -294,7 +345,7 @@ public class BypassCarTool extends WorldToolBase {
 		releasedOrCanceled();
 	}
 	
-	void determineCoasting(GraphPositionPathPosition origVertexPos, GraphPositionPathPosition otherVertexPos, boolean tryOtherSideFirst) {
+	void determineCoasting(MutableGPPP origVertexPos, MutableGPPP otherVertexPos, boolean tryOtherSideFirst) {
 		assert origVertexPos.gp instanceof VertexPosition;
 		assert otherVertexPos.gp instanceof VertexPosition;
 		
@@ -309,18 +360,21 @@ public class BypassCarTool extends WorldToolBase {
 			
 			if (otherIsForward) {
 				if (!otherVertexPos.isEndOfPath()) {
-					car.driver.toolCoastingGoal = otherVertexPos.travelForward(BypassStud.SIZE + 0.5 * studCount);
+					car.driver.toolCoastingGoal.set(otherVertexPos);
+					car.driver.toolCoastingGoal.travelForward(BypassStud.SIZE + 0.5 * studCount);
+				
 				} else {
 					/*
 					 * going through exit
 					 */
-					car.driver.toolCoastingGoal = otherVertexPos;
+					car.driver.toolCoastingGoal.set(otherVertexPos);
 				}
 				car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
 				car.state = CarStateEnum.COASTING_FORWARD;
 				
 			} else {
-				car.driver.toolCoastingGoal = otherVertexPos.travelBackward(BypassStud.SIZE + 0.5 * studCount);
+				car.driver.toolCoastingGoal.set(otherVertexPos);
+				car.driver.toolCoastingGoal.travelBackward(BypassStud.SIZE + 0.5 * studCount);
 				car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
 				car.state = CarStateEnum.COASTING_BACKWARD;
 				
@@ -332,12 +386,14 @@ public class BypassCarTool extends WorldToolBase {
 			 */
 			
 			if (otherIsForward) {
-				car.driver.toolCoastingGoal = origVertexPos.travelBackward(BypassStud.SIZE + 0.5 * studCount);
+				car.driver.toolCoastingGoal.set(origVertexPos);
+				car.driver.toolCoastingGoal.travelBackward(BypassStud.SIZE + 0.5 * studCount);
 				car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
 				car.state = CarStateEnum.COASTING_BACKWARD;
 				
 			} else {
-				car.driver.toolCoastingGoal = origVertexPos.travelForward(BypassStud.SIZE + 0.5 * studCount);
+				car.driver.toolCoastingGoal.set(origVertexPos);
+				car.driver.toolCoastingGoal.travelForward(BypassStud.SIZE + 0.5 * studCount);
 				car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
 				car.state = CarStateEnum.COASTING_FORWARD;
 				
@@ -415,9 +471,13 @@ public class BypassCarTool extends WorldToolBase {
 		 * but short enough to not have any path intersection problems, nor have any teleporting problems
 		 * 
 		 */
-		GraphPositionPathPosition attemptedPos = car.driver.overallPos.generalSearch(carPTmp, 1.0);
+		MutableGPPP attemptedPos = new MutableGPPP();
+		attemptedPos.set(car.driver.overallPos);
+		attemptedPos.generalSearch(carPTmp, 1.0);
 		
-		GraphPositionPathPosition actualPos = car.driver.overallPos.furthestAllowablePosition(car, attemptedPos);
+		MutableGPPP actualPos = new MutableGPPP();
+		actualPos.set(car.driver.overallPos);
+		actualPos.furthestAllowablePosition(car, attemptedPos);
 		
 		if (actualPos.equals(car.driver.overallPos)) {
 			return;
@@ -426,7 +486,8 @@ public class BypassCarTool extends WorldToolBase {
 		car.setTransform(actualPos.p, actualPos.angle);
 		car.setPhysicsTransform();
 		
-		car.driver.setOverallPos(actualPos);
+		car.driver.prevOverallPos.set(car.driver.overallPos);
+		car.driver.overallPos.set(actualPos);
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
 		GraphPosition prevGPos = car.driver.prevOverallPos.gp;
@@ -451,25 +512,25 @@ public class BypassCarTool extends WorldToolBase {
 				}
 				GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 				
-				car.driver.toolLastExitingVertexPos = vertexPos;
-				if (car.driver.toolOrigExitingVertexPos == null) {
-					car.driver.toolOrigExitingVertexPos = vertexPos;
+				car.driver.toolLastExitingVertexPos.set(vertexPos);
+				if (car.driver.toolOrigExitingVertexPos.isCleared()) {
+					car.driver.toolOrigExitingVertexPos.set(vertexPos);
 				}
 				
 			} else if (prevGPos instanceof VertexPosition) {
 				
-				car.driver.toolLastExitingVertexPos = car.driver.prevOverallPos;
-				if (car.driver.toolOrigExitingVertexPos == null) {
-					car.driver.toolOrigExitingVertexPos = car.driver.prevOverallPos;
+				car.driver.toolLastExitingVertexPos.set(car.driver.prevOverallPos);
+				if (car.driver.toolOrigExitingVertexPos.isCleared()) {
+					car.driver.toolOrigExitingVertexPos.set(car.driver.prevOverallPos);
 				}
 				
 			}
 			
 		} else if (gpos instanceof VertexPosition) {
 			
-			car.driver.toolLastExitingVertexPos = car.driver.overallPos;
-			if (car.driver.toolOrigExitingVertexPos == null) {
-				car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
+			car.driver.toolLastExitingVertexPos.set(car.driver.overallPos);
+			if (car.driver.toolOrigExitingVertexPos.isCleared()) {
+				car.driver.toolOrigExitingVertexPos.set(car.driver.overallPos);
 			}
 			
 		} else {
@@ -493,9 +554,9 @@ public class BypassCarTool extends WorldToolBase {
 					assert car.driver.overallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.prevOverallPos.combo;
 				}
 				
-				car.driver.toolLastExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
-				if (car.driver.toolOrigExitingVertexPos == null) {
-					car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
+				car.driver.toolLastExitingVertexPos.set(car.driver.overallPath, nextVertexIndex, 0.0);
+				if (car.driver.toolOrigExitingVertexPos.isCleared()) {
+					car.driver.toolOrigExitingVertexPos.set(car.driver.overallPath, nextVertexIndex, 0.0);
 				}
 				
 			} else if (prevGPos instanceof VertexPosition) {
@@ -520,9 +581,9 @@ public class BypassCarTool extends WorldToolBase {
 					}
 					GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 					
-					car.driver.toolLastExitingVertexPos = vertexPos;
-					if (car.driver.toolOrigExitingVertexPos == null) {
-						car.driver.toolOrigExitingVertexPos = vertexPos;
+					car.driver.toolLastExitingVertexPos.set(vertexPos);
+					if (car.driver.toolOrigExitingVertexPos.isCleared()) {
+						car.driver.toolOrigExitingVertexPos.set(vertexPos);
 					}
 					
 				} else {
@@ -538,9 +599,9 @@ public class BypassCarTool extends WorldToolBase {
 					}
 					GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 					
-					car.driver.toolLastExitingVertexPos = vertexPos;
-					if (car.driver.toolOrigExitingVertexPos == null) {
-						car.driver.toolOrigExitingVertexPos = vertexPos;
+					car.driver.toolLastExitingVertexPos.set(vertexPos);
+					if (car.driver.toolOrigExitingVertexPos.isCleared()) {
+						car.driver.toolOrigExitingVertexPos.set(vertexPos);
 					}
 					
 				}

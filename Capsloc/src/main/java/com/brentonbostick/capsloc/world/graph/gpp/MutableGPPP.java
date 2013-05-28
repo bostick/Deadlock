@@ -1,5 +1,7 @@
 package com.brentonbostick.capsloc.world.graph.gpp;
 
+import java.io.Serializable;
+
 import com.brentonbostick.capsloc.geom.Geom;
 import com.brentonbostick.capsloc.geom.Line;
 import com.brentonbostick.capsloc.geom.MutableOBB;
@@ -15,7 +17,9 @@ import com.brentonbostick.capsloc.world.graph.BypassStud;
 import com.brentonbostick.capsloc.world.graph.GraphPosition;
 import com.brentonbostick.capsloc.world.graph.VertexPosition;
 
-public class MutableGPPP {
+public class MutableGPPP implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public GraphPositionPath path;
 	public int index;
@@ -107,15 +111,46 @@ public class MutableGPPP {
 			b = path.get(index+1).p;
 		}
 		
-		pathVector = new Point(b.y - a.y, b.x - a.x);
+		pathVector = new Point(b.x - a.x, b.y - a.y);
 		double ang = Math.atan2(b.y - a.y, b.x - a.x);
 		ang = DMath.tryAdjustToRightAngle(ang);
 		angle = ang;
 		
 	}
 	
+	public void set(GraphPositionPathPosition v) {
+		set(v.path, v.index, v.param);
+	}
+	
 	public void set(MutableGPPP v) {
 		set(v.path, v.index, v.param);
+	}
+	
+	public void clear() {
+		this.path = null;
+		this.index = -1;
+		this.param = Double.NaN;
+		
+		this.combo = Double.NaN;
+		
+		this.bound = false;
+		
+		gp = null;
+		p = null;
+		
+		lengthToStartOfPath = Double.NaN;
+		lengthToEndOfPath = Double.NaN;
+		
+		pathVector = null;
+		angle = Double.NaN;
+	}
+	
+	public boolean isCleared() {
+		return path == null;
+	}
+	
+	public GraphPositionPathPosition copy() {
+		return new GraphPositionPathPosition(path, index, param);
 	}
 	
 	public int hashCode() {
@@ -220,6 +255,7 @@ public class MutableGPPP {
 			if (DMath.equals(traveled + distanceToNextVertexPosition, dist)) {
 				
 				set(path, nextVertexIndex, 0.0);
+				return;
 				
 			} else if (traveled + distanceToNextVertexPosition < dist) {
 				
@@ -236,7 +272,7 @@ public class MutableGPPP {
 				 */
 				set(path, curPathIndex, curPathParam);
 				travelByBound(dist-traveled, forward, null);
-				
+				return;
 			}
 			
 		}
@@ -476,11 +512,21 @@ public class MutableGPPP {
 	}
 	
 	public void prevVertexPosition() {
-		set(path, path.prevVertexIndex(index, param), 0.0);
+		int prev = path.prevVertexIndex(index, param);
+		if (prev != -1) {
+			set(path, prev, 0.0);
+		} else {
+			clear();
+		}
 	}
 	
 	public void nextVertexPosition() {
-		set(path, path.nextVertexIndex(index, param), 0.0);
+		int next = path.nextVertexIndex(index, param);
+		if (next != -1) {
+			set(path, next, 0.0);
+		} else {
+			clear();
+		}
 	}
 	
 	/**
@@ -1093,7 +1139,7 @@ public class MutableGPPP {
 		return bestParam;
 	}
 	
-	public int movesDistance(GraphPositionPathPosition end, Car c) {
+	public int movesDistance(MutableGPPP end, Car c) {
 		
 		boolean forward;
 		if (end.combo > this.combo) {

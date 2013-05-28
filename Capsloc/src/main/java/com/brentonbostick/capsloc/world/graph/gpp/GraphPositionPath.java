@@ -202,8 +202,10 @@ public class GraphPositionPath {
 	public VertexArrivalEvent vertexArrivalTest(AutonomousDriver d, double dist) {
 		
 		for (GraphPositionPathPosition p : borderPositions) {
-			GraphPositionPathPosition front = d.overallPos.travelForward(Math.min(d.c.length/2, d.overallPos.lengthToEndOfPath));
-			if (p.combo >= front.combo && DMath.lessThanEquals(front.lengthTo(p), dist)) {
+			MutableGPPP front = new MutableGPPP();
+			front.set(d.overallPos);
+			front.travelForward(Math.min(d.c.length/2, d.overallPos.lengthToEndOfPath));
+			if (p.combo >= front.combo && DMath.lessThanEquals(front.lengthTo(p.gppp), dist)) {
 				return new VertexArrivalEvent(d, p);
 			}
 		}
@@ -248,20 +250,22 @@ public class GraphPositionPath {
 	/**
 	 * assumes gp is on path
 	 */
-	public GraphPositionPathPosition findGraphPositionPathPosition(GraphPosition gp, double angle) {
+	public void findGraphPositionPathPosition(GraphPosition gp, double angle, MutableGPPP out) {
 		assert angle == 0.0 * Math.PI || angle == 0.5 * Math.PI;
 		
 		GraphPositionPathPosition start = startPos;
 		GraphPositionPathPosition end = endPos;
 		
 		if (gp.equals(start.gp)) {
-			return start;
+			out.set(start);
+			return;
 		}
 		
 		if (start.equals(end)) {
 			
 			assert gp.equals(start.gp);
-			return start;
+			out.set(start);
+			return;
 			
 		} else if (start.index == end.index) {
 			
@@ -277,7 +281,8 @@ public class GraphPositionPath {
 				GraphPositionPathPosition ret = new GraphPositionPathPosition(this, start.index, u);
 				assert ret.gp.equals(gp);
 				assert DMath.anglesCompatible(ret.angle, angle);
-				return ret;
+				out.set(ret);
+				return;
 			}
 			
 		} else if (end.index == start.index+1 && DMath.equals(end.param, 0.0)) {
@@ -292,7 +297,8 @@ public class GraphPositionPath {
 				GraphPositionPathPosition ret = new GraphPositionPathPosition(this, start.index, u);
 				assert ret.gp.equals(gp);
 				assert DMath.anglesCompatible(ret.angle, angle);
-				return ret;
+				out.set(ret);
+				return;
 			}
 					
 		}
@@ -316,7 +322,8 @@ public class GraphPositionPath {
 				
 				if (DMath.anglesCompatible(ret.angle, angle)) {
 					assert ret.gp.equals(gp);
-					return ret;
+					out.set(ret);
+					return;
 				}
 				
 			}
@@ -340,7 +347,8 @@ public class GraphPositionPath {
 				
 				if (DMath.anglesCompatible(ret.angle, angle)) {
 					assert ret.gp.equals(gp);
-					return ret;
+					out.set(ret);
+					return;
 				}
 				
 			}
@@ -361,7 +369,8 @@ public class GraphPositionPath {
 				
 				if (DMath.anglesCompatible(ret.angle, angle)) {
 					assert ret.gp.equals(gp);
-					return ret;
+					out.set(ret);
+					return;
 				}
 				
 			}
@@ -369,7 +378,8 @@ public class GraphPositionPath {
 		}
 		
 		assert false;
-		return null;
+		out.clear();
+		return;
 	}
 
 
@@ -393,7 +403,7 @@ public class GraphPositionPath {
 			
 			if (d.overallPath.equals(this) && !hasLoop) {
 				
-				map.put(d, d.overallPos);
+				map.put(d, d.overallPos.copy());
 				continue;
 				
 			}
@@ -483,6 +493,28 @@ public class GraphPositionPath {
 		return null;
 	}
 	
+	public AutonomousDriver driverProximityTest(MutableGPPP center, double dist) {
+		
+		for (Entry<AutonomousDriver, GraphPositionPathPosition> entry : hitMap.entrySet()) {
+			AutonomousDriver d = entry.getKey();
+			GraphPositionPathPosition otherCarCenter = entry.getValue();
+			if (otherCarCenter.equals(center)) {
+				continue;
+			}
+			if (DMath.lessThan(otherCarCenter.combo, center.combo)) {
+				continue;
+			}
+			double centerCenterDist = center.lengthTo(otherCarCenter.gppp);
+			double centerBackDist = centerCenterDist - d.c.length/2;
+			if (DMath.lessThanEquals(centerBackDist, dist)) {
+				assert !d.overallPos.equals(center);
+				return d;
+			}
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * resolve a gp into a gppp on this path
 	 * 
@@ -490,6 +522,24 @@ public class GraphPositionPath {
 	 * this is to help handle loops in paths
 	 */
 	public GraphPositionPathPosition hitTest(Driver d, GraphPositionPathPosition startingPosition) {
+		
+		GraphPositionPathPosition gppp = hitMap.get(d);
+		
+		if (gppp == null) {
+			/*
+			 * a car may have driven and no longer be itnerecting with this path
+			 */
+			return null;
+		}
+		
+		if (DMath.greaterThanEquals(gppp.combo, startingPosition.combo)) {
+			return gppp;
+		}
+		
+		return null;
+	}
+	
+	public GraphPositionPathPosition hitTest(Driver d, MutableGPPP startingPosition) {
 		
 		GraphPositionPathPosition gppp = hitMap.get(d);
 		
@@ -560,5 +610,31 @@ public class GraphPositionPath {
 		}
 		return null;
 	}
-
+	
+	public Entity pureGraphIntersectOBB(MutableOBB o, MutableGPPP min) {
+		
+		for (Entry<Vertex, Integer> ent : verticesMap.entrySet()) {
+			int i = ent.getValue();
+			Vertex v = ent.getKey();
+			if (i >= min.combo && ShapeUtils.intersectCO(v.shape, o)) {
+				return v;
+			}
+		}
+		for (Entry<Edge, Integer> ent : edgesMap.entrySet()) {
+			int i = ent.getValue();
+			Edge e = ent.getKey();
+			if (i + e.pointCount() >= min.combo) {
+				if (e instanceof Road) {
+					if (((Road)e).shape.intersect(o)) {
+						return e;
+					}
+				} else {
+					if (ShapeUtils.intersectAO(((Merger)e).shape, o)) {
+						return e;
+					}
+				}
+			}
+		}
+		return null;
+	}
 }

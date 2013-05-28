@@ -18,6 +18,7 @@ import com.brentonbostick.capsloc.world.cars.Car;
 import com.brentonbostick.capsloc.world.cars.CarStateEnum;
 import com.brentonbostick.capsloc.world.graph.BypassStud;
 import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP;
 import com.brentonbostick.capsloc.world.sprites.CarSheet.CarType;
 
 public class BypassCar extends Car {
@@ -111,11 +112,12 @@ public class BypassCar extends Car {
 		
 		double dist = coastingVel * Integratable.DT;
 		
-		GraphPositionPathPosition newPos;
+		MutableGPPP newPos = new MutableGPPP();
+		newPos.set(driver.overallPos);
 		if (state == CarStateEnum.COASTING_FORWARD) {
-			newPos = driver.overallPos.travelForward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
+			newPos.travelForward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
 		} else {
-			newPos = driver.overallPos.travelBackward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
+			newPos.travelBackward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
 		}
 		
 		if (DMath.equals(newPos.combo, driver.toolCoastingGoal.combo)) {
@@ -131,15 +133,17 @@ public class BypassCar extends Car {
 			computeDynamicPropertiesAlways();
 			computeDynamicPropertiesMoving();
 			
-			driver.setOverallPos(driver.toolCoastingGoal);
+			driver.prevOverallPos.set(driver.overallPos);
+			driver.overallPos.set(driver.toolCoastingGoal);
+			
 			if (!driver.toolCoastingGoal.isEndOfPath()) {
 				((BypassWorld)world).handlePanning(this, this.center);
 			}
 			
-			driver.toolOrigExitingVertexPos = null;
-			driver.toolLastExitingVertexPos = null;
-			driver.toolCoastingGoal = null;
-			driver.prevOverallPos = null;
+			driver.toolOrigExitingVertexPos.clear();
+			driver.toolLastExitingVertexPos.clear();
+			driver.toolCoastingGoal.clear();
+			driver.prevOverallPos.clear();
 			
 			return;
 		} else {
@@ -157,10 +161,12 @@ public class BypassCar extends Car {
 						
 						if (state == CarStateEnum.COASTING_FORWARD) {
 							state = CarStateEnum.COASTING_BACKWARD;
-							driver.toolCoastingGoal = driver.toolOrigExitingVertexPos.travelBackward(BypassStud.SIZE + 0.5 * studCount);
+							driver.toolCoastingGoal.set(driver.toolOrigExitingVertexPos);
+							driver.toolCoastingGoal.travelBackward(BypassStud.SIZE + 0.5 * studCount);
 						} else {
 							state = CarStateEnum.COASTING_FORWARD;
-							driver.toolCoastingGoal = driver.toolOrigExitingVertexPos.travelForward(BypassStud.SIZE + 0.5 * studCount);
+							driver.toolCoastingGoal.set(driver.toolOrigExitingVertexPos);
+							driver.toolCoastingGoal.travelForward(BypassStud.SIZE + 0.5 * studCount);
 						}
 						
 						coastingVel = 0.0;

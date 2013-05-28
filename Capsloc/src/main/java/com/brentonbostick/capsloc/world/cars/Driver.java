@@ -4,7 +4,7 @@ import com.brentonbostick.capsloc.math.Point;
 import com.brentonbostick.capsloc.world.graph.GraphPosition;
 import com.brentonbostick.capsloc.world.graph.Side;
 import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP;
 
 public abstract class Driver {
 	
@@ -15,26 +15,26 @@ public abstract class Driver {
 	
 	public GraphPositionPath overallPath;
 	
-	public GraphPositionPathPosition overallPos;
-	public GraphPositionPathPosition prevOverallPos;
+	public MutableGPPP overallPos = new MutableGPPP();
+	final public MutableGPPP prevOverallPos = new MutableGPPP();
 	
 	Point goalPoint;
 	
-	public GraphPositionPathPosition toolOrigOverallPos;
-	public GraphPositionPathPosition toolOrigExitingVertexPos;
-	public GraphPositionPathPosition toolLastExitingVertexPos;
+	final public MutableGPPP toolOrigOverallPos = new MutableGPPP();
+	public MutableGPPP toolOrigExitingVertexPos = new MutableGPPP();
+	final public MutableGPPP toolLastExitingVertexPos = new MutableGPPP();
 	
-	public GraphPositionPathPosition toolCoastingGoal;
+	public MutableGPPP toolCoastingGoal = new MutableGPPP();
 	
 	public Driver(Car c) {
 		this.c = c;
 	}
 	
-	public void setOverallPos(GraphPositionPathPosition pos) {
-		assert pos != null;
-		
-		prevOverallPos = overallPos;
-		overallPos = pos;
-	}
+//	public void setOverallPos(GraphPositionPathPosition pos) {
+//		assert pos != null;
+//		
+//		prevOverallPos.set(overallPos);
+//		overallPos.set(pos);
+//	}
 	
 }

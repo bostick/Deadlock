@@ -25,7 +25,7 @@ import com.brentonbostick.capsloc.world.Stroke;
 import com.brentonbostick.capsloc.world.World;
 import com.brentonbostick.capsloc.world.cars.Car;
 import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP;
 
 public class BypassBoard extends Entity {
 	
@@ -1254,8 +1254,12 @@ public class BypassBoard extends Entity {
 	
 	public boolean floorAndCeilWithinGrid(Car c) {
 		
-		GraphPositionPathPosition tmpFloorPos = c.driver.overallPos.floor(c.length/2);
-		GraphPositionPathPosition tmpCeilPos = c.driver.overallPos.ceil(c.length/2);
+		MutableGPPP tmpFloorPos = new MutableGPPP();
+		tmpFloorPos.set(c.driver.overallPos);
+		tmpFloorPos.floor(c.length/2);
+		MutableGPPP tmpCeilPos = new MutableGPPP();
+		tmpCeilPos.set(c.driver.overallPos);
+		tmpCeilPos.ceil(c.length/2);
 		
 		Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpFloorPos.p, testFloor);
 		Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpCeilPos.p, testCeil);

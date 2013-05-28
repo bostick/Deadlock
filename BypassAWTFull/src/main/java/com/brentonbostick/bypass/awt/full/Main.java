@@ -50,7 +50,7 @@ public class Main {
 		
 		mainFrame.setIconImage(((BypassAWTPlatform)APP.platform).titleBarIcon);
 		
-		APP.DEBUG_DRAW = false;
+		APP.DEBUG_DRAW = true;
 		
 		APP.platform.action(MainMenuFull.class);
 		

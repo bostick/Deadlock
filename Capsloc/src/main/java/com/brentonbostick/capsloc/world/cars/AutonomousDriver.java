@@ -6,6 +6,7 @@ import java.util.List;
 import com.brentonbostick.capsloc.math.DMath;
 import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
 import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP;
 
 public final class AutonomousDriver extends Driver {
 	
@@ -38,10 +39,10 @@ public final class AutonomousDriver extends Driver {
 			path.currentDrivers.add(this);
 		}
 		
-		overallPos = overallPath.startPos;
+		overallPos.set(overallPath.startPos);
 		startGP = overallPos.gp;
 		
-		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
+		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos.copy()));
 	}
 	
 	private void cleanupVertexDepartureQueue() {
@@ -93,7 +94,7 @@ public final class AutonomousDriver extends Driver {
 	
 	public void clear() {
 		
-		overallPos = null;
+		overallPos.clear();
 		
 		overallPath.currentDrivers.remove(this);
 		for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
@@ -151,7 +152,10 @@ public final class AutonomousDriver extends Driver {
 		switch (c.state) {
 		case DRIVING:
 			double steeringLookaheadDistance = c.length * 0.5;
-			GraphPositionPathPosition next = overallPos.travelForward(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
+			MutableGPPP next = new MutableGPPP();
+			next.set(overallPos);
+			next.travelForward(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
+			
 			goalPoint = next.p;
 			break;
 		case BRAKING:
@@ -170,9 +174,8 @@ public final class AutonomousDriver extends Driver {
 	}
 	
 	public void postStep(double t) {
-		
-		setOverallPos(overallPos.forwardSearch(c.center, Double.POSITIVE_INFINITY));
-		
+		prevOverallPos.set(overallPos);
+		overallPos.forwardSearch(c.center, Double.POSITIVE_INFINITY);
 	}
 	
 	private CarProximityEvent findNewCarProximityEvent() {
@@ -224,7 +227,7 @@ public final class AutonomousDriver extends Driver {
 						otherPosition = overallPath.hitTest(otherDriver, overallPos);
 					}
 					
-					if (otherPosition == null || DMath.greaterThan(overallPos.lengthTo(otherPosition), carProximityLookahead)) {
+					if (otherPosition == null || DMath.greaterThan(overallPos.lengthTo(otherPosition.gppp), carProximityLookahead)) {
 						return false;
 					}
 					

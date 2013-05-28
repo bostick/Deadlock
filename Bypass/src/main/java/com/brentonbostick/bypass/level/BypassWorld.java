@@ -34,7 +34,7 @@ import com.brentonbostick.capsloc.world.graph.RoadPosition;
 import com.brentonbostick.capsloc.world.graph.Side;
 import com.brentonbostick.capsloc.world.graph.VertexPosition;
 import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
-import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP;
 import com.brentonbostick.capsloc.world.sprites.CarSheet;
 import com.brentonbostick.capsloc.world.sprites.CarSheet.CarType;
 
@@ -191,19 +191,23 @@ public class BypassWorld extends World implements Model {
 			switch (c.driver.startSide) {
 			case RIGHT:
 				c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
-				c.driver.setOverallPos(c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
+				c.driver.prevOverallPos.set(c.driver.overallPos);
+				c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI, c.driver.overallPos);
 				break;
 			case BOTTOM:
 				c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
-				c.driver.setOverallPos(c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
+				c.driver.prevOverallPos.set(c.driver.overallPos);
+				c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI, c.driver.overallPos);
 				break;
 			case LEFT:
 				c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
-				c.driver.setOverallPos(c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
+				c.driver.prevOverallPos.set(c.driver.overallPos);
+				c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI, c.driver.overallPos);
 				break;
 			case TOP:
 				c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
-				c.driver.setOverallPos(c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
+				c.driver.prevOverallPos.set(c.driver.overallPos);
+				c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI, c.driver.overallPos);
 				break;
 			}
 			
@@ -336,14 +340,19 @@ public class BypassWorld extends World implements Model {
 			path = board.getPath(a, firstULRow);
 			
 			GraphPosition test = new BypassBoardPosition(board, firstULRow + c.width/2, firstULCol);
-			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test, 0.0 * Math.PI);
+			final MutableGPPP posTest = new MutableGPPP();
+			path.findGraphPositionPathPosition(test, 0.0 * Math.PI, posTest);
 			
 			Point dir;
 			if (!posTest.isEndOfPath()) {
-				GraphPositionPathPosition next = posTest.nextBound();
+				final MutableGPPP next = new MutableGPPP();
+				next.set(posTest);
+				next.nextBound();
 				dir = next.p.minus(test.p);
 			} else {
-				GraphPositionPathPosition prev = posTest.prevBound();
+				final MutableGPPP prev = new MutableGPPP();
+				prev.set(posTest);
+				prev.prevBound();
 				dir = test.p.minus(prev.p);
 			}
 			
@@ -364,14 +373,19 @@ public class BypassWorld extends World implements Model {
 			path = board.getPath(a, firstULCol);
 			
 			GraphPosition test = new BypassBoardPosition(board, firstULRow, firstULCol + c.width/2);
-			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test, 0.5 * Math.PI);
+			final MutableGPPP posTest = new MutableGPPP();
+			path.findGraphPositionPathPosition(test, 0.5 * Math.PI, posTest);
 			
 			Point dir;
 			if (!posTest.isEndOfPath()) {
-				GraphPositionPathPosition next = posTest.nextBound();
+				final MutableGPPP next = new MutableGPPP();
+				next.set(posTest);
+				next.nextBound();
 				dir = next.p.minus(test.p);
 			} else {
-				GraphPositionPathPosition prev = posTest.prevBound();
+				final MutableGPPP prev = new MutableGPPP();
+				prev.set(posTest);
+				prev.prevBound();
 				dir = test.p.minus(prev.p);
 			}
 			
@@ -395,28 +409,32 @@ public class BypassWorld extends World implements Model {
 			c.driver.startSide = Side.RIGHT;
 			c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
+//			c.driver.prevOverallPos.set(c.driver.overallPos);
+			path.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI, c.driver.overallPos);
 			break;
 		case BOTTOM:
 			c.driver.startGP = new BypassBoardPosition(board, firstULRow + c.length/2, firstULCol + c.width/2);
 			c.driver.startSide = Side.BOTTOM;
 			c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
+//			c.driver.prevOverallPos.set(c.driver.overallPos);
+			path.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI, c.driver.overallPos);
 			break;
 		case LEFT:
 			c.driver.startGP = new BypassBoardPosition(board, firstULRow + c.width/2, firstULCol + c.length/2);
 			c.driver.startSide = Side.LEFT;
 			c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
+//			c.driver.prevOverallPos.set(c.driver.overallPos);
+			path.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI, c.driver.overallPos);
 			break;
 		case TOP:
 			c.driver.startGP = new BypassBoardPosition(board, firstULRow + c.length/2, firstULCol + c.width/2);
 			c.driver.startSide = Side.TOP;
 			c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
+//			c.driver.prevOverallPos.set(c.driver.overallPos);
+			path.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI, c.driver.overallPos);
 			break;
 		}
 		
@@ -434,7 +452,7 @@ public class BypassWorld extends World implements Model {
 	
 	public void handlePanning(Car car, Point center) {
 		
-		if (car.driver.toolLastExitingVertexPos != null && car.driver.toolLastExitingVertexPos.gp.entity == bypassBoard.exitVertex) {
+		if (!car.driver.toolLastExitingVertexPos.isCleared() && car.driver.toolLastExitingVertexPos.gp.entity == bypassBoard.exitVertex) {
 			/*
 			 * no panning when exiting
 			 */
