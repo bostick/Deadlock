@@ -12,8 +12,8 @@ import com.brentonbostick.capsloc.ui.paint.Join;
 import com.brentonbostick.capsloc.ui.paint.RenderingContext;
 import com.brentonbostick.capsloc.world.World;
 import com.brentonbostick.capsloc.world.graph.Fixture;
-import com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition;
 import com.brentonbostick.capsloc.world.graph.Merger;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 import com.brentonbostick.capsloc.world.sprites.CarSheet.CarType;
 
 public class AutonomousCar extends Car {

@@ -30,11 +30,11 @@ import com.brentonbostick.capsloc.world.graph.BypassBoardPosition;
 import com.brentonbostick.capsloc.world.graph.BypassStud;
 import com.brentonbostick.capsloc.world.graph.Graph;
 import com.brentonbostick.capsloc.world.graph.GraphPosition;
-import com.brentonbostick.capsloc.world.graph.GraphPositionPath;
-import com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition;
 import com.brentonbostick.capsloc.world.graph.RoadPosition;
 import com.brentonbostick.capsloc.world.graph.Side;
 import com.brentonbostick.capsloc.world.graph.VertexPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 import com.brentonbostick.capsloc.world.sprites.CarSheet;
 import com.brentonbostick.capsloc.world.sprites.CarSheet.CarType;
 

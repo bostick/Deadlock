@@ -1,8 +1,8 @@
 package com.brentonbostick.capsloc.world.cars;
 
-import com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition;
 import com.brentonbostick.capsloc.world.graph.RoadPosition;
 import com.brentonbostick.capsloc.world.graph.StopSign;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 /**
  * arriving at a vertex

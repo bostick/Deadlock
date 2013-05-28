@@ -1,4 +1,4 @@
-package com.brentonbostick.capsloc.world.graph;
+package com.brentonbostick.capsloc.world.graph.gpp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +16,17 @@ import com.brentonbostick.capsloc.math.Point;
 import com.brentonbostick.capsloc.world.cars.AutonomousDriver;
 import com.brentonbostick.capsloc.world.cars.Driver;
 import com.brentonbostick.capsloc.world.cars.VertexArrivalEvent;
+import com.brentonbostick.capsloc.world.graph.Axis;
+import com.brentonbostick.capsloc.world.graph.BypassBoardPosition;
+import com.brentonbostick.capsloc.world.graph.Edge;
+import com.brentonbostick.capsloc.world.graph.EdgePosition;
+import com.brentonbostick.capsloc.world.graph.GraphPosition;
+import com.brentonbostick.capsloc.world.graph.Merger;
+import com.brentonbostick.capsloc.world.graph.MergerPosition;
+import com.brentonbostick.capsloc.world.graph.Road;
+import com.brentonbostick.capsloc.world.graph.RoadPosition;
+import com.brentonbostick.capsloc.world.graph.Vertex;
+import com.brentonbostick.capsloc.world.graph.VertexPosition;
 
 public class GraphPositionPath {
 

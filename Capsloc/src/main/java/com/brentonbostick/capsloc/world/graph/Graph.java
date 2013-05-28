@@ -21,6 +21,8 @@ import com.brentonbostick.capsloc.math.Point;
 import com.brentonbostick.capsloc.ui.Image;
 import com.brentonbostick.capsloc.ui.paint.RenderingContext;
 import com.brentonbostick.capsloc.world.World;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathFactory;
 
 public class Graph {
 	

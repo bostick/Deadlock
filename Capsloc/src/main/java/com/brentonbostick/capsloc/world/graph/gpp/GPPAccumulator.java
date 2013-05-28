@@ -1,6 +1,7 @@
-package com.brentonbostick.capsloc.world.graph;
+package com.brentonbostick.capsloc.world.graph.gpp;
 
 import com.brentonbostick.capsloc.math.Point;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public class GPPAccumulator {
 	

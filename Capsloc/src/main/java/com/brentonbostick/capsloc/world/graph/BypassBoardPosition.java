@@ -1,6 +1,8 @@
 package com.brentonbostick.capsloc.world.graph;
 
 import com.brentonbostick.capsloc.math.DMath;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public class BypassBoardPosition extends GraphPosition {
 	

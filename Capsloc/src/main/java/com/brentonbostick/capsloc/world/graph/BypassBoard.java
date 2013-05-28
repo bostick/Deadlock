@@ -24,6 +24,8 @@ import com.brentonbostick.capsloc.ui.paint.RenderingContext;
 import com.brentonbostick.capsloc.world.Stroke;
 import com.brentonbostick.capsloc.world.World;
 import com.brentonbostick.capsloc.world.cars.Car;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public class BypassBoard extends Entity {
 	

@@ -97,7 +97,7 @@ public class LevelDB {
 				String rest = inputLine.substring(7);
 				level.requiredMoves = Integer.parseInt(rest);
 			} else {
-				assert false;
+				throw new AssertionError(inputLine);
 			}
 			
 			while ((inputLine = in.readLine()) != null) {

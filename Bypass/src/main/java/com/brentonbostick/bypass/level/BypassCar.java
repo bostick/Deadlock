@@ -17,7 +17,7 @@ import com.brentonbostick.capsloc.world.World;
 import com.brentonbostick.capsloc.world.cars.Car;
 import com.brentonbostick.capsloc.world.cars.CarStateEnum;
 import com.brentonbostick.capsloc.world.graph.BypassStud;
-import com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 import com.brentonbostick.capsloc.world.sprites.CarSheet.CarType;
 
 public class BypassCar extends Car {

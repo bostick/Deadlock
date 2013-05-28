@@ -2,6 +2,8 @@ package com.brentonbostick.capsloc.world.graph;
 
 import com.brentonbostick.capsloc.Entity;
 import com.brentonbostick.capsloc.math.DMath;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public class VertexPosition extends GraphPosition {
 	

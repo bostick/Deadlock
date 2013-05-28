@@ -15,6 +15,7 @@ import com.brentonbostick.capsloc.ui.paint.RenderingContext;
 import com.brentonbostick.capsloc.world.World;
 import com.brentonbostick.capsloc.world.cars.AutonomousCar;
 import com.brentonbostick.capsloc.world.cars.AutonomousDriver;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
 import com.brentonbostick.capsloc.world.sprites.CarSheet;
 import com.brentonbostick.capsloc.world.sprites.CarSheet.CarType;
 

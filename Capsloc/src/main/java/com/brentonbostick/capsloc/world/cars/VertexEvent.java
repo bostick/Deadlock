@@ -1,8 +1,8 @@
 package com.brentonbostick.capsloc.world.cars;
 
-import com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition;
 import com.brentonbostick.capsloc.world.graph.Vertex;
 import com.brentonbostick.capsloc.world.graph.VertexPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public abstract class VertexEvent extends DrivingEvent {
 	

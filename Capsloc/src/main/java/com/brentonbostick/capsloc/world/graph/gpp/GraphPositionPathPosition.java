@@ -1,4 +1,4 @@
-package com.brentonbostick.capsloc.world.graph;
+package com.brentonbostick.capsloc.world.graph.gpp;
 
 import java.io.Serializable;
 
@@ -11,6 +11,11 @@ import com.brentonbostick.capsloc.geom.SweptOBB;
 import com.brentonbostick.capsloc.math.DMath;
 import com.brentonbostick.capsloc.math.Point;
 import com.brentonbostick.capsloc.world.cars.Car;
+import com.brentonbostick.capsloc.world.graph.BypassBoard;
+import com.brentonbostick.capsloc.world.graph.BypassBoardPosition;
+import com.brentonbostick.capsloc.world.graph.BypassStud;
+import com.brentonbostick.capsloc.world.graph.GraphPosition;
+import com.brentonbostick.capsloc.world.graph.VertexPosition;
 
 public class GraphPositionPathPosition implements Serializable {
 	

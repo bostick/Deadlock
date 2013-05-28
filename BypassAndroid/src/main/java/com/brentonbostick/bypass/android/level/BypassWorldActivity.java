@@ -31,7 +31,7 @@ import com.brentonbostick.capsloc.world.WorldCamera;
 import com.brentonbostick.capsloc.world.cars.Car;
 import com.brentonbostick.capsloc.world.cars.CarStateEnum;
 import com.brentonbostick.capsloc.world.graph.GraphPosition;
-import com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public class BypassWorldActivity extends BypassActivity {
 	

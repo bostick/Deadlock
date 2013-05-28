@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.brentonbostick.capsloc.math.DMath;
-import com.brentonbostick.capsloc.world.graph.GraphPositionPath;
-import com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public final class AutonomousDriver extends Driver {
 	

@@ -2,9 +2,9 @@ package com.brentonbostick.capsloc.world.cars;
 
 import com.brentonbostick.capsloc.math.Point;
 import com.brentonbostick.capsloc.world.graph.GraphPosition;
-import com.brentonbostick.capsloc.world.graph.GraphPositionPath;
-import com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition;
 import com.brentonbostick.capsloc.world.graph.Side;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 
 public abstract class Driver {
 	

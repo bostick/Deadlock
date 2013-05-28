@@ -12,9 +12,9 @@ import com.brentonbostick.capsloc.world.graph.BypassBoard;
 import com.brentonbostick.capsloc.world.graph.BypassBoardPosition;
 import com.brentonbostick.capsloc.world.graph.BypassStud;
 import com.brentonbostick.capsloc.world.graph.GraphPosition;
-import com.brentonbostick.capsloc.world.graph.GraphPositionPathPosition;
 import com.brentonbostick.capsloc.world.graph.RoadPosition;
 import com.brentonbostick.capsloc.world.graph.VertexPosition;
+import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPathPosition;
 import com.brentonbostick.capsloc.world.tools.WorldToolBase;
 
 public class BypassCarTool extends WorldToolBase {
