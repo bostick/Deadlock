@@ -15,7 +15,6 @@ import com.brentonbostick.bypass.level.BypassWorld;
 import com.brentonbostick.bypass.level.LevelDB;
 import com.brentonbostick.bypass.menu.LevelMenu;
 import com.brentonbostick.bypass.menu.MainMenu;
-import com.brentonbostick.bypass.menu.MainMenuLite;
 import com.brentonbostick.capsloc.Resource;
 import com.brentonbostick.capsloc.world.sprites.CarSheet;
 import com.brentonbostick.capsloc.world.sprites.SpriteSheet;

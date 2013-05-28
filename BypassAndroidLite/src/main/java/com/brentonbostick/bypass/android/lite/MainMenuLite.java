@@ -1,8 +1,11 @@
-package com.brentonbostick.bypass.menu;
+package com.brentonbostick.bypass.android.lite;
 
 import static com.brentonbostick.bypass.BypassApplication.BYPASSAPP;
 import static com.brentonbostick.capsloc.CapslocApplication.APP;
 
+import com.brentonbostick.bypass.menu.LevelMenu;
+import com.brentonbostick.bypass.menu.MainMenu;
+import com.brentonbostick.bypass.menu.MainMenuItem;
 import com.brentonbostick.capsloc.ui.MenuItem;
 
 public class MainMenuLite extends MainMenu {
