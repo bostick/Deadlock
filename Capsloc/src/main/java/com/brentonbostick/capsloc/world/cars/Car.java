@@ -31,7 +31,7 @@ public abstract class Car extends PhysicsBody {
 	public Driver driver;
 	public Engine engine;
 	
-	public int id;
+	public final int id;
 	
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
