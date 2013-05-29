@@ -24,8 +24,6 @@ import com.brentonbostick.bypass.level.WinnerMenu;
 import com.brentonbostick.bypass.menu.LevelMenu;
 import com.brentonbostick.capsloc.SimulationRunnable;
 import com.brentonbostick.capsloc.geom.Geom;
-import com.brentonbostick.capsloc.geom.MutableOBB;
-import com.brentonbostick.capsloc.geom.MutableSweptOBB;
 import com.brentonbostick.capsloc.math.Point;
 import com.brentonbostick.capsloc.world.WorldCamera;
 import com.brentonbostick.capsloc.world.cars.Car;
@@ -114,9 +112,10 @@ public class BypassWorldActivity extends BypassActivity {
 					c.driver.overallPos.gp = p1.approachNeighbor(p2, dist * c.driver.overallPos.param);
 					c.driver.overallPos.p = c.driver.overallPos.gp.p;
 				}
-				c.driver.overallPos.mao = new MutableOBB();
-				c.driver.overallPos.mao = new MutableOBB();
-				c.driver.overallPos.swept = new MutableSweptOBB();
+//				c.driver.overallPos.acc = new MutableGPPAccumulator(c.driver.overallPos);
+//				c.driver.overallPos.mao = new MutableOBB();
+//				c.driver.overallPos.mao = new MutableOBB();
+//				c.driver.overallPos.swept = new MutableSweptOBB();
 				
 				
 				if (c.state != CarStateEnum.IDLE) {
@@ -132,9 +131,10 @@ public class BypassWorldActivity extends BypassActivity {
 						c.driver.toolCoastingGoal.gp = p1.approachNeighbor(p2, dist * c.driver.toolCoastingGoal.param);
 						c.driver.toolCoastingGoal.p = c.driver.toolCoastingGoal.gp.p;
 					}
-					c.driver.toolCoastingGoal.mao = new MutableOBB();
-					c.driver.toolCoastingGoal.mao = new MutableOBB();
-					c.driver.toolCoastingGoal.swept = new MutableSweptOBB();
+//					c.driver.toolCoastingGoal.acc = new MutableGPPAccumulator(c.driver.toolCoastingGoal);
+//					c.driver.toolCoastingGoal.mao = new MutableOBB();
+//					c.driver.toolCoastingGoal.mao = new MutableOBB();
+//					c.driver.toolCoastingGoal.swept = new MutableSweptOBB();
 					
 					
 					c.driver.toolOrigExitingVertexPos = (MutableGPPP)savedInstanceState.getSerializable("com.brentonbostick.bypass.level.Car"+id+".OrigExitingVertexPos");
@@ -150,9 +150,10 @@ public class BypassWorldActivity extends BypassActivity {
 							c.driver.toolOrigExitingVertexPos.gp = p1.approachNeighbor(p2, dist * c.driver.toolOrigExitingVertexPos.param);
 							c.driver.toolOrigExitingVertexPos.p = c.driver.toolOrigExitingVertexPos.gp.p;
 						}
-						c.driver.toolOrigExitingVertexPos.mao = new MutableOBB();
-						c.driver.toolOrigExitingVertexPos.mao = new MutableOBB();
-						c.driver.toolOrigExitingVertexPos.swept = new MutableSweptOBB();
+//						c.driver.toolOrigExitingVertexPos.acc = new MutableGPPAccumulator(c.driver.toolOrigExitingVertexPos);
+//						c.driver.toolOrigExitingVertexPos.mao = new MutableOBB();
+//						c.driver.toolOrigExitingVertexPos.mao = new MutableOBB();
+//						c.driver.toolOrigExitingVertexPos.swept = new MutableSweptOBB();
 					}
 					
 					c.coastingVel = savedInstanceState.getDouble("com.brentonbostick.bypass.level.Car"+id+".CoastingVel");

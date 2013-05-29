@@ -21,7 +21,7 @@ public class MutableGPPP implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public GraphPositionPath path;
+	public transient GraphPositionPath path;
 	public int index;
 	public double param;
 	
@@ -29,16 +29,21 @@ public class MutableGPPP implements Serializable {
 	
 	public boolean bound;
 	
-	public Point p;
-	public GraphPosition gp;
+	public transient GraphPosition gp;
+	public transient Point p;
 	
 	public double lengthToStartOfPath;
 	public double lengthToEndOfPath;
 	
-	public Point pathVector;
+	public double pathVectorX;
+	public double pathVectorY;
 	public double angle;
 	
 	private int hash;
+	
+	public MutableGPPP() {
+		String.class.getName();
+	}
 	
 	public void set(GraphPositionPath path, int preIndex, double preParam) {
 		
@@ -111,8 +116,9 @@ public class MutableGPPP implements Serializable {
 			b = path.get(index+1).p;
 		}
 		
-		pathVector = new Point(b.x - a.x, b.y - a.y);
-		double ang = Math.atan2(b.y - a.y, b.x - a.x);
+		pathVectorX = b.x - a.x;
+		pathVectorY = b.y - a.y;
+		double ang = Math.atan2(pathVectorY, pathVectorX);
 		ang = DMath.tryAdjustToRightAngle(ang);
 		angle = ang;
 		
@@ -141,7 +147,8 @@ public class MutableGPPP implements Serializable {
 		lengthToStartOfPath = Double.NaN;
 		lengthToEndOfPath = Double.NaN;
 		
-		pathVector = null;
+		pathVectorX = Double.NaN;
+		pathVectorY = Double.NaN;
 		angle = Double.NaN;
 	}
 	
@@ -289,17 +296,19 @@ public class MutableGPPP implements Serializable {
 		
 		double traveled = 0.0;
 		
-		final MutableGPPP cur = new MutableGPPP();
-		cur.set(path, index, param);
+		int curIndex = index;
+		double curParam = param;
+		double curLengthToStartOfPath = lengthToStartOfPath;
 		
-		final MutableGPPP next = new MutableGPPP();
+		int nextIndex;
+		double nextParam;
 		
 		while (true) {
 			
 			/*
 			 * try to go to the next bound
 			 */
-			int nextBoundIndex = forward ? (cur.index < path.size-1 ? cur.index+1 : -1) : (DMath.equals(cur.param, 0.0) ? (cur.index > 0 ? cur.index-1 : -1) : cur.index);
+			int nextBoundIndex = forward ? (curIndex < path.size-1 ? curIndex+1 : -1) : (DMath.equals(curParam, 0.0) ? (curIndex > 0 ? curIndex-1 : -1) : curIndex);
 			GraphPosition nextBoundGP;
 			double nextBoundLengthToStartOfPath;
 			double distanceToNextBound;
@@ -311,35 +320,39 @@ public class MutableGPPP implements Serializable {
 			} else {
 				nextBoundGP = path.get(nextBoundIndex);
 				nextBoundLengthToStartOfPath = path.cumulativeDistancesFromStart[nextBoundIndex];
-				distanceToNextBound = forward ? nextBoundLengthToStartOfPath - cur.lengthToStartOfPath : cur.lengthToStartOfPath - nextBoundLengthToStartOfPath;
+				distanceToNextBound = forward ? nextBoundLengthToStartOfPath - curLengthToStartOfPath : curLengthToStartOfPath - nextBoundLengthToStartOfPath;
 			}
 			
-			next.set(path, nextBoundIndex, 0.0);
+			nextIndex = nextBoundIndex;
+			nextParam = 0.0;
 			
 			if (DMath.equals(traveled + distanceToNextBound, dist)) {	
 				
 				if (acc != null) {
 					if (forward) {
-						acc.apply(cur, next);
+						acc.apply(path, curIndex, curParam, nextIndex, nextParam);
 					} else {
-						acc.apply(next, cur);
+						acc.apply(path, nextIndex, nextParam, curIndex, curParam);
 					}
 				}
-				cur.set(next.path, next.index, next.param);
+				curIndex = nextIndex;
+				curParam = nextParam;
 				
-				set(cur.path, cur.index, cur.param);
+				set(path, curIndex, curParam);
 				return;
 				
 			} else if (traveled + distanceToNextBound < dist) {
 				
 				if (acc != null) {
 					if (forward) {
-						acc.apply(cur, next);
+						acc.apply(path, curIndex, curParam, nextIndex, nextParam);
 					} else {
-						acc.apply(next, cur);
+						acc.apply(path, nextIndex, nextParam, curIndex, curParam);
 					}
 				}
-				cur.set(next.path, next.index, next.param);
+				curIndex = nextIndex;
+				curParam = nextParam;
+				curLengthToStartOfPath = nextBoundLengthToStartOfPath;
 				
 				traveled += distanceToNextBound;
 				
@@ -348,7 +361,7 @@ public class MutableGPPP implements Serializable {
 				 * distanceToNextBound > toTravel == dist - traveled
 				 */
 				
-				set(cur.path, cur.index, cur.param);
+				set(path, curIndex, curParam);
 				travelWithinBound(nextBoundGP, dist - traveled, forward, acc);
 				return;
 			}
@@ -374,20 +387,17 @@ public class MutableGPPP implements Serializable {
 		int retIndex = (int)Math.floor(retCombo);
 		double retParam = retCombo - retIndex;
 		
-		final MutableGPPP ret = new MutableGPPP();
-		ret.set(path, retIndex, retParam);
-		
 		if (acc != null) {
 			if (forward) {
-				acc.apply(this, ret);
+				acc.apply(path, index, param, retIndex, retParam);
 			} else {
-				acc.apply(ret, this);
+				acc.apply(path, retIndex, retParam, index, param);
 			}
 		}
 		
-		assert DMath.equals(this.lengthTo(ret), dist);
+//		assert DMath.equals(this.lengthTo(ret), dist);
 		
-		set(ret.path, ret.index, ret.param);
+		set(path, retIndex, retParam);
 	}
 	
 	public void nextBound() {
@@ -529,19 +539,36 @@ public class MutableGPPP implements Serializable {
 		}
 	}
 	
+	
+	static final MutableGPPP start = new MutableGPPP();
+	static final MutableGPPP a = new MutableGPPP();
+	static final MutableGPPP b = new MutableGPPP();
+	static final MutableGPPP startCeiling = new MutableGPPP();
+	static final MutableGPPP endFloor = new MutableGPPP();
+	static final MutableGPPP startFloor = new MutableGPPP();
+	static final MutableGPPP endCeil = new MutableGPPP();
+	
+	static final MutableGPPP forwardPos = new MutableGPPP();
+	static final MutableGPPP backwardPos = new MutableGPPP();
+	
+	static final MutableOBB mao = new MutableOBB();
+	static final MutableOBB mbo = new MutableOBB();
+	static final MutableSweptOBB swept = new MutableSweptOBB();
+	
+	
+	
 	/**
 	 * searches forward from start position
 	 * 
 	 * finds closest position in a graphpositionpath to p
 	 */
-	public void forwardSearch(final Point p, double lengthFromStart) {
+	public void forwardSearch(final Point p, double lengthFromStart, MutableGPPAccumulator acc) {
 		
-		MutableGPPAccumulator forwardSearchAcc = new MutableGPPAccumulator(this);
-		forwardSearchAcc.reset(p);
+		acc.reset(this, p);
 		
-		travelByBound(lengthFromStart, true, forwardSearchAcc);
+		travelByBound(lengthFromStart, true, acc);
 		
-		set(forwardSearchAcc.closest.path, forwardSearchAcc.closest.index, forwardSearchAcc.closest.param);
+		set(path, acc.closestIndex, acc.closestParam);
 	}
 	
 	/**
@@ -549,28 +576,25 @@ public class MutableGPPP implements Serializable {
 	 * 
 	 * finds closest position in a graphpositionpath to p
 	 */
-	public void backwardSearch(Point p, double lengthFromStart) {
+	public void backwardSearch(Point p, double lengthFromStart, MutableGPPAccumulator acc) {
 		
-		MutableGPPAccumulator forwardSearchAcc = new MutableGPPAccumulator(this);
-		forwardSearchAcc.reset(p);
+		acc.reset(this, p);
 		
-		travelByBound(lengthFromStart, false, forwardSearchAcc);
+		travelByBound(lengthFromStart, false, acc);
 		
-		set(forwardSearchAcc.closest.path, forwardSearchAcc.closest.index, forwardSearchAcc.closest.param);
+		set(path, acc.closestIndex, acc.closestParam);
 	}
 	
 	/**
 	 * searches both forward and backward from start position
 	 */
-	public void generalSearch(Point p, double radius) {
+	public void generalSearch(Point p, double radius, MutableGPPAccumulator acc) {
 		
-		final MutableGPPP forwardPos = new MutableGPPP();
 		forwardPos.set(this);
-		forwardPos.forwardSearch(p, Math.min(radius, this.lengthToEndOfPath));
+		forwardPos.forwardSearch(p, Math.min(radius, this.lengthToEndOfPath), acc);
 		
-		final MutableGPPP backwardPos = new MutableGPPP();
 		backwardPos.set(this);
-		backwardPos.backwardSearch(p, Math.min(radius, this.lengthToStartOfPath));
+		backwardPos.backwardSearch(p, Math.min(radius, this.lengthToStartOfPath), acc);
 		
 		if (this.equals(backwardPos)) {
 			
@@ -613,18 +637,12 @@ public class MutableGPPP implements Serializable {
 		}
 	}
 	
-	
-	public transient MutableOBB mao = new MutableOBB();
-	public transient MutableOBB mbo = new MutableOBB();
-	public transient MutableSweptOBB swept = new MutableSweptOBB();
-	
 	/**
 	 * 
 	 * returns end upon finding first non-right angle,
 	 */
 	public void furthestAllowablePositionForward(Car car, MutableGPPP end) {
 		
-		final MutableGPPP start = new MutableGPPP();
 		start.set(this);
 		start.findFirstRightAngleForwardOrEnd(end);
 		
@@ -681,13 +699,9 @@ public class MutableGPPP implements Serializable {
 			return;
 		}
 		
-		final MutableGPPP a = new MutableGPPP();
 		a.set(start);
-		final MutableGPPP b = new MutableGPPP();
-		final MutableGPPP startCeiling = new MutableGPPP();
 		startCeiling.set(start);
 		startCeiling.ceil();
-		final MutableGPPP endFloor = new MutableGPPP();
 		endFloor.set(end);
 		endFloor.floor();
 		
@@ -780,7 +794,6 @@ public class MutableGPPP implements Serializable {
 	 */
 	public void furthestAllowablePositionBackward(Car car, MutableGPPP end) {
 		
-		final MutableGPPP start = new MutableGPPP();
 		start.set(this);
 		start.findFirstRightAngleBackwardOrEnd(end);
 		
@@ -837,13 +850,9 @@ public class MutableGPPP implements Serializable {
 			return;
 		}
 		
-		final MutableGPPP b = new MutableGPPP();
 		b.set(start);
-		final MutableGPPP a = new MutableGPPP();
-		final MutableGPPP startFloor = new MutableGPPP();
 		startFloor.set(start);
 		startFloor.floor();
-		final MutableGPPP endCeil = new MutableGPPP();
 		endCeil.set(end);
 		endCeil.ceil();
 		
@@ -957,13 +966,9 @@ public class MutableGPPP implements Serializable {
 			
 		}
 		
-		final MutableGPPP a = new MutableGPPP();
 		a.set(this);
-		final MutableGPPP b = new MutableGPPP();
-		final MutableGPPP startCeiling = new MutableGPPP();
 		startCeiling.set(this);
 		startCeiling.ceil();
-		final MutableGPPP endFloor = new MutableGPPP();
 		endFloor.set(end);
 		endFloor.floor();
 		
@@ -1034,13 +1039,9 @@ public class MutableGPPP implements Serializable {
 			return;
 		}
 		
-		final MutableGPPP b = new MutableGPPP();
 		b.set(this);
-		final MutableGPPP a = new MutableGPPP();
-		final MutableGPPP startFloor = new MutableGPPP();
 		startFloor.set(this);
 		startFloor.floor();
-		final MutableGPPP endCeil = new MutableGPPP();
 		endCeil.set(end);
 		endCeil.ceil();
 		
@@ -1091,8 +1092,10 @@ public class MutableGPPP implements Serializable {
 		
 		double bestParam = -1.0;
 		
-		for (BypassBoard b : car.world.graph.boards) {
-			for (Line l : b.perimeterSegments) {
+		for (int i = 0; i < car.world.graph.boards.size(); i++) {
+			BypassBoard b = car.world.graph.boards.get(i);
+			for (int j = 0; j < b.perimeterSegments.size(); j++) {
+				Line l = b.perimeterSegments.get(j);
 				double param = SweepUtils.firstCollisionParam(l, swept);
 				if (param != -1 && (bestParam == -1 || DMath.lessThan(param, bestParam))) {
 					bestParam = param;
@@ -1100,7 +1103,8 @@ public class MutableGPPP implements Serializable {
 			}
 		}
 		
-		for (Car c : car.world.carMap.cars) {
+		for (int i = 0; i < car.world.carMap.cars.size(); i++) {
+			Car c = car.world.carMap.cars.get(i);
 			if (c == car) {
 				continue;
 			}
@@ -1117,8 +1121,10 @@ public class MutableGPPP implements Serializable {
 		
 		double bestParam = -1.0;
 		
-		for (BypassBoard b : car.world.graph.boards) {
-			for (Line l : b.perimeterSegments) {
+		for (int i = 0; i < car.world.graph.boards.size(); i++) {
+			BypassBoard b = car.world.graph.boards.get(i);
+			for (int j = 0; j < b.perimeterSegments.size(); j++) {
+				Line l = b.perimeterSegments.get(j);
 				double param = SweepUtils.firstCollisionParam(l, swept);
 				if (param != -1 && (bestParam == -1 || DMath.lessThan(param, bestParam))) {
 					bestParam = param;
@@ -1126,7 +1132,8 @@ public class MutableGPPP implements Serializable {
 			}
 		}
 		
-		for (Car c : car.world.carMap.cars) {
+		for (int i = 0; i < car.world.carMap.cars.size(); i++) {
+			Car c = car.world.carMap.cars.get(i);
 			if (c == car) {
 				continue;
 			}
@@ -1148,7 +1155,7 @@ public class MutableGPPP implements Serializable {
 			forward = false;
 		}
 		
-		final MutableGPPP start = this;
+		start.set(this);
 		
 		assert start.gp instanceof BypassBoardPosition;
 		BypassBoard board = (BypassBoard)((BypassBoardPosition)start.gp).entity;
@@ -1160,9 +1167,7 @@ public class MutableGPPP implements Serializable {
 		
 		int m = 0;
 		
-		final MutableGPPP a = new MutableGPPP();
 		a.set(start);
-		final MutableGPPP b = new MutableGPPP();
 		
 		while (true) {
 			

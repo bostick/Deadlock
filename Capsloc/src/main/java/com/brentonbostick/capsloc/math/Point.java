@@ -705,9 +705,11 @@ public class Point implements Serializable {
 	}
 	
 	public static void worldToPanel(MutableAABB aabb, WorldCamera cam, MutableAABB out) {
-		Point ul = worldToPanel(aabb.x, aabb.y, cam);
-		Point br = worldToPanel(aabb.x+aabb.width, aabb.y+aabb.height, cam);
-		out.setShape(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
+		double ulX = (aabb.x - cam.worldViewport.x) * cam.pixelsPerMeter;
+		double ulY = (aabb.y - cam.worldViewport.y) * cam.pixelsPerMeter;
+		double brX = (aabb.x+aabb.width - cam.worldViewport.x) * cam.pixelsPerMeter;
+		double brY = (aabb.y+aabb.height - cam.worldViewport.y) * cam.pixelsPerMeter;
+		out.setShape(ulX, ulY, brX - ulX, brY - ulY);
 	}
 	
 	public static Point panelToMenu(Point p, Menu menu) {

@@ -8,16 +8,19 @@ public class MutableGPPAccumulator {
 	
 	Point p;
 	
-	public final MutableGPPP closest = new MutableGPPP();
+	int closestIndex;
+	double closestParam;
 	double closestDistance;
 	
-	public MutableGPPAccumulator(MutableGPPP par) {
-		this.par = par;
+	public MutableGPPAccumulator() {
+		
 	}
 	
-	public void reset(Point p) {
+	public void reset(MutableGPPP par, Point p) {
+		this.par = par;
 		this.p = p;
-		closest.set(par.path, par.index,  par.param);
+		closestIndex = par.index;
+		closestParam = par.param;
 		closestDistance = Point.distance(p, par.p);
 	}
 	
@@ -26,12 +29,16 @@ public class MutableGPPAccumulator {
 	final MutableGPPP b = new MutableGPPP();
 	
 	public void apply(MutableGPPP p0, MutableGPPP p1) {
+		apply(p0.path, p0.index, p0.param, p1.index, p1.param);
+	}
+	
+	public void apply(GraphPositionPath path, int p0Index, double p0Param, int p1Index, double p1Param) {
 		
-		assert p0.combo < p1.combo;
+		assert p0Index+p0Param < p1Index+p1Param;
 		
-		a.set(p0);
+		a.set(path, p0Index, p0Param);
 		a.floor();
-		b.set(p1);
+		b.set(path, p1Index, p1Param);
 		b.ceil();
 		Point aa = a.p;
 		Point bb = b.p;
@@ -47,7 +54,8 @@ public class MutableGPPAccumulator {
 			
 		double dist = Point.distance(p, pOnPath);
 		if (dist < closestDistance) {
-			closest.set(closest.path, a.index, u);
+			closestIndex = a.index;
+			closestParam = u;
 			closestDistance = dist;
 			
 		}

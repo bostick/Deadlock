@@ -1249,20 +1249,24 @@ public class BypassBoard extends Entity {
 	}
 	
 	
-	MutableAABB testFloor = new MutableAABB();
-	MutableAABB testCeil = new MutableAABB();
+	static final MutableGPPP tmpFloorPos = new MutableGPPP();
+	static final MutableAABB testFloor = new MutableAABB();
+	
+	static final MutableGPPP tmpCeilPos = new MutableGPPP();
+	static final MutableAABB testCeil = new MutableAABB();
 	
 	public boolean floorAndCeilWithinGrid(Car c) {
 		
-		MutableGPPP tmpFloorPos = new MutableGPPP();
 		tmpFloorPos.set(c.driver.overallPos);
 		tmpFloorPos.floor(c.length/2);
-		MutableGPPP tmpCeilPos = new MutableGPPP();
+		Point tmpFloorP = tmpFloorPos.p;
+		
 		tmpCeilPos.set(c.driver.overallPos);
 		tmpCeilPos.ceil(c.length/2);
+		Point tmpCeilP = tmpCeilPos.p;
 		
-		Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpFloorPos.p, testFloor);
-		Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpCeilPos.p, testCeil);
+		Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpFloorP, testFloor);
+		Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpCeilP, testCeil);
 		
 		boolean floorWithin = testFloor.completelyWithin(gridAABB);
 		boolean ceilWithin = testCeil.completelyWithin(gridAABB);

@@ -37,9 +37,9 @@ public class Geom {
 		}
 	}
 	
-	public static OBB localToWorld(AABB a, double angle, Point t) {
-		return new OBB(t, angle, a.width/2, a.height/2);
-	}
+//	public static OBB localToWorld(AABB a, double angle, Point t) {
+//		return new OBB(t, angle, a.width/2, a.height/2);
+//	}
 	
 	public static void localToWorld(AABB a, double angle, Point t, MutableOBB out) {
 		out.setShape(t, angle, a.width/2, a.height/2);

@@ -4,6 +4,7 @@ import com.brentonbostick.capsloc.math.Point;
 import com.brentonbostick.capsloc.world.graph.GraphPosition;
 import com.brentonbostick.capsloc.world.graph.Side;
 import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
+import com.brentonbostick.capsloc.world.graph.gpp.MutableGPPAccumulator;
 import com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP;
 
 public abstract class Driver {
@@ -16,6 +17,7 @@ public abstract class Driver {
 	public GraphPositionPath overallPath;
 	
 	public MutableGPPP overallPos = new MutableGPPP();
+	public MutableGPPAccumulator acc = new MutableGPPAccumulator();
 	final public MutableGPPP prevOverallPos = new MutableGPPP();
 	
 	Point goalPoint;

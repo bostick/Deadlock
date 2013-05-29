@@ -175,7 +175,7 @@ public final class AutonomousDriver extends Driver {
 	
 	public void postStep(double t) {
 		prevOverallPos.set(overallPos);
-		overallPos.forwardSearch(c.center, Double.POSITIVE_INFINITY);
+		overallPos.forwardSearch(c.center, Double.POSITIVE_INFINITY, acc);
 	}
 	
 	private CarProximityEvent findNewCarProximityEvent() {

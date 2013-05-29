@@ -29,7 +29,8 @@ public class GraphPositionPathPosition implements Serializable {
 	public final double lengthToStartOfPath;
 	public final double lengthToEndOfPath;
 	
-	public final Point pathVector;
+	public final double pathVectorX;
+	public final double pathVectorY;
 	public final double angle;
 	
 	private int hash;
@@ -54,7 +55,8 @@ public class GraphPositionPathPosition implements Serializable {
 		this.lengthToStartOfPath = gppp.lengthToStartOfPath;
 		this.lengthToEndOfPath = gppp.lengthToEndOfPath;
 		
-		this.pathVector = gppp.pathVector;
+		this.pathVectorX = gppp.pathVectorX;
+		this.pathVectorY = gppp.pathVectorY;
 		this.angle = gppp.angle;
 	}
 	
@@ -194,10 +196,10 @@ public class GraphPositionPathPosition implements Serializable {
 	 * 
 	 * finds closest position in a graphpositionpath to p
 	 */
-	public GraphPositionPathPosition forwardSearch(final Point p, double lengthFromStart) {
+	public GraphPositionPathPosition forwardSearch(final Point p, double lengthFromStart, MutableGPPAccumulator acc) {
 		MutableGPPP tmp = new MutableGPPP();
 		tmp.set(gppp);
-		tmp.forwardSearch(p, lengthFromStart);
+		tmp.forwardSearch(p, lengthFromStart, acc);
 		return tmp.copy();
 	}
 	
@@ -206,20 +208,20 @@ public class GraphPositionPathPosition implements Serializable {
 	 * 
 	 * finds closest position in a graphpositionpath to p
 	 */
-	public GraphPositionPathPosition backwardSearch(Point p, double lengthFromStart) {
+	public GraphPositionPathPosition backwardSearch(Point p, double lengthFromStart, MutableGPPAccumulator acc) {
 		MutableGPPP tmp = new MutableGPPP();
 		tmp.set(gppp);
-		tmp.backwardSearch(p, lengthFromStart);
+		tmp.backwardSearch(p, lengthFromStart, acc);
 		return tmp.copy();
 	}
 	
 	/**
 	 * searches both forward and backward from start position
 	 */
-	public GraphPositionPathPosition generalSearch(Point p, double radius) {
+	public GraphPositionPathPosition generalSearch(Point p, double radius, MutableGPPAccumulator acc) {
 		MutableGPPP tmp = new MutableGPPP();
 		tmp.set(gppp);
-		tmp.generalSearch(p, radius);
+		tmp.generalSearch(p, radius, acc);
 		return tmp.copy();
 	}
 	
@@ -276,8 +278,10 @@ public class GraphPositionPathPosition implements Serializable {
 		
 		double bestParam = -1.0;
 		
-		for (BypassBoard b : car.world.graph.boards) {
-			for (Line l : b.perimeterSegments) {
+		for (int i = 0; i < car.world.graph.boards.size(); i++) {
+			BypassBoard b = car.world.graph.boards.get(i);
+			for (int j = 0; j < b.perimeterSegments.size(); j++) {
+				Line l = b.perimeterSegments.get(j);
 				double param = SweepUtils.firstCollisionParam(l, swept);
 				if (param != -1 && (bestParam == -1 || DMath.lessThan(param, bestParam))) {
 					bestParam = param;
@@ -285,7 +289,8 @@ public class GraphPositionPathPosition implements Serializable {
 			}
 		}
 		
-		for (Car c : car.world.carMap.cars) {
+		for (int i = 0; i < car.world.carMap.cars.size(); i++) {
+			Car c = car.world.carMap.cars.get(i);
 			if (c == car) {
 				continue;
 			}
@@ -302,8 +307,10 @@ public class GraphPositionPathPosition implements Serializable {
 		
 		double bestParam = -1.0;
 		
-		for (BypassBoard b : car.world.graph.boards) {
-			for (Line l : b.perimeterSegments) {
+		for (int i = 0; i < car.world.graph.boards.size(); i++) {
+			BypassBoard b = car.world.graph.boards.get(i);
+			for (int j = 0; j < b.perimeterSegments.size(); j++) {
+				Line l = b.perimeterSegments.get(j);
 				double param = SweepUtils.firstCollisionParam(l, swept);
 				if (param != -1 && (bestParam == -1 || DMath.lessThan(param, bestParam))) {
 					bestParam = param;
@@ -311,7 +318,8 @@ public class GraphPositionPathPosition implements Serializable {
 			}
 		}
 		
-		for (Car c : car.world.carMap.cars) {
+		for (int i = 0; i < car.world.carMap.cars.size(); i++) {
+			Car c = car.world.carMap.cars.get(i);
 			if (c == car) {
 				continue;
 			}

@@ -4,9 +4,9 @@ import static com.brentonbostick.capsloc.CapslocApplication.APP;
 
 import com.brentonbostick.capsloc.Integratable;
 import com.brentonbostick.capsloc.geom.Geom;
-import com.brentonbostick.capsloc.geom.OBB;
+import com.brentonbostick.capsloc.geom.MutableOBB;
+import com.brentonbostick.capsloc.geom.MutableSweptOBB;
 import com.brentonbostick.capsloc.geom.ShapeUtils;
-import com.brentonbostick.capsloc.geom.SweptOBB;
 import com.brentonbostick.capsloc.math.DMath;
 import com.brentonbostick.capsloc.math.Point;
 import com.brentonbostick.capsloc.ui.paint.Cap;
@@ -80,7 +80,13 @@ public class BypassCar extends Car {
 		if (dragVector == null) {
 			d = 0;
 		} else {
-			d = Math.max(Point.dot(dragVector, (pathForward ? driver.overallPos.pathVector : driver.overallPos.pathVector.negate())) / driver.overallPos.pathVector.length(), 0.0);
+			double proj;
+			if (pathForward) {
+				proj = ((dragVector.x * driver.overallPos.pathVectorX) + (dragVector.y * driver.overallPos.pathVectorY)) / Math.hypot(driver.overallPos.pathVectorX, driver.overallPos.pathVectorY);
+			} else {
+				proj = ((dragVector.x * -driver.overallPos.pathVectorX) + (dragVector.y * -driver.overallPos.pathVectorY)) / Math.hypot(driver.overallPos.pathVectorX, driver.overallPos.pathVectorY);	
+			}
+			d = Math.max(proj, 0.0);
 		}
 		
 		double vel;
@@ -103,6 +109,11 @@ public class BypassCar extends Car {
 		coastingVel = 0.0;
 	}
 	
+	static final MutableGPPP newPos = new MutableGPPP();
+	static final MutableOBB so = new MutableOBB();
+	static final MutableOBB eo = new MutableOBB();
+	static final MutableSweptOBB swept = new MutableSweptOBB();
+	
 	public void fakeCoastingStep(double t) {
 		assert state == CarStateEnum.COASTING_FORWARD || state == CarStateEnum.COASTING_BACKWARD;
 		
@@ -112,7 +123,6 @@ public class BypassCar extends Car {
 		
 		double dist = coastingVel * Integratable.DT;
 		
-		MutableGPPP newPos = new MutableGPPP();
 		newPos.set(driver.overallPos);
 		if (state == CarStateEnum.COASTING_FORWARD) {
 			newPos.travelForward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
@@ -124,7 +134,7 @@ public class BypassCar extends Car {
 			
 			coastingVel = 0;
 			
-			newPos = driver.toolCoastingGoal;
+			newPos.set(driver.toolCoastingGoal);
 			state = CarStateEnum.IDLE;
 			
 			setTransform(newPos.p, (state == CarStateEnum.COASTING_FORWARD ? newPos.angle : newPos.angle));
@@ -149,9 +159,9 @@ public class BypassCar extends Car {
 		} else {
 			
 			if (DMath.equals(driver.overallPos.angle, newPos.angle)) {
-				OBB so = Geom.localToWorld(localAABB, driver.overallPos.angle, driver.overallPos.p);
-				OBB eo = Geom.localToWorld(localAABB, newPos.angle, newPos.p);
-				SweptOBB swept = new SweptOBB(so, eo);
+				Geom.localToWorld(localAABB, driver.overallPos.angle, driver.overallPos.p, so);
+				Geom.localToWorld(localAABB, newPos.angle, newPos.p, eo);
+				swept.setShape(so, eo);
 				
 				if (swept.isAABB) {
 					double param = GraphPositionPathPosition.firstCollisionParam(this, swept);
