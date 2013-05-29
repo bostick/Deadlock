@@ -25,6 +25,7 @@ com.brentonbostick.bypass.android.ResourceType: com.brentonbostick.bypass.androi
 com.brentonbostick.bypass.android.ResourceType: com.brentonbostick.bypass.android.ResourceType valueOf(java.lang.String)
 com.brentonbostick.bypass.android.level.BypassWorldActivity
 com.brentonbostick.bypass.android.level.BypassWorldActivity: BypassWorldActivity()
+com.brentonbostick.bypass.android.lite.BypassAndroidLitePlatform
 com.brentonbostick.bypass.android.lite.MainMenuActivity
 com.brentonbostick.bypass.android.lite.MainMenuActivity: MainMenuActivity()
 com.brentonbostick.bypass.android.lite.R$color: int grass_green

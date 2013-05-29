@@ -23,6 +23,7 @@ com.brentonbostick.bypass.android.R$style: int Theme_BypassLevelMenu
 com.brentonbostick.bypass.android.R$style: int Theme_BypassWorld
 com.brentonbostick.bypass.android.ResourceType: com.brentonbostick.bypass.android.ResourceType[] values()
 com.brentonbostick.bypass.android.ResourceType: com.brentonbostick.bypass.android.ResourceType valueOf(java.lang.String)
+com.brentonbostick.bypass.android.full.BypassAndroidFullPlatform
 com.brentonbostick.bypass.android.full.MainMenuActivity
 com.brentonbostick.bypass.android.full.MainMenuActivity: MainMenuActivity()
 com.brentonbostick.bypass.android.full.R$color: int grass_green
