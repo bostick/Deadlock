@@ -41,9 +41,9 @@ public class MutableGPPP implements Serializable {
 	
 	private int hash;
 	
-	public MutableGPPP() {
-		String.class.getName();
-	}
+//	public MutableGPPP() {
+//		String.class.getName();
+//	}
 	
 	public void set(GraphPositionPath path, int preIndex, double preParam) {
 		

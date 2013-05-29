@@ -150,10 +150,10 @@ public class BypassCar extends Car {
 				((BypassWorld)world).handlePanning(this, this.center);
 			}
 			
-			driver.toolOrigExitingVertexPos.clear();
-			driver.toolLastExitingVertexPos.clear();
-			driver.toolCoastingGoal.clear();
-			driver.prevOverallPos.clear();
+//			driver.toolOrigExitingVertexPos.clear();
+//			driver.toolLastExitingVertexPos.clear();
+//			driver.toolCoastingGoal.clear();
+//			driver.prevOverallPos.clear();
 			
 			return;
 		} else {
