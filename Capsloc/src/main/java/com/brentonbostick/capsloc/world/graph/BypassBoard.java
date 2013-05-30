@@ -16,7 +16,6 @@ import com.brentonbostick.capsloc.geom.Line;
 import com.brentonbostick.capsloc.geom.MutableAABB;
 import com.brentonbostick.capsloc.geom.MutableOBB;
 import com.brentonbostick.capsloc.math.Point;
-import com.brentonbostick.capsloc.ui.Image;
 import com.brentonbostick.capsloc.ui.paint.Cap;
 import com.brentonbostick.capsloc.ui.paint.Color;
 import com.brentonbostick.capsloc.ui.paint.Join;
@@ -75,7 +74,7 @@ public class BypassBoard extends Entity {
 	private Map<Integer, GraphPositionPath> rowPaths = new HashMap<Integer, GraphPositionPath>();
 	private Map<Integer, GraphPositionPath> colPaths = new HashMap<Integer, GraphPositionPath>();
 	
-	Image img;
+//	Image img;
 	
 	public BypassBoard(World world, Point center, char[][] ini) {
 		this.world = world;
@@ -349,18 +348,18 @@ public class BypassBoard extends Entity {
 					(kStudCount == 2 && (kStuds[0].col == -1 && kStuds[0].row == i || kStuds[1].col == -1 && kStuds[1].row == i))) {
 				track.add(new BypassBoardPosition(this, i + 0.5, -1));
 			}
-			for (int j = 0; j < colCount; j++) {
+			for (int j = 0; j <= colCount; j++) {
 				track.add(new BypassBoardPosition(this, i + 0.5, j));
 			}
 			if (yStud.col == colCount && yStud.row == i) {
 				/*
 				 * on right, so add last BypassBoardPosition
 				 */
-				track.add(new BypassBoardPosition(this, i + 0.5, colCount));
+//				track.add(new BypassBoardPosition(this, i + 0.5, colCount));
 				addExitRoadToTrack(track, yStud);
 			} else if ((jStudCount == 2 && (jStuds[0].col == colCount && jStuds[0].row == i || jStuds[1].col == colCount && jStuds[1].row == i)) ||
 					(kStudCount == 2 && (kStuds[0].col == colCount && kStuds[0].row == i || kStuds[1].col == colCount && kStuds[1].row == i))) {
-				track.add(new BypassBoardPosition(this, i + 0.5, colCount));
+//				track.add(new BypassBoardPosition(this, i + 0.5, colCount));
 			}
 			rowTracks.put(i, track);
 		}
@@ -376,18 +375,18 @@ public class BypassBoard extends Entity {
 					(kStudCount == 2 && (kStuds[0].row == -1 && kStuds[0].col == i || kStuds[1].row == -1 && kStuds[1].col == i))) {
 				track.add(new BypassBoardPosition(this, -1, i + 0.5));
 			}
-			for (int j = 0; j < rowCount; j++) {
+			for (int j = 0; j <= rowCount; j++) {
 				track.add(new BypassBoardPosition(this, j, i + 0.5));
 			}
 			if (yStud.row == rowCount && yStud.col == i) {
 				/*
 				 * on bottom, so add last BypassBoardPosition
 				 */
-				track.add(new BypassBoardPosition(this, rowCount, i + 0.5));
+//				track.add(new BypassBoardPosition(this, rowCount, i + 0.5));
 				addExitRoadToTrack(track, yStud);
 			} else if ((jStudCount == 2 && (jStuds[0].row == rowCount && jStuds[0].col == i || jStuds[1].row == rowCount && jStuds[1].col == i)) ||
 					(kStudCount == 2 && (kStuds[0].row == rowCount && kStuds[0].col == i || kStuds[1].row == rowCount && kStuds[1].col == i))) {
-				track.add(new BypassBoardPosition(this, rowCount, i + 0.5));
+//				track.add(new BypassBoardPosition(this, rowCount, i + 0.5));
 			}
 			colTracks.put(i, track);
 		}
@@ -1334,23 +1333,23 @@ public class BypassBoard extends Entity {
 				break;
 			case RENDERED_ROADS_VERTICES_BOARDS:
 				
-				if (img != null) {
-					img.dispose();
-				}
-				
-				img = APP.platform.createTransparentImage((int)(allStudsAABB.width * world.worldCamera.pixelsPerMeter), (int)(allStudsAABB.height * world.worldCamera.pixelsPerMeter));
-				
-				RenderingContext ctxt = APP.platform.createRenderingContext();
-				APP.platform.setRenderingContextFields1(ctxt, img);
-				
-				ctxt.cam = world.worldCamera;
-				
-				ctxt.scale(world.worldCamera.pixelsPerMeter, world.worldCamera.pixelsPerMeter);
-				ctxt.translate(-allStudsAABB.x, -allStudsAABB.y);
-				
-				paintStuds(ctxt);
-				
-				ctxt.dispose();
+//				if (img != null) {
+//					img.dispose();
+//				}
+//				
+//				img = APP.platform.createTransparentImage((int)(allStudsAABB.width * world.worldCamera.pixelsPerMeter), (int)(allStudsAABB.height * world.worldCamera.pixelsPerMeter));
+//				
+//				RenderingContext ctxt = APP.platform.createRenderingContext();
+//				APP.platform.setRenderingContextFields1(ctxt, img);
+//				
+//				ctxt.cam = world.worldCamera;
+//				
+//				ctxt.scale(world.worldCamera.pixelsPerMeter, world.worldCamera.pixelsPerMeter);
+//				ctxt.translate(-allStudsAABB.x, -allStudsAABB.y);
+//				
+//				paintStuds(ctxt);
+//				
+//				ctxt.dispose();
 				
 				break;
 			
@@ -1376,9 +1375,9 @@ public class BypassBoard extends Entity {
 		case RENDERED_ROADS_VERTICES:
 			break;
 		case RENDERED_ROADS_VERTICES_BOARDS:
-			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter,
-					allStudsAABB.x, allStudsAABB.y, allStudsAABB.x+allStudsAABB.width, allStudsAABB.y+allStudsAABB.height,
-					0, 0, img.getWidth(), img.getHeight());
+//			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter,
+//					allStudsAABB.x, allStudsAABB.y, allStudsAABB.x+allStudsAABB.width, allStudsAABB.y+allStudsAABB.height,
+//					0, 0, img.getWidth(), img.getHeight());
 			break;
 		}
 		

@@ -473,7 +473,7 @@ public class BypassCarTool extends WorldToolBase {
 		}
 		
 		newFrontPos.set(actualPos);
-		if (car.state == CarStateEnum.COASTING_FORWARD) {
+		if (actualPos.combo > car.driver.overallPos.combo) {
 			newFrontPos.travelForward(car.length / 2);
 		} else {
 			newFrontPos.travelBackward(car.length / 2);

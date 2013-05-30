@@ -128,6 +128,7 @@ public class BypassCar extends Car {
 		if (state == CarStateEnum.COASTING_FORWARD) {
 			newPos.travelForward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
 		} else {
+			assert state == CarStateEnum.COASTING_BACKWARD;
 			newPos.travelBackward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
 		}
 		
@@ -212,9 +213,10 @@ public class BypassCar extends Car {
 		
 		newFrontPos.set(newPos);
 		if (state == CarStateEnum.COASTING_FORWARD) {
-			newFrontPos.travelForward(length / 2);
+			newFrontPos.travelForward(Math.min(length / 2, newFrontPos.lengthToEndOfPath));
 		} else {
-			newFrontPos.travelBackward(length / 2);
+			assert state == CarStateEnum.COASTING_BACKWARD : state;
+			newFrontPos.travelBackward(Math.min(length / 2, newFrontPos.lengthToStartOfPath));
 		}
 		double a = Math.atan2(newFrontPos.p.y - newPos.p.y, newFrontPos.p.x - newPos.p.x);
 		
