@@ -106,6 +106,7 @@ public class BypassCarTool extends WorldToolBase {
 	static final MutableGPPP tmpRoundPos = new MutableGPPP();
 	static final MutableGPPP attemptedPos = new MutableGPPP();
 	static final MutableGPPP actualPos = new MutableGPPP();
+	static final MutableGPPP newFrontPos = new MutableGPPP();
 	
 	private void releasedOrCanceled() {
 		
@@ -471,7 +472,15 @@ public class BypassCarTool extends WorldToolBase {
 			return;
 		}
 		
-		car.setTransform(actualPos.p, actualPos.angle);
+		newFrontPos.set(actualPos);
+		if (car.state == CarStateEnum.COASTING_FORWARD) {
+			newFrontPos.travelForward(car.length / 2);
+		} else {
+			newFrontPos.travelBackward(car.length / 2);
+		}
+		double a = Math.atan2(newFrontPos.p.y - actualPos.p.y, newFrontPos.p.x - actualPos.p.x);
+		
+		car.setTransform(actualPos.p, a);
 		car.setPhysicsTransform();
 		
 		car.driver.prevOverallPos.set(car.driver.overallPos);
