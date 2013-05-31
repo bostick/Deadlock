@@ -1,4 +1,4 @@
-package solver;
+package com.brentonbostick.bypass.solver;
 
 public class CarInfo {
 	byte o;

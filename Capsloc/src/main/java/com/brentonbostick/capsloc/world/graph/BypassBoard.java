@@ -16,6 +16,7 @@ import com.brentonbostick.capsloc.geom.Line;
 import com.brentonbostick.capsloc.geom.MutableAABB;
 import com.brentonbostick.capsloc.geom.MutableOBB;
 import com.brentonbostick.capsloc.math.Point;
+import com.brentonbostick.capsloc.ui.Image;
 import com.brentonbostick.capsloc.ui.paint.Cap;
 import com.brentonbostick.capsloc.ui.paint.Color;
 import com.brentonbostick.capsloc.ui.paint.Join;
@@ -74,7 +75,7 @@ public class BypassBoard extends Entity {
 	private Map<Integer, GraphPositionPath> rowPaths = new HashMap<Integer, GraphPositionPath>();
 	private Map<Integer, GraphPositionPath> colPaths = new HashMap<Integer, GraphPositionPath>();
 	
-//	Image img;
+	Image img;
 	
 	public BypassBoard(World world, Point center, char[][] ini) {
 		this.world = world;
@@ -1333,23 +1334,23 @@ public class BypassBoard extends Entity {
 				break;
 			case RENDERED_ROADS_VERTICES_BOARDS:
 				
-//				if (img != null) {
-//					img.dispose();
-//				}
-//				
-//				img = APP.platform.createTransparentImage((int)(allStudsAABB.width * world.worldCamera.pixelsPerMeter), (int)(allStudsAABB.height * world.worldCamera.pixelsPerMeter));
-//				
-//				RenderingContext ctxt = APP.platform.createRenderingContext();
-//				APP.platform.setRenderingContextFields1(ctxt, img);
-//				
-//				ctxt.cam = world.worldCamera;
-//				
-//				ctxt.scale(world.worldCamera.pixelsPerMeter, world.worldCamera.pixelsPerMeter);
-//				ctxt.translate(-allStudsAABB.x, -allStudsAABB.y);
-//				
-//				paintStuds(ctxt);
-//				
-//				ctxt.dispose();
+				if (img != null) {
+					img.dispose();
+				}
+				
+				img = APP.platform.createTransparentImage((int)(allStudsAABB.width * world.worldCamera.pixelsPerMeter), (int)(allStudsAABB.height * world.worldCamera.pixelsPerMeter));
+				
+				RenderingContext ctxt = APP.platform.createRenderingContext();
+				APP.platform.setRenderingContextFields1(ctxt, img);
+				
+				ctxt.cam = world.worldCamera;
+				
+				ctxt.scale(world.worldCamera.pixelsPerMeter, world.worldCamera.pixelsPerMeter);
+				ctxt.translate(-allStudsAABB.x, -allStudsAABB.y);
+				
+				paintStuds(ctxt);
+				
+				ctxt.dispose();
 				
 				break;
 			
@@ -1375,9 +1376,9 @@ public class BypassBoard extends Entity {
 		case RENDERED_ROADS_VERTICES:
 			break;
 		case RENDERED_ROADS_VERTICES_BOARDS:
-//			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter,
-//					allStudsAABB.x, allStudsAABB.y, allStudsAABB.x+allStudsAABB.width, allStudsAABB.y+allStudsAABB.height,
-//					0, 0, img.getWidth(), img.getHeight());
+			ctxt.paintImage(img, ctxt.cam.pixelsPerMeter, ctxt.cam.pixelsPerMeter,
+					allStudsAABB.x, allStudsAABB.y, allStudsAABB.x+allStudsAABB.width, allStudsAABB.y+allStudsAABB.height,
+					0, 0, img.getWidth(), img.getHeight());
 			break;
 		}
 		

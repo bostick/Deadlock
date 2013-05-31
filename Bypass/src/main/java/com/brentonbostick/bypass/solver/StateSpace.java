@@ -1,4 +1,4 @@
-package solver;
+package com.brentonbostick.bypass.solver;
 
 import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.set.hash.TLongHashSet;

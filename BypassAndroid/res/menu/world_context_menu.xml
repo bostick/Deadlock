@@ -2,12 +2,14 @@
 
     <item
         android:id="@+id/btn_world_resetLevel"
-        android:title="@string/reset_level"
-        android:showAsAction="ifRoom|withText" />
+        android:title="@string/reset_level" />
+    
+    <item
+        android:id="@+id/btn_world_hint"
+        android:title="@string/hint" />
     
     <item
         android:id="@+id/btn_world_toggleInfo"
-        android:title="@string/toggle_info"
-        android:showAsAction="ifRoom|withText" />
+        android:title="@string/toggle_info" />
     	
 </menu>

@@ -1,4 +1,4 @@
-package solver;
+package com.brentonbostick.bypass.solver;
 
 import java.util.ArrayList;
 import java.util.List;

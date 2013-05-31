@@ -7,5 +7,6 @@
     <string name="clear_scores">Clear Scores</string>
     
     <string name="reset_level">Reset Level</string>
+    <string name="hint">Hint</string>
     
 </resources>
