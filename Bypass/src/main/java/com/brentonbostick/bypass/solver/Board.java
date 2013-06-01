@@ -272,7 +272,12 @@ public class Board {
 		
 		return true;
 	}
-
+	
+	/*
+	 * set to true to globally prevent any alpha reduction
+	 */
+	public static boolean PREVENT_ALPHA_REDUCE = false;
+	
 	public void moveCar(byte c, int size, byte oldO, int oldRow, int oldCol, byte newO, int newRow, int newCol, boolean alphaReduce, Board out) {
 		
 		assert this != out;
@@ -290,7 +295,7 @@ public class Board {
 		prevRow = oldRow;
 		prevCol = oldCol;
 		
-		if (alphaReduce) {
+		if (alphaReduce && !PREVENT_ALPHA_REDUCE) {
 			out.alphaReduce();
 		}
 		

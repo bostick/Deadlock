@@ -1,8 +1,11 @@
-package com.brentonbostick.bypass.solver;
+package com.brentonbostick.bypass.generator;
 
 import gnu.trove.list.array.TLongArrayList;
 
 import java.util.List;
+
+import com.brentonbostick.bypass.solver.Board;
+import com.brentonbostick.bypass.solver.Solver;
 
 public class Partition {
 	
@@ -10,7 +13,7 @@ public class Partition {
 	
 	byte[] partitionId;
 	
-	StateSpace space = new StateSpace();
+	GeneratingStateSpace space = new GeneratingStateSpace();
 	
 	int totalBoardCount;
 	int candidateBoardCount;

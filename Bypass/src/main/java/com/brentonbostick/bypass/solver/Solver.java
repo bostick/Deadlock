@@ -3,11 +3,12 @@ package com.brentonbostick.bypass.solver;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Solver {
 	
 	public static List<String> solve(Board start) {
 		
-		StateSpace space = new StateSpace();
+		SolvingStateSpace space = new SolvingStateSpace();
 		space.putSolving(start, null);
 		
 		Board winner = null;

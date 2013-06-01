@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[     18473,        479]
-NotebookOptionsPosition[     17999,        460]
-NotebookOutlinePosition[     18345,        475]
-CellTagsIndexPosition[     18302,        472]
+NotebookDataLength[     21593,        557]
+NotebookOptionsPosition[     20849,        529]
+NotebookOutlinePosition[     21195,        544]
+CellTagsIndexPosition[     21152,        541]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -53,19 +53,24 @@ Cell[BoxData[{
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"LoadJavaClass", "[", "\"\<solver.Solver\>\"", "]"}], 
-  ";"}], "\[IndentingNewLine]", 
+  RowBox[{
+  "LoadJavaClass", "[", "\"\<com.brentonbostick.bypass.solver.Solver\>\"", 
+   "]"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"LoadJavaClass", "[", "\"\<solver.Board\>\"", "]"}], 
-  ";"}], "\[IndentingNewLine]", 
+  RowBox[{
+  "LoadJavaClass", "[", "\"\<com.brentonbostick.bypass.solver.Board\>\"", 
+   "]"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"LoadJavaClass", "[", "\"\<solver.Parent\>\"", "]"}], 
-  ";"}]}], "Input",
- CellChangeTimes->{{3.5772962632459984`*^9, 3.5772962728799734`*^9}}],
+  RowBox[{
+  "LoadJavaClass", "[", "\"\<com.brentonbostick.bypass.solver.Parent\>\"", 
+   "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.5772962632459984`*^9, 3.5772962728799734`*^9}, {
+  3.579022791577755*^9, 3.579022808091793*^9}}],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"test", "[", "singleStringBoard_", "]"}], ":=", 
+  RowBox[{"solve", "[", "singleStringBoard_", "]"}], ":=", 
+  "\[IndentingNewLine]", 
   RowBox[{"Module", "[", 
    RowBox[{
     RowBox[{"{", 
@@ -202,8 +207,9 @@ Cell[BoxData[
      "\[IndentingNewLine]", 
      RowBox[{"b", "=", 
       RowBox[{"JavaNew", "[", 
-       RowBox[{"\"\<solver.Board\>\"", ",", "6", ",", "6"}], "]"}]}], ";", 
-     "\[IndentingNewLine]", 
+       RowBox[{
+       "\"\<com.brentonbostick.bypass.solver.Board\>\"", ",", "6", ",", "6"}],
+        "]"}]}], ";", "\[IndentingNewLine]", 
      RowBox[{"For", "[", 
       RowBox[{
        RowBox[{"i", "=", "1"}], ",", 
@@ -237,7 +243,25 @@ Cell[BoxData[
        RowBox[{
         RowBox[{"res", "=", 
          RowBox[{"Solver`solve", "[", "b", "]"}]}], ";"}]}], 
-      "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", "res"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.5790230075651784`*^9, 3.5790230312724695`*^9}, {
+  3.5790230784588594`*^9, 3.5790230788771677`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"test", "[", "singleStringBoard_", "]"}], ":=", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+     "b", ",", "aPresent", ",", "bPresent", ",", "cPresent", ",", "dPresent", 
+      ",", "ePresent", ",", "fPresent", ",", "gPresent"}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"res", "=", 
+      RowBox[{"solve", "[", "singleStringBoard", "]"}]}], ";", 
+     "\[IndentingNewLine]", 
      RowBox[{"res2", "=", 
       RowBox[{"If", "[", 
        RowBox[{
@@ -271,7 +295,8 @@ Cell[BoxData[
    3.577533054683098*^9, 3.577533095281624*^9}, {3.577533160405961*^9, 
    3.5775331753018193`*^9}, {3.5775334632522516`*^9, 3.5775334981415944`*^9}, 
    3.5775356641279325`*^9, {3.5775357317771344`*^9, 3.577535731967293*^9}, {
-   3.577538895265998*^9, 3.5775389418508787`*^9}}],
+   3.577538895265998*^9, 3.5775389418508787`*^9}, 3.5790228237612114`*^9, 
+   3.5790229694213753`*^9, {3.579023095832509*^9, 3.5790231126087365`*^9}}],
 
 Cell[BoxData[
  RowBox[{
@@ -456,7 +481,51 @@ Cell[BoxData[
   3.5775251583540025`*^9, 3.5775254057329235`*^9}, {3.5775351390580783`*^9, 
   3.577535174141562*^9}, {3.577535369957983*^9, 3.577535404513113*^9}, {
   3.577535504198615*^9, 3.5775355199510717`*^9}, {3.5775387075684505`*^9, 
-  3.57753886225799*^9}, {3.5775389511606464`*^9, 3.577538951549934*^9}}]
+  3.57753886225799*^9}, {3.5775389511606464`*^9, 3.577538951549934*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\"\</-Y----\\\\\\n|      |\\n|      |\\n|      |\\n|      |\\n| \
+R    |\\n| R    |\\n\\\\------/\\n\>\""], "Input",
+ CellChangeTimes->{{3.579022938792085*^9, 3.5790229512631693`*^9}}],
+
+Cell[BoxData["\<\"/-Y----\\\\\\n|      |\\n|      |\\n|      |\\n|      |\\n| \
+R    |\\n| R    |\\n\\\\------/\\n\"\>"], "Output",
+ CellChangeTimes->{{3.5790229266141796`*^9, 3.579022951670471*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"JavaObjectToExpression", "[", 
+  RowBox[{
+  "solve", "[", 
+   "\"\</-Y----\\\\\\n|   A  |\\n| BBA  |\\n|      |\\n|      |\\n| R    \
+|\\n| R    |\\n\\\\------/\\n\>\"", "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.5790228905408835`*^9, 3.579022958145159*^9}, {
+  3.5790231237308426`*^9, 3.579023179001156*^9}, {3.57902366722997*^9, 
+  3.5790237260358644`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"/-Y----\\\\\\n|   A  |\\n| BBA  |\\n|      |\\n|      |\\n| R  \
+  |\\n| R    |\\n\\\\------/\\n\"\>", 
+   ",", "\<\"/-Y----\\\\\\n|   A  |\\n| BBA  |\\n|      |\\n| R    |\\n| R    \
+|\\n|      |\\n\\\\------/\\n\"\>", 
+   ",", "\<\"/-Y----\\\\\\n|   A  |\\n| BBA  |\\n| R    |\\n| R    |\\n|      \
+|\\n|      |\\n\\\\------/\\n\"\>", 
+   ",", "\<\"/-Y----\\\\\\n|      |\\n| AAB  |\\n| R B  |\\n| R    |\\n|      \
+|\\n|      |\\n\\\\------/\\n\"\>", 
+   ",", "\<\"/-Y----\\\\\\n|      |\\n| AA   |\\n| R B  |\\n| R B  |\\n|      \
+|\\n|      |\\n\\\\------/\\n\"\>", 
+   ",", "\<\"/-Y----\\\\\\n|      |\\n|  AA  |\\n| R B  |\\n| R B  |\\n|      \
+|\\n|      |\\n\\\\------/\\n\"\>", 
+   ",", "\<\"/-Y----\\\\\\n|      |\\n| RAA  |\\n| R B  |\\n|   B  |\\n|      \
+|\\n|      |\\n\\\\------/\\n\"\>"}], "}"}]], "Output",
+ CellChangeTimes->{{3.579022959352071*^9, 3.579022975004478*^9}, {
+  3.5790231245594487`*^9, 3.5790231794464645`*^9}, {3.5790236737677355`*^9, 
+  3.5790237265922384`*^9}}]
+}, Open  ]]
 },
 WindowSize->{846, 763},
 WindowMargins->{{Automatic, 229}, {Automatic, -25}},
@@ -478,9 +547,18 @@ Cell[557, 20, 118, 2, 31, "Input"],
 Cell[678, 24, 120, 2, 31, "Input"],
 Cell[801, 28, 389, 9, 72, "Input"],
 Cell[1193, 39, 493, 12, 72, "Input"],
-Cell[1689, 53, 394, 10, 72, "Input"],
-Cell[2086, 65, 8715, 208, 712, "Input"],
-Cell[10804, 275, 7191, 183, 792, "Input"]
+Cell[1689, 53, 533, 14, 72, "Input"],
+Cell[2225, 69, 6866, 179, 612, "Input"],
+Cell[9094, 250, 2654, 48, 212, "Input"],
+Cell[11751, 300, 7191, 183, 792, "Input"],
+Cell[CellGroupData[{
+Cell[18967, 487, 198, 2, 31, "Input"],
+Cell[19168, 491, 199, 2, 192, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[19404, 498, 386, 8, 72, "Input"],
+Cell[19793, 508, 1040, 18, 1152, "Output"]
+}, Open  ]]
 }
 ]
 *)

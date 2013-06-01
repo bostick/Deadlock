@@ -1,9 +1,13 @@
-package com.brentonbostick.bypass.solver;
+package com.brentonbostick.bypass.generator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.brentonbostick.bypass.solver.Board;
+import com.brentonbostick.bypass.solver.Boards;
+import com.brentonbostick.bypass.solver.Parent;
 
 public class Generator {
 	
