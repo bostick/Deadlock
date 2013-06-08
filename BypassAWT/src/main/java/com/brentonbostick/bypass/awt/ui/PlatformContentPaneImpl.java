@@ -130,6 +130,8 @@ public class PlatformContentPaneImpl extends PlatformContentPane implements java
 				APP.tool.ctrlOKey();
 			}
 			
+		} else if (ev.getKeyCode() == KeyEvent.VK_H) {
+			APP.tool.hKey();
 		}
 	}
 

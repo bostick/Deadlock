@@ -58,7 +58,7 @@ public class Partition {
 		if (longest != -1) {
 			Board start = new Board(Board.par.emptyBoard);
 			Board.toBoard(longest, start);
-			List<String> hardestSolution = Solver.solve(start);
+			List<Board> hardestSolution = Solver.solve(start);
 			System.out.println("hardest is " + hardestSolution.size() + " moves, total " + (totalBoardCount) + " boards, candidate " + candidateBoardCount + " boards, time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
 			System.out.println(start);
 			System.out.println();

@@ -3,10 +3,9 @@ package com.brentonbostick.bypass.solver;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Solver {
 	
-	public static List<String> solve(Board start) {
+	public static List<Board> solve(Board start) {
 		
 		SolvingStateSpace space = new SolvingStateSpace();
 		space.putSolving(start, null);
@@ -26,7 +25,7 @@ public class Solver {
 				Board b = a.get(i);
 				
 				if (b.isWinning()) {
-					winner = b;
+					winner = b.clone();
 					break loop;
 				}
 				
@@ -34,16 +33,16 @@ public class Solver {
 				
 				for (Board m : moves) {
 					if (!space.allSolvingConfigsContains(m)) {
-						space.putSolving(m.clone(), b);
+						space.putSolving(m.clone(), b.clone());
 					}
 				}
 				
 			}
 		}
 		
-		List<String> solution = new ArrayList<String>();
+		List<Board> solution = new ArrayList<Board>();
 		
-		String l = winner.toString();
+		Board l = winner;
 		solution.add(l);
 		while (true) {
 			l = space.getSolving(l);

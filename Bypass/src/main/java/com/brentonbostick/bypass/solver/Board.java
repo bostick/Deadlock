@@ -11,12 +11,18 @@ public class Board {
 	
 	
 	private final byte[][] arr;
-	byte prevCar;
-	int prevSize;
-	int prevO;
-	int prevRow;
-	int prevCol;
 	
+	public byte prevCar;
+	public int prevSize;
+	public int prevO;
+	public int prevRow;
+	public int prevCol;
+	
+	public byte nextCar;
+	public int nextSize;
+	public int nextO;
+	public int nextRow;
+	public int nextCol;
 	
 	public Board(int rows, int cols) {
 		arr = new byte[rows][cols];
@@ -27,6 +33,18 @@ public class Board {
 		for (int i = 0; i < old.arr.length; i++) {
 			System.arraycopy(old.arr[i], 0, arr[i], 0, old.arr[i].length);
 		}
+		
+		prevCar = old.prevCar;
+		prevSize = old.prevSize;
+		prevO = old.prevO;
+		prevRow = old.prevRow;
+		prevCol = old.prevCol;
+		
+		nextCar = old.nextCar;
+		nextSize = old.nextSize;
+		nextO = old.nextO;
+		nextRow = old.nextRow;
+		nextCol = old.nextCol;
 	}
 	
 	public void copyTo(Board out) {
@@ -84,6 +102,30 @@ public class Board {
 		}
 		b.append("\n\n");
 		return b.toString();
+	}
+	
+	public int hashCode() {
+		int h = 17;
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr[i].length; j++) {
+				h = 37 * h + arr[i][j];
+			}
+		}
+		return h;
+	}
+	
+	public boolean equals(Object o) {
+		
+		Board b = (Board)o;
+		
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr[i].length; j++) {
+				if (arr[i][j] != b.arr[i][j]) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	public boolean loadScratchInfo(byte c) {
@@ -294,6 +336,12 @@ public class Board {
 		prevO = oldO;
 		prevRow = oldRow;
 		prevCol = oldCol;
+		
+		out.nextCar = c;
+		out.nextSize = size;
+		out.nextO = newO;
+		out.nextRow = newRow;
+		out.nextCol = newCol;
 		
 		if (alphaReduce && !PREVENT_ALPHA_REDUCE) {
 			out.alphaReduce();

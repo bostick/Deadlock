@@ -2,6 +2,8 @@ package com.brentonbostick.bypass.level;
 
 import static com.brentonbostick.capsloc.CapslocApplication.APP;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.brentonbostick.capsloc.Integratable;
 import com.brentonbostick.capsloc.geom.Geom;
 import com.brentonbostick.capsloc.geom.MutableOBB;
@@ -35,6 +37,8 @@ public class BypassCar extends Car {
 	 */
 	public double coastingVel;
 	final double coastingAcceleration = 0.5;
+	
+	public ReentrantLock motionLock = new ReentrantLock();
 	
 	public BypassCar(World w, CarType type) {
 		super(w, type);
@@ -116,6 +120,9 @@ public class BypassCar extends Car {
 	static final MutableSweptOBB swept = new MutableSweptOBB();
 	
 	public void fakeCoastingStep(double t) {
+		
+		motionLock.lock();
+		
 		assert state == CarStateEnum.COASTING_FORWARD || state == CarStateEnum.COASTING_BACKWARD;
 		
 		double dv = coastingAcceleration * Integratable.DT;
@@ -132,96 +139,102 @@ public class BypassCar extends Car {
 			newPos.travelBackward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
 		}
 		
-		if (DMath.equals(newPos.combo, driver.toolCoastingGoal.combo)) {
+		try {
 			
-			coastingVel = 0;
-			
-			newPos.set(driver.toolCoastingGoal);
-			state = CarStateEnum.IDLE;
-			
-			setTransform(newPos.p, newPos.angle);
-			setPhysicsTransform();
-			
-			computeDynamicPropertiesAlways();
-			computeDynamicPropertiesMoving();
-			
-			driver.prevOverallPos.set(driver.overallPos);
-			driver.overallPos.set(driver.toolCoastingGoal);
-			
-			if (!driver.toolCoastingGoal.isEndOfPath()) {
-				((BypassWorld)world).handlePanning(this, this.center);
+			if (DMath.equals(newPos.combo, driver.toolCoastingGoal.combo)) {
+				
+				coastingVel = 0;
+				
+				newPos.set(driver.toolCoastingGoal);
+				state = CarStateEnum.IDLE;
+				
+				setTransform(newPos.p, newPos.angle);
+				setPhysicsTransform();
+				
+				computeDynamicPropertiesAlways();
+				computeDynamicPropertiesMoving();
+				
+				driver.prevOverallPos.set(driver.overallPos);
+				driver.overallPos.set(driver.toolCoastingGoal);
+				
+				if (!driver.toolCoastingGoal.isEndOfPath()) {
+					((BypassWorld)world).handlePanning(this, this.center);
+				}
+				
+				return;
 			}
-			
-			return;
-		}
-			
-		if (DMath.equals(driver.overallPos.angle, newPos.angle)) {
-			Geom.localToWorld(localAABB, driver.overallPos.angle, driver.overallPos.p, so);
-			Geom.localToWorld(localAABB, newPos.angle, newPos.p, eo);
-			swept.setShape(so, eo);
-			
-			if (swept.isAABB) {
-				double param = GraphPositionPathPosition.firstCollisionParam(this, swept);
-				if (param != -1) {
-					
-					int studCount = (int)(length * Car.METERS_PER_CARLENGTH / BypassStud.SIZE);
-					
-					if (state == CarStateEnum.COASTING_FORWARD) {
-						state = CarStateEnum.COASTING_BACKWARD;
-						driver.toolCoastingGoal.set(driver.toolOrigExitingVertexPos);
-						driver.toolCoastingGoal.travelBackward(BypassStud.SIZE + 0.5 * studCount);
-					} else {
-						state = CarStateEnum.COASTING_FORWARD;
-						driver.toolCoastingGoal.set(driver.toolOrigExitingVertexPos);
-						driver.toolCoastingGoal.travelForward(BypassStud.SIZE + 0.5 * studCount);
-					}
-					
-					coastingVel = 0.0;
-					/*
-					 * doing setTransform(Point.point(driver.overallPos.p, newPos.p, param), newPos.angle);
-					 * would be more correct here, but the resolving of overallPos from p in postStep starts searching from overallPos,
-					 * so the correct point of impact would be in front of overallPos when doing a backward search, and
-					 * in back of overallPos when doing a forward search, so the correct pos would never be found.
-					 * 
-					 * so we'd have to also set overallPos here (which is confusing), or have another state BOUNCING or something
-					 * to indicate in the transition between COASTING FORWARD and BACKWARD, which seems overkill
-					 * 
-					 * no one is going to miss one time step
-					 */
-					return;
-					
-				} else if (type == CarType.RED && !ShapeUtils.intersectAA(world.worldCamera.worldViewport, this.shape.aabb)) {
-					
-					if (!((BypassWorld)world).curLevel.isWon) {
+				
+			if (DMath.equals(driver.overallPos.angle, newPos.angle)) {
+				Geom.localToWorld(localAABB, driver.overallPos.angle, driver.overallPos.p, so);
+				Geom.localToWorld(localAABB, newPos.angle, newPos.p, eo);
+				swept.setShape(so, eo);
+				
+				if (swept.isAABB) {
+					double param = GraphPositionPathPosition.firstCollisionParam(this, swept);
+					if (param != -1) {
 						
+						int studCount = (int)(length * Car.METERS_PER_CARLENGTH / BypassStud.SIZE);
+						
+						if (state == CarStateEnum.COASTING_FORWARD) {
+							state = CarStateEnum.COASTING_BACKWARD;
+							driver.toolCoastingGoal.set(driver.toolOrigExitingVertexPos);
+							driver.toolCoastingGoal.travelBackward(BypassStud.SIZE + 0.5 * studCount);
+						} else {
+							state = CarStateEnum.COASTING_FORWARD;
+							driver.toolCoastingGoal.set(driver.toolOrigExitingVertexPos);
+							driver.toolCoastingGoal.travelForward(BypassStud.SIZE + 0.5 * studCount);
+						}
+						
+						coastingVel = 0.0;
 						/*
-						 * repaint once right before the winner menu goes up
+						 * doing setTransform(Point.point(driver.overallPos.p, newPos.p, param), newPos.angle);
+						 * would be more correct here, but the resolving of overallPos from p in postStep starts searching from overallPos,
+						 * so the correct point of impact would be in front of overallPos when doing a backward search, and
+						 * in back of overallPos when doing a forward search, so the correct pos would never be found.
 						 * 
-						 * rendering the winner menu takes a split second, and it is done on the simulation thread, so the previous scene is not redrawn promptly sometimes
+						 * so we'd have to also set overallPos here (which is confusing), or have another state BOUNCING or something
+						 * to indicate in the transition between COASTING FORWARD and BACKWARD, which seems overkill
 						 * 
-						 * force redraw with car outside of view now so that everything looks smooth (rendering winner menu still takes some time, but now the car
-						 * is out of view, so it is not noticed) 
+						 * no one is going to miss one time step
 						 */
-						APP.appScreen.contentPane.repaint();
+						return;
 						
-						((BypassWorld)world).winner();
+					} else if (type == CarType.RED && !ShapeUtils.intersectAA(world.worldCamera.worldViewport, this.shape.aabb)) {
+						
+						if (!((BypassWorld)world).curLevel.isWon) {
+							
+							/*
+							 * repaint once right before the winner menu goes up
+							 * 
+							 * rendering the winner menu takes a split second, and it is done on the simulation thread, so the previous scene is not redrawn promptly sometimes
+							 * 
+							 * force redraw with car outside of view now so that everything looks smooth (rendering winner menu still takes some time, but now the car
+							 * is out of view, so it is not noticed) 
+							 */
+							APP.appScreen.contentPane.repaint();
+							
+							((BypassWorld)world).winner();
+						}
+						
 					}
-					
 				}
 			}
+			
+			newFrontPos.set(newPos);
+			if (state == CarStateEnum.COASTING_FORWARD) {
+				newFrontPos.travelForward(Math.min(length / 2, newFrontPos.lengthToEndOfPath));
+			} else {
+				assert state == CarStateEnum.COASTING_BACKWARD : state;
+				newFrontPos.travelBackward(Math.min(length / 2, newFrontPos.lengthToStartOfPath));
+			}
+			double a = Math.atan2(newFrontPos.p.y - newPos.p.y, newFrontPos.p.x - newPos.p.x);
+			
+			setTransform(newPos.p, a);
+			setPhysicsTransform();
+			
+		} finally {
+			motionLock.unlock();
 		}
-		
-		newFrontPos.set(newPos);
-		if (state == CarStateEnum.COASTING_FORWARD) {
-			newFrontPos.travelForward(Math.min(length / 2, newFrontPos.lengthToEndOfPath));
-		} else {
-			assert state == CarStateEnum.COASTING_BACKWARD : state;
-			newFrontPos.travelBackward(Math.min(length / 2, newFrontPos.lengthToStartOfPath));
-		}
-		double a = Math.atan2(newFrontPos.p.y - newPos.p.y, newFrontPos.p.x - newPos.p.x);
-		
-		setTransform(newPos.p, a);
-		setPhysicsTransform();
 	}
 	
 	public boolean postStep(double t) {

@@ -34,6 +34,10 @@ public abstract class Tool {
 		
 	}
 	
+	public void hKey() {
+		
+	}
+	
 	public void insertKey() {
 		
 	}

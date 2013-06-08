@@ -38,6 +38,56 @@ public class BypassCarTool extends WorldToolBase {
 		APP.platform.finishAction();
 	}
 	
+	public void hKey() {
+		
+		BypassWorld world = (BypassWorld)APP.model;
+		BypassBoard b = world.bypassBoard;
+		
+//		Board bb = b.toBoard();
+//		
+//		solution@get[0]@loadScratchInfo[82]
+//		(Board`par@scratchInfo)@o
+//		(Board`par@scratchInfo)@row
+//		(Board`par@scratchInfo)@col
+//		solution@get[1]@loadScratchInfo[82]
+//		(Board`par@scratchInfo)@o
+//		(Board`par@scratchInfo)@row
+//		(Board`par@scratchInfo)@col
+		
+		
+		
+		Car c = world.carMap.cars.get(1);
+		final Point p = c.center;
+		
+		Runnable r = new Runnable() {
+			public void run() {
+				
+				BypassWorld world = (BypassWorld)APP.model;
+				
+				Point panelP = Point.worldToPanel(p, world.worldCamera);
+				APP.appScreen.contentPane.pcp.pressedDriver(panelP);
+				Point panelP1 = Point.worldToPanel(p.plus(0.5 * BypassStud.SIZE, 0.0), world.worldCamera);
+				Point panelP2 = Point.worldToPanel(p.plus(1.0 * BypassStud.SIZE, 0.0), world.worldCamera);
+				
+				try {
+					Thread.sleep(20);
+					APP.appScreen.contentPane.pcp.draggedDriver(panelP1);
+					
+					Thread.sleep(20);
+					APP.appScreen.contentPane.pcp.draggedDriver(panelP2);
+					
+					Thread.sleep(20);
+					APP.appScreen.contentPane.pcp.releasedDriver(panelP2);
+					
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		
+//		SwingUtilities.invokeLater(r);
+	}
 	
 	
 	Point lastPressP;
@@ -59,6 +109,8 @@ public class BypassCarTool extends WorldToolBase {
 		if (car != null && pressed != car && car.state != CarStateEnum.IDLE) {
 			return;
 		}
+		
+		pressed.motionLock.lock();
 		
 		switch (pressed.state) {
 		case IDLE: {
@@ -127,18 +179,21 @@ public class BypassCarTool extends WorldToolBase {
 //			}
 //		}
 		
+		if (car == null) {
+			return;
+		}
+		if (!car.toolOrigShape.hitTest(world.lastPressedWorldPoint)) {
+			return;
+		}
+		
+		if (car.state != CarStateEnum.DRAGGING) {
+			return;
+		}
+		
 		try {
 			
-			if (car == null) {
-				return;
-			}
-			if (!car.toolOrigShape.hitTest(world.lastPressedWorldPoint)) {
-				return;
-			}
+			assert car.motionLock.isHeldByCurrentThread();
 			
-			if (car.state != CarStateEnum.DRAGGING) {
-				return;
-			}
 			if (car.driver.prevOverallPos.isCleared()) {
 				/*
 				 * nothing dragged, so this is only press, release
@@ -316,11 +371,13 @@ public class BypassCarTool extends WorldToolBase {
 			world.curLevel.userMoves += moves;
 			
 		} finally {
+			
 			dragVector = null;
 			
 			lastPanelDragP = null;
 			penPanelDragP = null;
 			
+			car.motionLock.unlock();
 		}
 	}
 	

@@ -35,7 +35,7 @@ public class Parent {
 	public List<Byte> actualCars = new ArrayList<Byte>();
 	byte[] possibleCars = new byte[]{ 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 	
-	CarInfo scratchInfo = new CarInfo();
+	public CarInfo scratchInfo = new CarInfo();
 	
 	Map<Byte, Board> scratchLeft = new HashMap<Byte, Board>();
 	Map<Byte, Board> scratchRight = new HashMap<Byte, Board>();
