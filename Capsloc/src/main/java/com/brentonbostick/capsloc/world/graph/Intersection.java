@@ -99,7 +99,7 @@ public class Intersection extends Vertex {
 		
 	}
 	
-	public void paint_panel(RenderingContext ctxt) {
+	public void paint(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.GRAY);
 		

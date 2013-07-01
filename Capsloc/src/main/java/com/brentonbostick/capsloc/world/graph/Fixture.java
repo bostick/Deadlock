@@ -19,7 +19,7 @@ import com.brentonbostick.capsloc.world.graph.gpp.GraphPositionPath;
 import com.brentonbostick.capsloc.world.sprites.CarSheet;
 import com.brentonbostick.capsloc.world.sprites.CarSheet.CarType;
 
-public final class Fixture extends Vertex {
+public class Fixture extends Vertex {
 	
 	public static double SPAWN_FREQUENCY_SECONDS = 1500.5;
 	
@@ -408,7 +408,7 @@ public final class Fixture extends Vertex {
 		
 	}
 	
-	public void paint_panel(RenderingContext ctxt) {
+	public void paint(RenderingContext ctxt) {
 		
 		switch (world.background.method) {
 		case MONOLITHIC:

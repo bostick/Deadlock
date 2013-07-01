@@ -42,6 +42,10 @@ public abstract class BypassMenu extends Menu implements Model {
 		BypassMenu.BYPASSMENU.lock.lock();
 		try {
 			
+			if (APP.model != BypassMenu.BYPASSMENU) {
+				throw new AssertionError(APP.model);
+			}
+			
 			APP.appScreen.postDisplay(width, height);
 			
 			BypassMenu.BYPASSMENU.render();

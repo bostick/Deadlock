@@ -1299,7 +1299,7 @@ public class Graph {
 			
 			for (int i = 0; i < vertices.size(); i++) {
 				Vertex v = vertices.get(i);
-				v.paint_panel(ctxt);
+				v.paint(ctxt);
 			}
 			
 			for (int i = 0; i < boards.size(); i++) {
@@ -1337,7 +1337,7 @@ public class Graph {
 			
 			for (int i = 0; i < vertices.size(); i++) {
 				Vertex v = vertices.get(i);
-				v.paint_panel(ctxt);
+				v.paint(ctxt);
 			}
 			
 			for (int i = 0; i < boards.size(); i++) {

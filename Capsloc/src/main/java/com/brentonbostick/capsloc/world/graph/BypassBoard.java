@@ -224,7 +224,7 @@ public class BypassBoard extends Entity {
 						perimeterSegments.add(s.aabb.getP1P2Line());
 						perimeterSegments.add(s.aabb.getP3P0Line());
 						
-						Fixture f = new Fixture(world, point(i - originRow, j - originCol + 0.5), Axis.TOPBOTTOM);
+						Fixture f = new BypassFixture(world, point(i - originRow, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setFacingSide(Side.BOTTOM);
 						s.f = f;
 						f.s = s;
@@ -234,7 +234,7 @@ public class BypassBoard extends Entity {
 						perimeterSegments.add(s.aabb.getP1P2Line());
 						perimeterSegments.add(s.aabb.getP3P0Line());
 						
-						Fixture f = new Fixture(world, point(i - originRow + 1.0, j - originCol + 0.5), Axis.TOPBOTTOM);
+						Fixture f = new BypassFixture(world, point(i - originRow + 1.0, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setFacingSide(Side.TOP);
 						s.f = f;
 						f.s = s;
@@ -244,7 +244,7 @@ public class BypassBoard extends Entity {
 						perimeterSegments.add(s.aabb.getP0P1Line());
 						perimeterSegments.add(s.aabb.getP2P3Line());
 						
-						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol), Axis.LEFTRIGHT);
+						Fixture f = new BypassFixture(world, point(i - originRow + 0.5, j - originCol), Axis.LEFTRIGHT);
 						f.setFacingSide(Side.RIGHT);
 						s.f = f;
 						f.s = s;
@@ -255,7 +255,7 @@ public class BypassBoard extends Entity {
 						perimeterSegments.add(s.aabb.getP0P1Line());
 						perimeterSegments.add(s.aabb.getP2P3Line());
 						
-						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol + 1.0), Axis.LEFTRIGHT);
+						Fixture f = new BypassFixture(world, point(i - originRow + 0.5, j - originCol + 1.0), Axis.LEFTRIGHT);
 						f.setFacingSide(Side.LEFT);
 						s.f = f;
 						f.s = s;
@@ -272,7 +272,7 @@ public class BypassBoard extends Entity {
 						perimeterSegments.add(s.aabb.getP1P2Line());
 						perimeterSegments.add(s.aabb.getP3P0Line());
 						
-						Fixture f = new Fixture(world, point(i - originRow, j - originCol + 0.5), Axis.TOPBOTTOM);
+						Fixture f = new BypassFixture(world, point(i - originRow, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setFacingSide(Side.BOTTOM);
 						s.f = f;
 						f.s = s;
@@ -284,7 +284,7 @@ public class BypassBoard extends Entity {
 						perimeterSegments.add(s.aabb.getP1P2Line());
 						perimeterSegments.add(s.aabb.getP3P0Line());
 						
-						Fixture f = new Fixture(world, point(i - originRow + 1.0, j - originCol + 0.5), Axis.TOPBOTTOM);
+						Fixture f = new BypassFixture(world, point(i - originRow + 1.0, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setFacingSide(Side.TOP);
 						s.f = f;
 						f.s = s;
@@ -296,7 +296,7 @@ public class BypassBoard extends Entity {
 						perimeterSegments.add(s.aabb.getP0P1Line());
 						perimeterSegments.add(s.aabb.getP2P3Line());
 						
-						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol), Axis.LEFTRIGHT);
+						Fixture f = new BypassFixture(world, point(i - originRow + 0.5, j - originCol), Axis.LEFTRIGHT);
 						f.setFacingSide(Side.RIGHT);
 						s.f = f;
 						f.s = s;
@@ -309,7 +309,7 @@ public class BypassBoard extends Entity {
 						perimeterSegments.add(s.aabb.getP0P1Line());
 						perimeterSegments.add(s.aabb.getP2P3Line());
 						
-						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol + 1.0), Axis.LEFTRIGHT);
+						Fixture f = new BypassFixture(world, point(i - originRow + 0.5, j - originCol + 1.0), Axis.LEFTRIGHT);
 						f.setFacingSide(Side.LEFT);
 						s.f = f;
 						f.s = s;
@@ -588,25 +588,25 @@ public class BypassBoard extends Entity {
 		switch(y.f.getFacingSide()) {
 		case TOP:
 			other = y.f.p.plus(new Point(0, EXITROADLENGTH));
-			f = new Fixture(world, other, Axis.TOPBOTTOM);
+			f = new BypassFixture(world, other, Axis.TOPBOTTOM);
 			f.setFacingSide(Side.TOP);
 			world.addFixture(f);
 			break;
 		case LEFT:
 			other = y.f.p.plus(new Point(EXITROADLENGTH, 0));
-			f = new Fixture(world, other, Axis.LEFTRIGHT);
+			f = new BypassFixture(world, other, Axis.LEFTRIGHT);
 			f.setFacingSide(Side.LEFT);
 			world.addFixture(f);
 			break;
 		case RIGHT:
 			other = y.f.p.plus(new Point(-EXITROADLENGTH, 0));
-			f = new Fixture(world, other, Axis.LEFTRIGHT);
+			f = new BypassFixture(world, other, Axis.LEFTRIGHT);
 			f.setFacingSide(Side.RIGHT);
 			world.addFixture(f);
 			break;
 		case BOTTOM:
 			other = y.f.p.plus(new Point(0, -EXITROADLENGTH));
-			f = new Fixture(world, other, Axis.TOPBOTTOM);
+			f = new BypassFixture(world, other, Axis.TOPBOTTOM);
 			f.setFacingSide(Side.BOTTOM);
 			world.addFixture(f);
 			break;
