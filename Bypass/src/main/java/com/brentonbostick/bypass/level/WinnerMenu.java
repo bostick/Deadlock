@@ -28,8 +28,6 @@ public class WinnerMenu extends Menu {
 		
 		world.winnerMenu = new WinnerMenu(world, excl, "Grade: " + world.curLevel.grade);
 		
-		APP.tool = new MenuTool();
-		
 		world.lock.lock();
 		try {
 			
@@ -41,6 +39,21 @@ public class WinnerMenu extends Menu {
 			world.lock.unlock();
 		}
 		
+		/*
+		 * used to be:
+		 * 
+		 * APP.tool = new MenuTool();
+		 * lock(); postDisplay(); render(); unlock();
+		 * 
+		 * but there is a race condition:
+		 * 
+		 * after APP.tool = new MenuTool(); but before lock(), a press could come in
+		 * this would go to the menu press code, and crash because the menu has not been rendered yet
+		 * 
+		 * assigning tool should come last
+		 */
+		
+		APP.tool = new MenuTool();
 	}
 	
 	public WinnerMenu(BypassWorld world, String excl, String grade) {
