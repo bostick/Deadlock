@@ -1,3 +1,866 @@
+android.support.v4.app.ActivityCompatHoneycomb -> android.support.v4.app.a:
+    29:30:void invalidateOptionsMenu(android.app.Activity) -> a
+android.support.v4.app.BackStackRecord -> android.support.v4.app.b:
+    android.support.v4.app.FragmentManagerImpl mManager -> a
+    android.support.v4.app.BackStackRecord$Op mHead -> b
+    android.support.v4.app.BackStackRecord$Op mTail -> c
+    int mNumOp -> d
+    int mEnterAnim -> e
+    int mExitAnim -> f
+    int mPopEnterAnim -> g
+    int mPopExitAnim -> h
+    int mTransition -> i
+    int mTransitionStyle -> j
+    boolean mAddToBackStack -> k
+    boolean mAllowAddToBackStack -> l
+    java.lang.String mName -> m
+    boolean mCommitted -> n
+    int mIndex -> o
+    int mBreadCrumbTitleRes -> p
+    java.lang.CharSequence mBreadCrumbTitleText -> q
+    int mBreadCrumbShortTitleRes -> r
+    java.lang.CharSequence mBreadCrumbShortTitleText -> s
+    221:233:java.lang.String toString() -> toString
+    237:238:void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+    241:331:void dump(java.lang.String,java.io.PrintWriter,boolean) -> a
+    364:376:void addOp(android.support.v4.app.BackStackRecord$Op) -> a
+    389:390:android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment,java.lang.String) -> a
+    394:418:void doAddOp(int,android.support.v4.app.Fragment,java.lang.String,int) -> a
+    461:466:android.support.v4.app.FragmentTransaction detach(android.support.v4.app.Fragment) -> a
+    470:475:android.support.v4.app.FragmentTransaction attach(android.support.v4.app.Fragment) -> b
+    549:571:void bumpBackStackNesting(int) -> a
+    574:574:int commit() -> a
+    582:596:int commitInternal(boolean) -> a
+    600:688:void run() -> run
+    691:772:void popFromBackStack(boolean) -> b
+    775:775:java.lang.String getName() -> b
+android.support.v4.app.BackStackRecord$Op -> android.support.v4.app.c:
+    android.support.v4.app.BackStackRecord$Op next -> a
+    android.support.v4.app.BackStackRecord$Op prev -> b
+    int cmd -> c
+    android.support.v4.app.Fragment fragment -> d
+    int enterAnim -> e
+    int exitAnim -> f
+    int popEnterAnim -> g
+    int popExitAnim -> h
+    java.util.ArrayList removed -> i
+android.support.v4.app.BackStackState -> android.support.v4.app.BackStackState:
+    int[] mOps -> a
+    int mTransition -> b
+    int mTransitionStyle -> c
+    java.lang.String mName -> d
+    int mIndex -> e
+    int mBreadCrumbTitleRes -> f
+    java.lang.CharSequence mBreadCrumbTitleText -> g
+    int mBreadCrumbShortTitleRes -> h
+    java.lang.CharSequence mBreadCrumbShortTitleText -> i
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    96:138:android.support.v4.app.BackStackRecord instantiate(android.support.v4.app.FragmentManagerImpl) -> a
+    142:142:int describeContents() -> describeContents
+    146:155:void writeToParcel(android.os.Parcel,int) -> writeToParcel
+android.support.v4.app.BackStackState$1 -> android.support.v4.app.d:
+    160:160:android.support.v4.app.BackStackState createFromParcel(android.os.Parcel) -> a
+    164:164:android.support.v4.app.BackStackState[] newArray(int) -> a
+    158:158:java.lang.Object[] newArray(int) -> newArray
+    158:158:java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.app.Fragment -> android.support.v4.app.Fragment:
+    java.util.HashMap sClassMap -> P
+    int mState -> a
+    android.view.View mAnimatingAway -> b
+    int mStateAfterAnimating -> c
+    android.os.Bundle mSavedFragmentState -> d
+    android.util.SparseArray mSavedViewState -> e
+    int mIndex -> f
+    java.lang.String mWho -> g
+    android.os.Bundle mArguments -> h
+    android.support.v4.app.Fragment mTarget -> i
+    int mTargetIndex -> j
+    int mTargetRequestCode -> k
+    boolean mAdded -> l
+    boolean mRemoving -> m
+    boolean mResumed -> n
+    boolean mFromLayout -> o
+    boolean mInLayout -> p
+    boolean mRestored -> q
+    int mBackStackNesting -> r
+    android.support.v4.app.FragmentManagerImpl mFragmentManager -> s
+    android.support.v4.app.FragmentActivity mActivity -> t
+    android.support.v4.app.FragmentManagerImpl mChildFragmentManager -> u
+    android.support.v4.app.Fragment mParentFragment -> v
+    int mFragmentId -> w
+    int mContainerId -> x
+    java.lang.String mTag -> y
+    boolean mHidden -> z
+    boolean mDetached -> A
+    boolean mRetainInstance -> B
+    boolean mRetaining -> C
+    boolean mHasMenu -> D
+    boolean mMenuVisible -> E
+    boolean mCalled -> F
+    int mNextAnim -> G
+    android.view.ViewGroup mContainer -> H
+    android.view.View mView -> I
+    android.view.View mInnerView -> J
+    boolean mDeferStart -> K
+    boolean mUserVisibleHint -> L
+    android.support.v4.app.LoaderManagerImpl mLoaderManager -> M
+    boolean mLoadersStarted -> N
+    boolean mCheckedForLoaderManager -> O
+    369:369:android.support.v4.app.Fragment instantiate(android.content.Context,java.lang.String) -> a
+    388:409:android.support.v4.app.Fragment instantiate(android.content.Context,java.lang.String,android.os.Bundle) -> a
+    416:426:void restoreViewState(android.os.Bundle) -> a
+    429:435:void setIndex(int,android.support.v4.app.Fragment) -> a
+    438:438:boolean isInBackStack() -> a
+    445:445:boolean equals(java.lang.Object) -> equals
+    452:452:int hashCode() -> hashCode
+    457:472:java.lang.String toString() -> toString
+    563:563:android.support.v4.app.FragmentActivity getActivity() -> b
+    570:573:android.content.res.Resources getResources() -> c
+    664:664:boolean isDetached() -> d
+    724:724:void onHiddenChanged(boolean) -> a
+    867:867:void onActivityResult(int,int,android.content.Intent) -> a
+    875:875:android.view.LayoutInflater getLayoutInflater(android.os.Bundle) -> b
+    921:922:void onInflate(android.app.Activity,android.util.AttributeSet,android.os.Bundle) -> a
+    929:930:void onAttach(android.app.Activity) -> a
+    936:936:android.view.animation.Animation onCreateAnimation(int,boolean,int) -> a
+    954:955:void onCreate(android.os.Bundle) -> c
+    978:978:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
+    992:992:void onViewCreated(android.view.View,android.os.Bundle) -> a
+    1018:1019:void onActivityCreated(android.os.Bundle) -> d
+    1033:1034:void onViewStateRestored(android.os.Bundle) -> e
+    1042:1054:void onStart() -> e
+    1063:1064:void onResume() -> f
+    1086:1086:void onSaveInstanceState(android.os.Bundle) -> f
+    1089:1090:void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
+    1098:1099:void onPause() -> g
+    1107:1108:void onStop() -> h
+    1111:1112:void onLowMemory() -> onLowMemory
+    1124:1125:void onDestroyView() -> i
+    1132:1142:void onDestroy() -> j
+    1151:1171:void initState() -> k
+    1178:1179:void onDetach() -> l
+    1195:1195:void onCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> a
+    1212:1212:void onPrepareOptionsMenu(android.view.Menu) -> a
+    1222:1222:void onDestroyOptionsMenu() -> m
+    1243:1243:boolean onOptionsItemSelected(android.view.MenuItem) -> a
+    1254:1254:void onOptionsMenuClosed(android.view.Menu) -> b
+    1274:1275:void onCreateContextMenu(android.view.ContextMenu,android.view.View,android.view.ContextMenu$ContextMenuInfo) -> onCreateContextMenu
+    1320:1320:boolean onContextItemSelected(android.view.MenuItem) -> b
+    1333:1407:void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+    1420:1430:void instantiateChildFragmentManager() -> n
+    1433:1453:void performCreate(android.os.Bundle) -> g
+    1457:1460:android.view.View performCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> b
+    1464:1476:void performActivityCreated(android.os.Bundle) -> h
+    1479:1495:void performStart() -> o
+    1498:1512:void performResume() -> p
+    1515:1519:void performConfigurationChanged(android.content.res.Configuration) -> a
+    1522:1526:void performLowMemory() -> q
+    1538:1548:boolean performCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> b
+    1552:1562:boolean performPrepareOptionsMenu(android.view.Menu) -> c
+    1566:1578:boolean performOptionsItemSelected(android.view.MenuItem) -> c
+    1582:1592:boolean performContextItemSelected(android.view.MenuItem) -> d
+    1596:1604:void performOptionsMenuClosed(android.view.Menu) -> d
+    1607:1614:void performSaveInstanceState(android.os.Bundle) -> i
+    1617:1626:void performPause() -> r
+    1629:1638:void performStop() -> s
+    1641:1658:void performReallyStop() -> t
+    1661:1673:void performDestroyView() -> u
+    1676:1685:void performDestroy() -> v
+android.support.v4.app.Fragment$1 -> android.support.v4.app.e:
+    android.support.v4.app.Fragment this$0 -> a
+    1424:1427:android.view.View findViewById(int) -> a
+android.support.v4.app.Fragment$InstantiationException -> android.support.v4.app.f:
+android.support.v4.app.Fragment$SavedState -> android.support.v4.app.Fragment$SavedState:
+    android.os.Bundle mState -> a
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    314:314:int describeContents() -> describeContents
+    319:320:void writeToParcel(android.os.Parcel,int) -> writeToParcel
+android.support.v4.app.Fragment$SavedState$1 -> android.support.v4.app.g:
+    325:325:android.support.v4.app.Fragment$SavedState createFromParcel(android.os.Parcel) -> a
+    329:329:android.support.v4.app.Fragment$SavedState[] newArray(int) -> a
+    323:323:java.lang.Object[] newArray(int) -> newArray
+    323:323:java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.app.FragmentActivity -> android.support.v4.app.h:
+    android.os.Handler mHandler -> a
+    android.support.v4.app.FragmentManagerImpl mFragments -> b
+    android.support.v4.app.FragmentContainer mContainer -> c
+    boolean mCreated -> d
+    boolean mResumed -> e
+    boolean mStopped -> f
+    boolean mReallyStopped -> g
+    boolean mRetaining -> h
+    boolean mOptionsMenuInvalidated -> i
+    boolean mCheckedForLoaderManager -> j
+    boolean mLoadersStarted -> k
+    java.util.HashMap mAllLoaderManagers -> l
+    android.support.v4.app.LoaderManagerImpl mLoaderManager -> m
+    147:167:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    174:177:void onBackPressed() -> onBackPressed
+    184:186:void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
+    193:211:void onCreate(android.os.Bundle) -> onCreate
+    218:229:boolean onCreatePanelMenu(int,android.view.Menu) -> onCreatePanelMenu
+    237:312:android.view.View onCreateView(java.lang.String,android.content.Context,android.util.AttributeSet) -> onCreateView
+    320:328:void onDestroy() -> onDestroy
+    335:344:boolean onKeyDown(int,android.view.KeyEvent) -> onKeyDown
+    352:354:void onLowMemory() -> onLowMemory
+    361:373:boolean onMenuItemSelected(int,android.view.MenuItem) -> onMenuItemSelected
+    382:388:void onPanelClosed(int,android.view.Menu) -> onPanelClosed
+    395:402:void onPause() -> onPause
+    416:418:void onNewIntent(android.content.Intent) -> onNewIntent
+    431:435:void onResume() -> onResume
+    442:446:void onPostResume() -> onPostResume
+    455:456:void onResumeFragments() -> a
+    463:473:boolean onPreparePanel(int,android.view.View,android.view.Menu) -> onPreparePanel
+    483:518:java.lang.Object onRetainNonConfigurationInstance() -> onRetainNonConfigurationInstance
+    526:531:void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    539:580:void onStart() -> onStart
+    587:593:void onStop() -> onStop
+    604:604:java.lang.Object onRetainCustomNonConfigurationInstance() -> b
+    623:633:void supportInvalidateOptionsMenu() -> c
+    646:670:void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> dump
+    673:735:java.lang.String viewToString(android.view.View) -> a
+    739:757:void dumpViewHierarchy(java.lang.String,java.io.PrintWriter,android.view.View) -> a
+    760:766:void doReallyStop(boolean) -> a
+    776:788:void onReallyStop() -> d
+    798:798:void onAttachFragment(android.support.v4.app.Fragment) -> a
+    814:818:void startActivityForResult(android.content.Intent,int) -> startActivityForResult
+    837:844:void invalidateSupportFragment(java.lang.String) -> a
+    863:875:android.support.v4.app.LoaderManagerImpl getLoaderManager(java.lang.String,boolean,boolean) -> a
+android.support.v4.app.FragmentActivity$FragmentTag -> android.support.v4.app.i:
+    int[] Fragment -> a
+android.support.v4.app.FragmentActivity$NonConfigurationInstances -> android.support.v4.app.j:
+    java.lang.Object activity -> a
+    java.lang.Object custom -> b
+    java.util.HashMap children -> c
+    java.util.ArrayList fragments -> d
+    java.util.HashMap loaders -> e
+android.support.v4.app.FragmentContainer -> android.support.v4.app.k:
+    android.view.View findViewById(int) -> a
+android.support.v4.app.FragmentManager -> android.support.v4.app.l:
+    android.support.v4.app.FragmentTransaction beginTransaction() -> a
+    boolean executePendingTransactions() -> b
+    android.support.v4.app.Fragment findFragmentByTag(java.lang.String) -> a
+android.support.v4.app.FragmentManager$OnBackStackChangedListener -> android.support.v4.app.m:
+    void onBackStackChanged() -> a
+android.support.v4.app.FragmentManagerImpl -> android.support.v4.app.n:
+    boolean DEBUG -> a
+    boolean HONEYCOMB -> b
+    java.util.ArrayList mPendingActions -> c
+    java.lang.Runnable[] mTmpActions -> d
+    boolean mExecutingActions -> e
+    java.util.ArrayList mActive -> f
+    java.util.ArrayList mAdded -> g
+    java.util.ArrayList mAvailIndices -> h
+    java.util.ArrayList mBackStack -> i
+    java.util.ArrayList mCreatedMenus -> j
+    java.util.ArrayList mBackStackIndices -> k
+    java.util.ArrayList mAvailBackStackIndices -> l
+    java.util.ArrayList mBackStackChangeListeners -> m
+    int mCurState -> n
+    android.support.v4.app.FragmentActivity mActivity -> o
+    android.support.v4.app.FragmentContainer mContainer -> p
+    android.support.v4.app.Fragment mParent -> q
+    boolean mNeedMenuInvalidate -> r
+    boolean mStateSaved -> s
+    boolean mDestroyed -> t
+    java.lang.String mNoTransactionsBecause -> u
+    boolean mHavePendingDeferredStart -> v
+    android.os.Bundle mStateBundle -> w
+    android.util.SparseArray mStateArray -> x
+    java.lang.Runnable mExecCommit -> y
+    android.view.animation.Interpolator DECELERATE_QUINT -> z
+    android.view.animation.Interpolator DECELERATE_CUBIC -> A
+    android.view.animation.Interpolator ACCELERATE_QUINT -> B
+    android.view.animation.Interpolator ACCELERATE_CUBIC -> C
+    434:451:void throwException(java.lang.RuntimeException) -> a
+    456:456:android.support.v4.app.FragmentTransaction beginTransaction() -> a
+    461:461:boolean executePendingTransactions() -> b
+    475:477:boolean popBackStackImmediate() -> c
+    545:550:void putFragment(android.os.Bundle,java.lang.String,android.support.v4.app.Fragment) -> a
+    554:567:android.support.v4.app.Fragment getFragment(android.os.Bundle,java.lang.String) -> a
+    585:595:java.lang.String toString() -> toString
+    600:709:void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+    720:730:android.view.animation.Animation makeOpenCloseAnimation(android.content.Context,float,float,float,float) -> a
+    734:737:android.view.animation.Animation makeFadeAnimation(android.content.Context,float,float) -> a
+    742:796:android.view.animation.Animation loadAnimation(android.support.v4.app.Fragment,int,boolean,int) -> a
+    800:809:void performPendingDeferredStart(android.support.v4.app.Fragment) -> a
+    814:1063:void moveToState(android.support.v4.app.Fragment,int,int,int,boolean) -> a
+    1066:1067:void moveToState(android.support.v4.app.Fragment) -> b
+    1070:1071:void moveToState(int,boolean) -> a
+    1074:1104:void moveToState(int,int,int,boolean) -> a
+    1107:1115:void startPendingDeferredFragments() -> d
+    1118:1134:void makeActive(android.support.v4.app.Fragment) -> c
+    1137:1149:void makeInactive(android.support.v4.app.Fragment) -> d
+    1152:1171:void addFragment(android.support.v4.app.Fragment,boolean) -> a
+    1174:1188:void removeFragment(android.support.v4.app.Fragment,int,int) -> a
+    1191:1207:void hideFragment(android.support.v4.app.Fragment,int,int) -> b
+    1210:1226:void showFragment(android.support.v4.app.Fragment,int,int) -> c
+    1229:1245:void detachFragment(android.support.v4.app.Fragment,int,int) -> d
+    1248:1267:void attachFragment(android.support.v4.app.Fragment,int,int) -> e
+    1270:1288:android.support.v4.app.Fragment findFragmentById(int) -> a
+    1292:1310:android.support.v4.app.Fragment findFragmentByTag(java.lang.String) -> a
+    1326:1334:void checkStateLoss() -> t
+    1337:1353:void enqueueAction(java.lang.Runnable,boolean) -> a
+    1356:1372:int allocBackStackIndex(android.support.v4.app.BackStackRecord) -> a
+    1376:1398:void setBackStackIndex(int,android.support.v4.app.BackStackRecord) -> a
+    1401:1409:void freeBackStackIndex(int) -> b
+    1415:1464:boolean execPendingActions() -> e
+    1468:1473:void reportBackStackChanged() -> f
+    1476:1481:void addBackStackState(android.support.v4.app.BackStackRecord) -> b
+    1484:1543:boolean popBackStackState(android.os.Handler,java.lang.String,int,int) -> a
+    1547:1562:java.util.ArrayList retainNonConfig() -> g
+    1566:1579:void saveFragmentViewState(android.support.v4.app.Fragment) -> e
+    1582:1611:android.os.Bundle saveFragmentBasicState(android.support.v4.app.Fragment) -> f
+    1617:1727:android.os.Parcelable saveAllState() -> h
+    1733:1840:void restoreAllState(android.os.Parcelable,java.util.ArrayList) -> a
+    1844:1848:void attachActivity(android.support.v4.app.FragmentActivity,android.support.v4.app.FragmentContainer,android.support.v4.app.Fragment) -> a
+    1851:1852:void noteStateNotSaved() -> i
+    1855:1857:void dispatchCreate() -> j
+    1860:1862:void dispatchActivityCreated() -> k
+    1865:1867:void dispatchStart() -> l
+    1870:1872:void dispatchResume() -> m
+    1875:1876:void dispatchPause() -> n
+    1882:1885:void dispatchStop() -> o
+    1888:1889:void dispatchReallyStop() -> p
+    1892:1893:void dispatchDestroyView() -> q
+    1896:1902:void dispatchDestroy() -> r
+    1905:1913:void dispatchConfigurationChanged(android.content.res.Configuration) -> a
+    1916:1924:void dispatchLowMemory() -> s
+    1927:1955:boolean dispatchCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> a
+    1959:1970:boolean dispatchPrepareOptionsMenu(android.view.Menu) -> a
+    1974:1984:boolean dispatchOptionsItemSelected(android.view.MenuItem) -> a
+    1988:1998:boolean dispatchContextItemSelected(android.view.MenuItem) -> b
+    2002:2010:void dispatchOptionsMenuClosed(android.view.Menu) -> b
+    2013:2025:int reverseTransit(int) -> c
+    2037:2049:int transitToStyleIndex(int,boolean) -> b
+android.support.v4.app.FragmentManagerImpl$1 -> android.support.v4.app.o:
+    android.support.v4.app.FragmentManagerImpl this$0 -> a
+    429:430:void run() -> run
+android.support.v4.app.FragmentManagerImpl$5 -> android.support.v4.app.p:
+    android.support.v4.app.Fragment val$fragment -> a
+    android.support.v4.app.FragmentManagerImpl this$0 -> b
+    994:999:void onAnimationEnd(android.view.animation.Animation) -> onAnimationEnd
+    1002:1002:void onAnimationRepeat(android.view.animation.Animation) -> onAnimationRepeat
+    1005:1005:void onAnimationStart(android.view.animation.Animation) -> onAnimationStart
+android.support.v4.app.FragmentManagerState -> android.support.v4.app.FragmentManagerState:
+    android.support.v4.app.FragmentState[] mActive -> a
+    int[] mAdded -> b
+    android.support.v4.app.BackStackState[] mBackStack -> c
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    353:353:int describeContents() -> describeContents
+    357:360:void writeToParcel(android.os.Parcel,int) -> writeToParcel
+android.support.v4.app.FragmentManagerState$1 -> android.support.v4.app.q:
+    365:365:android.support.v4.app.FragmentManagerState createFromParcel(android.os.Parcel) -> a
+    369:369:android.support.v4.app.FragmentManagerState[] newArray(int) -> a
+    363:363:java.lang.Object[] newArray(int) -> newArray
+    363:363:java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.app.FragmentState -> android.support.v4.app.FragmentState:
+    java.lang.String mClassName -> a
+    int mIndex -> b
+    boolean mFromLayout -> c
+    int mFragmentId -> d
+    int mContainerId -> e
+    java.lang.String mTag -> f
+    boolean mRetainInstance -> g
+    boolean mDetached -> h
+    android.os.Bundle mArguments -> i
+    android.os.Bundle mSavedFragmentState -> j
+    android.support.v4.app.Fragment mInstance -> k
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    89:116:android.support.v4.app.Fragment instantiate(android.support.v4.app.FragmentActivity,android.support.v4.app.Fragment) -> a
+    120:120:int describeContents() -> describeContents
+    124:134:void writeToParcel(android.os.Parcel,int) -> writeToParcel
+android.support.v4.app.FragmentState$1 -> android.support.v4.app.r:
+    139:139:android.support.v4.app.FragmentState createFromParcel(android.os.Parcel) -> a
+    143:143:android.support.v4.app.FragmentState[] newArray(int) -> a
+    137:137:java.lang.Object[] newArray(int) -> newArray
+    137:137:java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.app.FragmentTabHost -> android.support.v4.app.FragmentTabHost:
+    java.util.ArrayList mTabs -> a
+    android.content.Context mContext -> b
+    android.support.v4.app.FragmentManager mFragmentManager -> c
+    int mContainerId -> d
+    android.widget.TabHost$OnTabChangeListener mOnTabChangeListener -> e
+    android.support.v4.app.FragmentTabHost$TabInfo mLastTab -> f
+    boolean mAttached -> g
+    181:181:void setup() -> setup
+    219:220:void setOnTabChangedListener(android.widget.TabHost$OnTabChangeListener) -> setOnTabChangedListener
+    246:281:void onAttachedToWindow() -> onAttachedToWindow
+    285:287:void onDetachedFromWindow() -> onDetachedFromWindow
+    291:294:android.os.Parcelable onSaveInstanceState() -> onSaveInstanceState
+    299:302:void onRestoreInstanceState(android.os.Parcelable) -> onRestoreInstanceState
+    306:315:void onTabChanged(java.lang.String) -> onTabChanged
+    318:349:android.support.v4.app.FragmentTransaction doTabChanged(java.lang.String,android.support.v4.app.FragmentTransaction) -> a
+android.support.v4.app.FragmentTabHost$1 -> android.support.v4.app.s:
+android.support.v4.app.FragmentTabHost$SavedState -> android.support.v4.app.FragmentTabHost$SavedState:
+    java.lang.String curTab -> a
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    104:106:void writeToParcel(android.os.Parcel,int) -> writeToParcel
+    110:110:java.lang.String toString() -> toString
+android.support.v4.app.FragmentTabHost$SavedState$1 -> android.support.v4.app.t:
+    118:118:android.support.v4.app.FragmentTabHost$SavedState createFromParcel(android.os.Parcel) -> a
+    122:122:android.support.v4.app.FragmentTabHost$SavedState[] newArray(int) -> a
+    116:116:java.lang.Object[] newArray(int) -> newArray
+    116:116:java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.app.FragmentTabHost$TabInfo -> android.support.v4.app.u:
+    java.lang.String tag -> a
+    java.lang.Class clss -> b
+    android.os.Bundle args -> c
+    android.support.v4.app.Fragment fragment -> d
+    61:61:android.support.v4.app.Fragment access$102(android.support.v4.app.FragmentTabHost$TabInfo,android.support.v4.app.Fragment) -> a
+    61:61:android.support.v4.app.Fragment access$100(android.support.v4.app.FragmentTabHost$TabInfo) -> a
+    61:61:java.lang.String access$200(android.support.v4.app.FragmentTabHost$TabInfo) -> b
+    61:61:java.lang.Class access$300(android.support.v4.app.FragmentTabHost$TabInfo) -> c
+    61:61:android.os.Bundle access$400(android.support.v4.app.FragmentTabHost$TabInfo) -> d
+android.support.v4.app.FragmentTransaction -> android.support.v4.app.v:
+    android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment,java.lang.String) -> a
+    android.support.v4.app.FragmentTransaction detach(android.support.v4.app.Fragment) -> a
+    android.support.v4.app.FragmentTransaction attach(android.support.v4.app.Fragment) -> b
+    int commit() -> a
+android.support.v4.app.LoaderManager -> android.support.v4.app.w:
+    184:184:boolean hasRunningLoaders() -> a
+android.support.v4.app.LoaderManager$LoaderCallbacks -> android.support.v4.app.x:
+    android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> a
+    void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
+    void onLoaderReset(android.support.v4.content.Loader) -> a
+android.support.v4.app.LoaderManagerImpl -> android.support.v4.app.y:
+    boolean DEBUG -> a
+    android.support.v4.util.SparseArrayCompat mLoaders -> b
+    android.support.v4.util.SparseArrayCompat mInactiveLoaders -> c
+    java.lang.String mWho -> d
+    android.support.v4.app.FragmentActivity mActivity -> e
+    boolean mStarted -> f
+    boolean mRetaining -> g
+    484:485:void updateActivity(android.support.v4.app.FragmentActivity) -> a
+    701:716:void doStart() -> b
+    719:731:void doStop() -> c
+    734:747:void doRetain() -> d
+    750:758:void finishRetain() -> e
+    761:764:void doReportNextStart() -> f
+    767:770:void doReportStart() -> g
+    773:785:void doDestroy() -> h
+    789:795:java.lang.String toString() -> toString
+    800:820:void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+    824:830:boolean hasRunningLoaders() -> a
+android.support.v4.app.LoaderManagerImpl$LoaderInfo -> android.support.v4.app.z:
+    int mId -> a
+    android.os.Bundle mArgs -> b
+    android.support.v4.app.LoaderManager$LoaderCallbacks mCallbacks -> c
+    android.support.v4.content.Loader mLoader -> d
+    boolean mHaveData -> e
+    boolean mDeliveredData -> f
+    java.lang.Object mData -> g
+    boolean mStarted -> h
+    boolean mRetaining -> i
+    boolean mRetainingStarted -> j
+    boolean mReportNextStart -> k
+    boolean mDestroyed -> l
+    boolean mListenerRegistered -> m
+    android.support.v4.app.LoaderManagerImpl$LoaderInfo mPendingLoader -> n
+    android.support.v4.app.LoaderManagerImpl this$0 -> o
+    235:267:void start() -> a
+    270:275:void retain() -> b
+    278:300:void finishRetain() -> c
+    303:311:void reportStart() -> d
+    314:324:void stop() -> e
+    327:359:void destroy() -> f
+    418:435:void callOnLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
+    439:447:java.lang.String toString() -> toString
+    451:474:void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+android.support.v4.app.NoSaveStateFrameLayout -> android.support.v4.app.aa:
+    32:41:android.view.ViewGroup wrap(android.view.View) -> a
+    53:54:void dispatchSaveInstanceState(android.util.SparseArray) -> dispatchSaveInstanceState
+    61:62:void dispatchRestoreInstanceState(android.util.SparseArray) -> dispatchRestoreInstanceState
+android.support.v4.app.SuperNotCalledException -> android.support.v4.app.ab:
+android.support.v4.content.Loader -> android.support.v4.a.a:
+    int mId -> a
+    android.support.v4.content.Loader$OnLoadCompleteListener mListener -> b
+    boolean mStarted -> c
+    boolean mAbandoned -> d
+    boolean mReset -> e
+    boolean mContentChanged -> f
+    129:134:void registerListener(int,android.support.v4.content.Loader$OnLoadCompleteListener) -> a
+    142:149:void unregisterListener(android.support.v4.content.Loader$OnLoadCompleteListener) -> a
+    194:198:void startLoading() -> a
+    206:206:void onStartLoading() -> b
+    242:244:void stopLoading() -> c
+    253:253:void onStopLoading() -> d
+    290:295:void reset() -> e
+    304:304:void onReset() -> f
+    341:344:java.lang.String dataToString(java.lang.Object) -> a
+    349:354:java.lang.String toString() -> toString
+    366:372:void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+android.support.v4.content.Loader$OnLoadCompleteListener -> android.support.v4.a.b:
+android.support.v4.os.ParcelableCompat -> android.support.v4.b.a:
+    36:39:android.os.Parcelable$Creator newCreator(android.support.v4.os.ParcelableCompatCreatorCallbacks) -> a
+android.support.v4.os.ParcelableCompat$CompatCreator -> android.support.v4.b.b:
+    android.support.v4.os.ParcelableCompatCreatorCallbacks mCallbacks -> a
+    51:51:java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+    56:56:java.lang.Object[] newArray(int) -> newArray
+android.support.v4.os.ParcelableCompatCreatorCallbacks -> android.support.v4.b.c:
+    java.lang.Object createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> a
+    java.lang.Object[] newArray(int) -> a
+android.support.v4.os.ParcelableCompatCreatorHoneycombMR2 -> android.support.v4.b.d:
+    android.support.v4.os.ParcelableCompatCreatorCallbacks mCallbacks -> a
+    36:36:java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+    40:40:java.lang.Object createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> createFromParcel
+    44:44:java.lang.Object[] newArray(int) -> newArray
+android.support.v4.os.ParcelableCompatCreatorHoneycombMR2Stub -> android.support.v4.b.e:
+    24:24:android.os.Parcelable$Creator instantiate(android.support.v4.os.ParcelableCompatCreatorCallbacks) -> a
+android.support.v4.util.DebugUtils -> android.support.v4.c.a:
+    28:43:void buildShortClassTag(java.lang.Object,java.lang.StringBuilder) -> a
+android.support.v4.util.LogWriter -> android.support.v4.c.b:
+    java.lang.String mTag -> a
+    java.lang.StringBuilder mBuilder -> b
+    44:45:void close() -> close
+    48:49:void flush() -> flush
+    52:61:void write(char[],int,int) -> write
+    64:68:void flushBuilder() -> a
+android.support.v4.util.SparseArrayCompat -> android.support.v4.c.c:
+    java.lang.Object DELETED -> a
+    boolean mGarbage -> b
+    int[] mKeys -> c
+    java.lang.Object[] mValues -> d
+    int mSize -> e
+    116:138:void gc() -> c
+    197:201:int size() -> a
+    210:214:int keyAt(int) -> a
+    223:227:java.lang.Object valueAt(int) -> b
+    280:289:void clear() -> b
+    346:350:int idealByteArraySize(int) -> c
+    354:354:int idealIntArraySize(int) -> d
+android.support.v4.view.KeyEventCompat -> android.support.v4.view.a:
+    android.support.v4.view.KeyEventCompat$KeyEventVersionImpl IMPL -> a
+    139:139:boolean hasModifiers(android.view.KeyEvent,int) -> a
+    143:143:boolean hasNoModifiers(android.view.KeyEvent) -> a
+android.support.v4.view.KeyEventCompat$BaseKeyEventVersionImpl -> android.support.v4.view.b:
+    49:61:int metaStateFilterDirectionalModifiers(int,int,int,int,int) -> a
+    67:73:int normalizeMetaState(int) -> a
+    78:83:boolean metaStateHasModifiers(int,int) -> a
+    88:88:boolean metaStateHasNoModifiers(int) -> b
+android.support.v4.view.KeyEventCompat$HoneycombKeyEventVersionImpl -> android.support.v4.view.c:
+    103:103:boolean metaStateHasModifiers(int,int) -> a
+    108:108:boolean metaStateHasNoModifiers(int) -> b
+android.support.v4.view.KeyEventCompat$KeyEventVersionImpl -> android.support.v4.view.d:
+    boolean metaStateHasModifiers(int,int) -> a
+    boolean metaStateHasNoModifiers(int) -> b
+android.support.v4.view.KeyEventCompatHoneycomb -> android.support.v4.view.e:
+    30:30:boolean metaStateHasModifiers(int,int) -> a
+    34:34:boolean metaStateHasNoModifiers(int) -> a
+android.support.v4.view.MotionEventCompat -> android.support.v4.view.f:
+    android.support.v4.view.MotionEventCompat$MotionEventVersionImpl IMPL -> a
+    191:191:int getActionIndex(android.view.MotionEvent) -> a
+    201:201:int findPointerIndex(android.view.MotionEvent,int) -> a
+    210:210:int getPointerId(android.view.MotionEvent,int) -> b
+    219:219:float getX(android.view.MotionEvent,int) -> c
+    228:228:float getY(android.view.MotionEvent,int) -> d
+android.support.v4.view.MotionEventCompat$BaseMotionEventVersionImpl -> android.support.v4.view.g:
+    43:47:int findPointerIndex(android.view.MotionEvent,int) -> a
+    51:55:int getPointerId(android.view.MotionEvent,int) -> b
+    59:62:float getX(android.view.MotionEvent,int) -> c
+    66:69:float getY(android.view.MotionEvent,int) -> d
+android.support.v4.view.MotionEventCompat$EclairMotionEventVersionImpl -> android.support.v4.view.h:
+    83:83:int findPointerIndex(android.view.MotionEvent,int) -> a
+    87:87:int getPointerId(android.view.MotionEvent,int) -> b
+    91:91:float getX(android.view.MotionEvent,int) -> c
+    95:95:float getY(android.view.MotionEvent,int) -> d
+android.support.v4.view.MotionEventCompat$MotionEventVersionImpl -> android.support.v4.view.i:
+    int findPointerIndex(android.view.MotionEvent,int) -> a
+    int getPointerId(android.view.MotionEvent,int) -> b
+    float getX(android.view.MotionEvent,int) -> c
+    float getY(android.view.MotionEvent,int) -> d
+android.support.v4.view.MotionEventCompatEclair -> android.support.v4.view.j:
+    26:26:int findPointerIndex(android.view.MotionEvent,int) -> a
+    29:29:int getPointerId(android.view.MotionEvent,int) -> b
+    32:32:float getX(android.view.MotionEvent,int) -> c
+    35:35:float getY(android.view.MotionEvent,int) -> d
+android.support.v4.view.PagerAdapter -> android.support.v4.view.k:
+    android.database.DataSetObservable mObservable -> a
+    int getCount() -> a
+    95:96:void startUpdate(android.view.ViewGroup) -> a
+    110:110:java.lang.Object instantiateItem(android.view.ViewGroup,int) -> a
+    124:125:void destroyItem(android.view.ViewGroup,int,java.lang.Object) -> a
+    137:138:void setPrimaryItem(android.view.ViewGroup,int,java.lang.Object) -> b
+    148:149:void finishUpdate(android.view.ViewGroup) -> b
+    159:159:void startUpdate(android.view.View) -> a
+    175:175:java.lang.Object instantiateItem(android.view.View,int) -> a
+    192:192:void destroyItem(android.view.View,int,java.lang.Object) -> a
+    207:207:void setPrimaryItem(android.view.View,int,java.lang.Object) -> b
+    219:219:void finishUpdate(android.view.View) -> b
+    boolean isViewFromObject(android.view.View,java.lang.Object) -> a
+    239:239:android.os.Parcelable saveState() -> b
+    250:250:void restoreState(android.os.Parcelable,java.lang.ClassLoader) -> a
+    268:268:int getItemPosition(java.lang.Object) -> a
+    280:281:void registerDataSetObserver(android.database.DataSetObserver) -> a
+    284:285:void unregisterDataSetObserver(android.database.DataSetObserver) -> b
+    308:308:float getPageWidth(int) -> a
+android.support.v4.view.VelocityTrackerCompat -> android.support.v4.view.l:
+    android.support.v4.view.VelocityTrackerCompat$VelocityTrackerVersionImpl IMPL -> a
+    82:82:float getXVelocity(android.view.VelocityTracker,int) -> a
+android.support.v4.view.VelocityTrackerCompat$BaseVelocityTrackerVersionImpl -> android.support.v4.view.m:
+    40:40:float getXVelocity(android.view.VelocityTracker,int) -> a
+android.support.v4.view.VelocityTrackerCompat$HoneycombVelocityTrackerVersionImpl -> android.support.v4.view.n:
+    54:54:float getXVelocity(android.view.VelocityTracker,int) -> a
+android.support.v4.view.VelocityTrackerCompat$VelocityTrackerVersionImpl -> android.support.v4.view.o:
+    float getXVelocity(android.view.VelocityTracker,int) -> a
+android.support.v4.view.VelocityTrackerCompatHoneycomb -> android.support.v4.view.p:
+    26:26:float getXVelocity(android.view.VelocityTracker,int) -> a
+android.support.v4.view.ViewCompat -> android.support.v4.view.q:
+    android.support.v4.view.ViewCompat$ViewCompatImpl IMPL -> a
+    347:347:boolean canScrollHorizontally(android.view.View,int) -> a
+    371:371:int getOverScrollMode(android.view.View) -> a
+    544:545:void postInvalidateOnAnimation(android.view.View) -> b
+    576:577:void postOnAnimation(android.view.View,java.lang.Runnable) -> a
+    713:714:void setLayerType(android.view.View,int,android.graphics.Paint) -> a
+android.support.v4.view.ViewCompat$BaseViewCompatImpl -> android.support.v4.view.r:
+    141:141:boolean canScrollHorizontally(android.view.View,int) -> a
+    147:147:int getOverScrollMode(android.view.View) -> a
+    172:173:void postInvalidateOnAnimation(android.view.View) -> b
+    178:179:void postOnAnimation(android.view.View,java.lang.Runnable) -> a
+    184:184:long getFrameTime() -> a
+    199:199:void setLayerType(android.view.View,int,android.graphics.Paint) -> a
+android.support.v4.view.ViewCompat$GBViewCompatImpl -> android.support.v4.view.s:
+    214:214:int getOverScrollMode(android.view.View) -> a
+android.support.v4.view.ViewCompat$HCViewCompatImpl -> android.support.v4.view.t:
+    224:224:long getFrameTime() -> a
+    227:228:void setLayerType(android.view.View,int,android.graphics.Paint) -> a
+android.support.v4.view.ViewCompat$ICSViewCompatImpl -> android.support.v4.view.u:
+    237:237:boolean canScrollHorizontally(android.view.View,int) -> a
+android.support.v4.view.ViewCompat$JBViewCompatImpl -> android.support.v4.view.v:
+    272:273:void postInvalidateOnAnimation(android.view.View) -> b
+    280:281:void postOnAnimation(android.view.View,java.lang.Runnable) -> a
+android.support.v4.view.ViewCompat$JbMr1ViewCompatImpl -> android.support.v4.view.w:
+android.support.v4.view.ViewCompat$ViewCompatImpl -> android.support.v4.view.x:
+    boolean canScrollHorizontally(android.view.View,int) -> a
+    int getOverScrollMode(android.view.View) -> a
+    void postInvalidateOnAnimation(android.view.View) -> b
+    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
+    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
+android.support.v4.view.ViewCompatGingerbread -> android.support.v4.view.y:
+    23:23:int getOverScrollMode(android.view.View) -> a
+android.support.v4.view.ViewCompatHC -> android.support.v4.view.z:
+    25:25:long getFrameTime() -> a
+    29:30:void setLayerType(android.view.View,int,android.graphics.Paint) -> a
+android.support.v4.view.ViewCompatICS -> android.support.v4.view.aa:
+    30:30:boolean canScrollHorizontally(android.view.View,int) -> a
+android.support.v4.view.ViewCompatJB -> android.support.v4.view.ab:
+    36:37:void postInvalidateOnAnimation(android.view.View) -> a
+    45:46:void postOnAnimation(android.view.View,java.lang.Runnable) -> a
+android.support.v4.view.ViewPager -> android.support.v4.view.ViewPager:
+    int[] LAYOUT_ATTRS -> a
+    java.util.Comparator COMPARATOR -> b
+    android.view.animation.Interpolator sInterpolator -> c
+    java.util.ArrayList mItems -> d
+    android.support.v4.view.ViewPager$ItemInfo mTempItem -> e
+    android.graphics.Rect mTempRect -> f
+    android.support.v4.view.PagerAdapter mAdapter -> g
+    int mCurItem -> h
+    int mRestoredCurItem -> i
+    android.os.Parcelable mRestoredAdapterState -> j
+    java.lang.ClassLoader mRestoredClassLoader -> k
+    android.widget.Scroller mScroller -> l
+    android.support.v4.view.ViewPager$PagerObserver mObserver -> m
+    int mPageMargin -> n
+    android.graphics.drawable.Drawable mMarginDrawable -> o
+    int mTopPageBounds -> p
+    int mBottomPageBounds -> q
+    float mFirstOffset -> r
+    float mLastOffset -> s
+    int mChildWidthMeasureSpec -> t
+    int mChildHeightMeasureSpec -> u
+    boolean mInLayout -> v
+    boolean mScrollingCacheEnabled -> w
+    boolean mPopulatePending -> x
+    int mOffscreenPageLimit -> y
+    boolean mIsBeingDragged -> z
+    boolean mIsUnableToDrag -> A
+    int mDefaultGutterSize -> B
+    int mGutterSize -> C
+    int mTouchSlop -> D
+    float mLastMotionX -> E
+    float mLastMotionY -> F
+    float mInitialMotionX -> G
+    float mInitialMotionY -> H
+    int mActivePointerId -> I
+    android.view.VelocityTracker mVelocityTracker -> J
+    int mMinimumVelocity -> K
+    int mMaximumVelocity -> L
+    int mFlingDistance -> M
+    int mCloseEnough -> N
+    boolean mFakeDragging -> O
+    android.support.v4.widget.EdgeEffectCompat mLeftEdge -> P
+    android.support.v4.widget.EdgeEffectCompat mRightEdge -> Q
+    boolean mFirstLayout -> R
+    boolean mNeedCalculatePageOffsets -> S
+    boolean mCalledSuper -> T
+    int mDecorChildCount -> U
+    android.support.v4.view.ViewPager$OnPageChangeListener mOnPageChangeListener -> V
+    android.support.v4.view.ViewPager$OnPageChangeListener mInternalPageChangeListener -> W
+    android.support.v4.view.ViewPager$OnAdapterChangeListener mAdapterChangeListener -> Z
+    android.support.v4.view.ViewPager$PageTransformer mPageTransformer -> aa
+    java.lang.reflect.Method mSetChildrenDrawingOrderEnabled -> ab
+    int mDrawingOrder -> ac
+    java.util.ArrayList mDrawingOrderedChildren -> ad
+    android.support.v4.view.ViewPager$ViewPositionComparator sPositionComparator -> ae
+    java.lang.Runnable mEndScrollRunnable -> af
+    int mScrollState -> ag
+    377:379:void onDetachedFromWindow() -> onDetachedFromWindow
+    382:394:void setScrollState(int) -> setScrollState
+    402:440:void setAdapter(android.support.v4.view.PagerAdapter) -> setAdapter
+    443:451:void removeNonDecorViews() -> f
+    459:459:android.support.v4.view.PagerAdapter getAdapter() -> getAdapter
+    463:464:void setOnAdapterChangeListener(android.support.v4.view.ViewPager$OnAdapterChangeListener) -> setOnAdapterChangeListener
+    474:476:void setCurrentItem(int) -> setCurrentItem
+    485:487:void setCurrentItem(int,boolean) -> a
+    490:490:int getCurrentItem() -> getCurrentItem
+    494:495:void setCurrentItemInternal(int,boolean,boolean) -> a
+    498:524:void setCurrentItemInternal(int,boolean,boolean,int) -> a
+    528:553:void scrollToItem(int,boolean,int,boolean) -> a
+    562:563:void setOnPageChangeListener(android.support.v4.view.ViewPager$OnPageChangeListener) -> setOnPageChangeListener
+    593:606:void setChildrenDrawingOrderEnabledCompat(boolean) -> setChildrenDrawingOrderEnabledCompat
+    610:612:int getChildDrawingOrder(int,int) -> getChildDrawingOrder
+    635:635:int getOffscreenPageLimit() -> getOffscreenPageLimit
+    656:665:void setOffscreenPageLimit(int) -> setOffscreenPageLimit
+    676:683:void setPageMargin(int) -> setPageMargin
+    691:691:int getPageMargin() -> getPageMargin
+    700:704:void setPageMarginDrawable(android.graphics.drawable.Drawable) -> setPageMarginDrawable
+    712:713:void setPageMarginDrawable(int) -> setPageMarginDrawable
+    717:717:boolean verifyDrawable(android.graphics.drawable.Drawable) -> verifyDrawable
+    722:727:void drawableStateChanged() -> drawableStateChanged
+    734:736:float distanceInfluenceForSnapDuration(float) -> a
+    757:795:void smoothScrollTo(int,int,int) -> a
+    798:807:android.support.v4.view.ViewPager$ItemInfo addNewItem(int,int) -> a
+    813:877:void dataSetChanged() -> a
+    880:881:void populate() -> b
+    884:1057:void populate(int) -> a
+    1060:1143:void calculatePageOffsets(android.support.v4.view.ViewPager$ItemInfo,int,android.support.v4.view.ViewPager$ItemInfo) -> a
+    1199:1205:android.os.Parcelable onSaveInstanceState() -> onSaveInstanceState
+    1210:1226:void onRestoreInstanceState(android.os.Parcelable) -> onRestoreInstanceState
+    1230:1252:void addView(android.view.View,int,android.view.ViewGroup$LayoutParams) -> addView
+    1256:1261:void removeView(android.view.View) -> removeView
+    1264:1270:android.support.v4.view.ViewPager$ItemInfo infoForChild(android.view.View) -> a
+    1275:1281:android.support.v4.view.ViewPager$ItemInfo infoForAnyChild(android.view.View) -> b
+    1285:1291:android.support.v4.view.ViewPager$ItemInfo infoForPosition(int) -> b
+    1296:1298:void onAttachedToWindow() -> onAttachedToWindow
+    1307:1393:void onMeasure(int,int) -> onMeasure
+    1397:1403:void onSizeChanged(int,int,int,int) -> onSizeChanged
+    1406:1430:void recomputeScrollPosition(int,int,int,int) -> a
+    1434:1538:void onLayout(boolean,int,int,int,int) -> onLayout
+    1542:1563:void computeScroll() -> computeScroll
+    1566:1590:boolean pageScrolled(int) -> d
+    1607:1668:void onPageScrolled(int,float,int) -> a
+    1671:1699:void completeScroll(boolean) -> a
+    1702:1702:boolean isGutterDrag(float,float) -> a
+    1706:1712:void enableLayers(boolean) -> b
+    1722:1853:boolean onInterceptTouchEvent(android.view.MotionEvent) -> onInterceptTouchEvent
+    1858:1974:boolean onTouchEvent(android.view.MotionEvent) -> onTouchEvent
+    1978:2021:boolean performDrag(float) -> b
+    2029:2067:android.support.v4.view.ViewPager$ItemInfo infoForCurrentScrollPosition() -> g
+    2072:2087:int determineTargetPage(int,float,int,int) -> a
+    2092:2130:void draw(android.graphics.Canvas) -> draw
+    2134:2174:void onDraw(android.graphics.Canvas) -> onDraw
+    2305:2317:void onSecondaryPointerUp(android.view.MotionEvent) -> a
+    2320:2327:void endDrag() -> h
+    2330:2342:void setScrollingCacheEnabled(boolean) -> setScrollingCacheEnabled
+    2356:2375:boolean canScroll(android.view.View,boolean,int,int,int) -> a
+    2381:2381:boolean dispatchKeyEvent(android.view.KeyEvent) -> dispatchKeyEvent
+    2393:2415:boolean executeKeyEvent(android.view.KeyEvent) -> a
+    2419:2458:boolean arrowScroll(int) -> c
+    2462:2484:android.graphics.Rect getChildRectInPagerCoordinates(android.graphics.Rect,android.view.View) -> a
+    2488:2492:boolean pageLeft() -> c
+    2496:2500:boolean pageRight() -> d
+    2508:2545:void addFocusables(java.util.ArrayList,int,int) -> addFocusables
+    2555:2564:void addTouchables(java.util.ArrayList) -> addTouchables
+    2575:2596:boolean onRequestFocusInDescendants(int,android.graphics.Rect) -> onRequestFocusInDescendants
+    2606:2618:boolean dispatchPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) -> dispatchPopulateAccessibilityEvent
+    2623:2623:android.view.ViewGroup$LayoutParams generateDefaultLayoutParams() -> generateDefaultLayoutParams
+    2628:2628:android.view.ViewGroup$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> generateLayoutParams
+    2633:2633:boolean checkLayoutParams(android.view.ViewGroup$LayoutParams) -> checkLayoutParams
+    2638:2638:android.view.ViewGroup$LayoutParams generateLayoutParams(android.util.AttributeSet) -> generateLayoutParams
+    84:84:int[] access$400() -> e
+android.support.v4.view.ViewPager$1 -> android.support.v4.view.ac:
+    113:113:int compare(android.support.v4.view.ViewPager$ItemInfo,android.support.v4.view.ViewPager$ItemInfo) -> a
+    110:110:int compare(java.lang.Object,java.lang.Object) -> compare
+android.support.v4.view.ViewPager$2 -> android.support.v4.view.ad:
+    119:120:float getInterpolation(float) -> getInterpolation
+android.support.v4.view.ViewPager$Decor -> android.support.v4.view.ae:
+android.support.v4.view.ViewPager$ItemInfo -> android.support.v4.view.af:
+    java.lang.Object object -> a
+    int position -> b
+    boolean scrolling -> c
+    float widthFactor -> d
+    float offset -> e
+android.support.v4.view.ViewPager$LayoutParams -> android.support.v4.view.ag:
+    boolean isDecor -> a
+    int gravity -> b
+    float widthFactor -> c
+    boolean needsMeasure -> d
+    int position -> e
+    int childIndex -> f
+android.support.v4.view.ViewPager$OnAdapterChangeListener -> android.support.v4.view.ah:
+    void onAdapterChanged(android.support.v4.view.PagerAdapter,android.support.v4.view.PagerAdapter) -> a
+android.support.v4.view.ViewPager$OnPageChangeListener -> android.support.v4.view.ai:
+    void onPageScrolled(int,float,int) -> a
+    void onPageSelected(int) -> a
+    void onPageScrollStateChanged(int) -> b
+android.support.v4.view.ViewPager$PageTransformer -> android.support.v4.view.aj:
+    void transformPage(android.view.View,float) -> a
+android.support.v4.view.ViewPager$PagerObserver -> android.support.v4.view.ak:
+    android.support.v4.view.ViewPager this$0 -> a
+    2688:2689:void onChanged() -> onChanged
+    2692:2693:void onInvalidated() -> onInvalidated
+android.support.v4.view.ViewPager$SavedState -> android.support.v4.view.ViewPager$SavedState:
+    int position -> a
+    android.os.Parcelable adapterState -> b
+    java.lang.ClassLoader loader -> c
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    1162:1165:void writeToParcel(android.os.Parcel,int) -> writeToParcel
+    1169:1169:java.lang.String toString() -> toString
+android.support.v4.view.ViewPager$SavedState$1 -> android.support.v4.view.al:
+    1178:1178:android.support.v4.view.ViewPager$SavedState createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> b
+    1182:1182:android.support.v4.view.ViewPager$SavedState[] newArray(int) -> b
+    1175:1175:java.lang.Object[] newArray(int) -> a
+    1175:1175:java.lang.Object createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> a
+android.support.v4.view.ViewPager$ViewPositionComparator -> android.support.v4.view.am:
+    2751:2756:int compare(android.view.View,android.view.View) -> a
+    2748:2748:int compare(java.lang.Object,java.lang.Object) -> compare
+android.support.v4.widget.EdgeEffectCompat -> android.support.v4.d.a:
+    java.lang.Object mEdgeEffect -> a
+    android.support.v4.widget.EdgeEffectCompat$EdgeEffectImpl IMPL -> b
+    143:144:void setSize(int,int) -> a
+    154:154:boolean isFinished() -> a
+    162:163:void finish() -> b
+    177:177:boolean onPull(float) -> a
+    189:189:boolean onRelease() -> c
+    218:218:boolean draw(android.graphics.Canvas) -> a
+android.support.v4.widget.EdgeEffectCompat$BaseEdgeEffectImpl -> android.support.v4.d.b:
+    64:64:void setSize(java.lang.Object,int,int) -> a
+    67:67:boolean isFinished(java.lang.Object) -> a
+    71:71:void finish(java.lang.Object) -> b
+    74:74:boolean onPull(java.lang.Object,float) -> a
+    78:78:boolean onRelease(java.lang.Object) -> c
+    86:86:boolean draw(java.lang.Object,android.graphics.Canvas) -> a
+android.support.v4.widget.EdgeEffectCompat$EdgeEffectIcsImpl -> android.support.v4.d.c:
+    96:97:void setSize(java.lang.Object,int,int) -> a
+    100:100:boolean isFinished(java.lang.Object) -> a
+    104:105:void finish(java.lang.Object) -> b
+    108:108:boolean onPull(java.lang.Object,float) -> a
+    112:112:boolean onRelease(java.lang.Object) -> c
+    120:120:boolean draw(java.lang.Object,android.graphics.Canvas) -> a
+android.support.v4.widget.EdgeEffectCompat$EdgeEffectImpl -> android.support.v4.d.d:
+    void setSize(java.lang.Object,int,int) -> a
+    boolean isFinished(java.lang.Object) -> a
+    void finish(java.lang.Object) -> b
+    boolean onPull(java.lang.Object,float) -> a
+    boolean onRelease(java.lang.Object) -> c
+    boolean draw(java.lang.Object,android.graphics.Canvas) -> a
+android.support.v4.widget.EdgeEffectCompatIcs -> android.support.v4.d.e:
+    34:35:void setSize(java.lang.Object,int,int) -> a
+    38:38:boolean isFinished(java.lang.Object) -> a
+    42:43:void finish(java.lang.Object) -> b
+    46:47:boolean onPull(java.lang.Object,float) -> a
+    51:53:boolean onRelease(java.lang.Object) -> c
+    62:62:boolean draw(java.lang.Object,android.graphics.Canvas) -> a
 com.brentonbostick.bypass.BypassApplication -> com.brentonbostick.bypass.a:
     com.brentonbostick.bypass.BypassPlatform bypassPlatform -> a
     com.brentonbostick.bypass.BypassApplication BYPASSAPP -> b
@@ -77,6 +940,7 @@ com.brentonbostick.bypass.android.R -> com.brentonbostick.bypass.android.d:
 com.brentonbostick.bypass.android.R$id -> com.brentonbostick.bypass.android.e:
     int btn_levelmenu_clearScores -> btn_levelmenu_clearScores
     int btn_levelmenu_toggleInfo -> btn_levelmenu_toggleInfo
+    int btn_world_hint -> btn_world_hint
     int btn_world_resetLevel -> btn_world_resetLevel
     int btn_world_toggleInfo -> btn_world_toggleInfo
     int view_bypassworld -> view_bypassworld
@@ -183,41 +1047,43 @@ com.brentonbostick.bypass.android.ui.paint.RenderingContextImpl -> com.brentonbo
     122:123:void popTransform() -> d
     126:127:void pushClip() -> e
     130:131:void popClip() -> f
-    134:136:void drawAABB(com.brentonbostick.capsloc.geom.AABB) -> a
-    139:141:void paintAABB(com.brentonbostick.capsloc.geom.AABB) -> b
-    144:146:void drawAABB(com.brentonbostick.capsloc.geom.MutableAABB) -> a
-    168:178:void paintPath(com.brentonbostick.capsloc.geom.GeometryPath) -> a
-    182:183:void drawLine(com.brentonbostick.capsloc.geom.Line) -> a
-    197:205:void paintCircle(com.brentonbostick.capsloc.geom.Circle) -> a
-    208:209:void scale(double,double) -> a
-    212:214:void setColor(com.brentonbostick.capsloc.ui.paint.Color) -> b
-    217:218:void translate(double,double) -> b
-    225:226:void clip(com.brentonbostick.capsloc.geom.AABB) -> c
-    229:230:void setAlpha(double) -> b
-    234:241:void paintString(double,double,double,java.lang.String) -> a
-    245:274:void setStroke(double,com.brentonbostick.capsloc.ui.paint.Cap,com.brentonbostick.capsloc.ui.paint.Join) -> a
-    288:289:void setAntialiasing() -> g
-    292:294:void clearAntialiasing() -> h
+    134:138:void drawAABB(com.brentonbostick.capsloc.geom.AABB) -> a
+    141:145:void paintAABB(com.brentonbostick.capsloc.geom.AABB) -> b
+    148:152:void drawAABB(com.brentonbostick.capsloc.geom.MutableAABB) -> a
+    178:190:void paintPath(com.brentonbostick.capsloc.geom.GeometryPath) -> a
+    194:195:void drawLine(com.brentonbostick.capsloc.geom.Line) -> a
+    211:221:void paintCircle(com.brentonbostick.capsloc.geom.Circle) -> a
+    224:225:void scale(double,double) -> a
+    228:230:void setColor(com.brentonbostick.capsloc.ui.paint.Color) -> b
+    233:234:void translate(double,double) -> b
+    241:242:void clip(com.brentonbostick.capsloc.geom.AABB) -> c
+    245:246:void setAlpha(double) -> b
+    250:257:void paintString(double,double,double,java.lang.String) -> a
+    261:290:void setStroke(double,com.brentonbostick.capsloc.ui.paint.Cap,com.brentonbostick.capsloc.ui.paint.Join) -> a
+    304:305:void setAntialiasing() -> g
+    308:310:void clearAntialiasing() -> h
     30:30:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$ui$paint$Cap() -> i
     30:30:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$ui$paint$Join() -> j
 com.brentonbostick.bypass.level.BypassCar -> com.brentonbostick.bypass.a.a:
     char boardLetter -> a
     double coastingVel -> b
     double coastingAcceleration -> c
-    com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP newPos -> d
-    com.brentonbostick.capsloc.geom.MutableOBB so -> e
-    com.brentonbostick.capsloc.geom.MutableOBB eo -> f
-    com.brentonbostick.capsloc.geom.MutableSweptOBB swept -> g
-    boolean $assertionsDisabled -> h
-    int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$cars$CarStateEnum -> Q
-    45:53:com.brentonbostick.bypass.level.BypassCar createCar(com.brentonbostick.capsloc.world.World,com.brentonbostick.capsloc.world.sprites.CarSheet$CarType,int,char) -> a
-    58:72:boolean preStep(double) -> a
-    80:106:void setCoastingVelFromDrag(com.brentonbostick.capsloc.math.Point,long,boolean) -> a
-    109:110:void clearCoastingVel() -> a
-    118:220:void fakeCoastingStep(double) -> b
-    224:245:boolean postStep(double) -> c
-    255:271:void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
-    24:24:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$cars$CarStateEnum() -> b
+    java.util.concurrent.locks.ReentrantLock motionLock -> d
+    com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP newPos -> e
+    com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP newFrontPos -> f
+    com.brentonbostick.capsloc.geom.MutableOBB so -> g
+    com.brentonbostick.capsloc.geom.MutableOBB eo -> h
+    com.brentonbostick.capsloc.geom.MutableSweptOBB swept -> i
+    boolean $assertionsDisabled -> j
+    int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$cars$CarStateEnum -> S
+    49:57:com.brentonbostick.bypass.level.BypassCar createCar(com.brentonbostick.capsloc.world.World,com.brentonbostick.capsloc.world.sprites.CarSheet$CarType,int,char) -> a
+    62:76:boolean preStep(double) -> a
+    84:110:void setCoastingVelFromDrag(com.brentonbostick.capsloc.math.Point,long,boolean) -> a
+    113:114:void clearCoastingVel() -> a
+    124:238:void fakeCoastingStep(double) -> b
+    242:263:boolean postStep(double) -> c
+    273:289:void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
+    26:26:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$cars$CarStateEnum() -> b
 com.brentonbostick.bypass.level.BypassCarTool -> com.brentonbostick.bypass.a.b:
     com.brentonbostick.bypass.level.BypassCar car -> a
     com.brentonbostick.capsloc.math.Point lastPressP -> b
@@ -229,23 +1095,24 @@ com.brentonbostick.bypass.level.BypassCarTool -> com.brentonbostick.bypass.a.b:
     com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP tmpRoundPos -> h
     com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP attemptedPos -> i
     com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP actualPos -> j
-    com.brentonbostick.capsloc.math.Point prevDragP -> k
-    com.brentonbostick.capsloc.math.Point curDragP -> l
-    com.brentonbostick.capsloc.math.Point dragVector -> m
-    long prevDragMillis -> n
-    long curDragMillis -> o
-    long dragTimeStepMillis -> p
-    com.brentonbostick.capsloc.math.Point lastPanelDragP -> q
-    com.brentonbostick.capsloc.math.Point penPanelDragP -> r
-    boolean $assertionsDisabled -> s
-    int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$cars$CarStateEnum -> u
-    47:100:void pressed(com.brentonbostick.capsloc.ui.InputEvent) -> a
-    112:324:void releasedOrCanceled() -> b
-    327:330:void released(com.brentonbostick.capsloc.ui.InputEvent) -> b
-    333:336:void canceled(com.brentonbostick.capsloc.ui.InputEvent) -> c
-    339:394:void determineCoasting(com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP,com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP,boolean) -> a
-    412:600:void dragged(com.brentonbostick.capsloc.ui.InputEvent) -> d
-    604:604:void paint_panel(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
+    com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP newFrontPos -> k
+    com.brentonbostick.capsloc.math.Point prevDragP -> l
+    com.brentonbostick.capsloc.math.Point curDragP -> m
+    com.brentonbostick.capsloc.math.Point dragVector -> n
+    long prevDragMillis -> o
+    long curDragMillis -> p
+    long dragTimeStepMillis -> q
+    com.brentonbostick.capsloc.math.Point lastPanelDragP -> r
+    com.brentonbostick.capsloc.math.Point penPanelDragP -> s
+    boolean $assertionsDisabled -> t
+    int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$cars$CarStateEnum -> v
+    97:152:void pressed(com.brentonbostick.capsloc.ui.InputEvent) -> a
+    165:382:void releasedOrCanceled() -> b
+    385:388:void released(com.brentonbostick.capsloc.ui.InputEvent) -> b
+    391:394:void canceled(com.brentonbostick.capsloc.ui.InputEvent) -> c
+    397:452:void determineCoasting(com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP,com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP,boolean) -> a
+    470:666:void dragged(com.brentonbostick.capsloc.ui.InputEvent) -> d
+    670:670:void paint_panel(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
     20:20:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$cars$CarStateEnum() -> a
 com.brentonbostick.bypass.level.BypassDriver -> com.brentonbostick.bypass.a.c:
     boolean $assertionsDisabled -> a
@@ -308,20 +1175,20 @@ com.brentonbostick.bypass.level.LevelDB -> com.brentonbostick.bypass.a.f:
     165:177:void clearLevels() -> c
 com.brentonbostick.bypass.level.WinnerMenu -> com.brentonbostick.bypass.a.g:
     boolean ready -> a
-    15:44:void action() -> a
-    119:122:void postDisplay(int,int) -> a
+    15:57:void action() -> a
+    132:135:void postDisplay(int,int) -> a
 com.brentonbostick.bypass.level.WinnerMenu$1 -> com.brentonbostick.bypass.a.h:
     com.brentonbostick.bypass.level.WinnerMenu this$0 -> a
-    55:55:void action() -> a
+    68:68:void action() -> a
 com.brentonbostick.bypass.level.WinnerMenu$2 -> com.brentonbostick.bypass.a.i:
     com.brentonbostick.bypass.level.WinnerMenu this$0 -> a
-    62:62:void action() -> a
+    75:75:void action() -> a
 com.brentonbostick.bypass.level.WinnerMenu$3 -> com.brentonbostick.bypass.a.j:
     com.brentonbostick.bypass.level.WinnerMenu this$0 -> a
-    69:77:void action() -> a
+    82:90:void action() -> a
 com.brentonbostick.bypass.level.WinnerMenu$4 -> com.brentonbostick.bypass.a.k:
     com.brentonbostick.bypass.level.WinnerMenu this$0 -> a
-    83:91:void action() -> a
+    96:104:void action() -> a
 com.brentonbostick.bypass.menu.BypassMenu -> com.brentonbostick.bypass.b.a:
     java.util.concurrent.locks.ReentrantLock lock -> c
     boolean rendered -> d
@@ -331,11 +1198,11 @@ com.brentonbostick.bypass.menu.BypassMenu -> com.brentonbostick.bypass.b.a:
     20:20:com.brentonbostick.capsloc.ui.Menu getMenu() -> f
     24:24:double getTime() -> b
     33:38:void resume() -> c
-    42:57:void surfaceChanged(int,int) -> b
-    61:70:void pause() -> d
-    74:82:boolean integrate(double) -> a
-    86:91:void postDisplay(int,int) -> a
-    94:101:void render() -> e
+    42:61:void surfaceChanged(int,int) -> b
+    65:74:void pause() -> d
+    78:86:boolean integrate(double) -> a
+    90:95:void postDisplay(int,int) -> a
+    98:105:void render() -> e
 com.brentonbostick.bypass.menu.BypassMenuPanel -> com.brentonbostick.bypass.b.b:
     com.brentonbostick.capsloc.ui.Image logo -> a
     com.brentonbostick.capsloc.ui.Image copyright -> b
@@ -428,10 +1295,10 @@ com.brentonbostick.capsloc.SimulationRunnable -> com.brentonbostick.a.h:
     java.util.concurrent.atomic.AtomicBoolean trigger -> a
     17:83:void run() -> run
 com.brentonbostick.capsloc.Tool -> com.brentonbostick.a.i:
-    90:90:void pressed(com.brentonbostick.capsloc.ui.InputEvent) -> a
-    97:97:void released(com.brentonbostick.capsloc.ui.InputEvent) -> b
-    104:104:void dragged(com.brentonbostick.capsloc.ui.InputEvent) -> d
-    125:125:void canceled(com.brentonbostick.capsloc.ui.InputEvent) -> c
+    94:94:void pressed(com.brentonbostick.capsloc.ui.InputEvent) -> a
+    101:101:void released(com.brentonbostick.capsloc.ui.InputEvent) -> b
+    108:108:void dragged(com.brentonbostick.capsloc.ui.InputEvent) -> d
+    129:129:void canceled(com.brentonbostick.capsloc.ui.InputEvent) -> c
     void paint_panel(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
 com.brentonbostick.capsloc.geom.AABB -> com.brentonbostick.a.a.a:
     com.brentonbostick.capsloc.math.Dim dim -> a
@@ -1249,28 +2116,28 @@ com.brentonbostick.capsloc.world.cars.AutonomousEngine -> com.brentonbostick.a.d
     157:170:void updateBrake(double) -> b
     7:7:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$cars$CarStateEnum() -> a
 com.brentonbostick.capsloc.world.cars.Car -> com.brentonbostick.a.d.a.d:
-    com.brentonbostick.capsloc.world.sprites.CarSheet$CarType type -> i
-    com.brentonbostick.capsloc.world.cars.CarStateEnum state -> j
-    double startingTime -> k
-    com.brentonbostick.capsloc.world.cars.Driver driver -> l
-    com.brentonbostick.capsloc.world.cars.Engine engine -> m
-    int id -> n
-    boolean atleastPartiallyOnRoad -> o
-    boolean inMerger -> p
-    com.brentonbostick.capsloc.math.Point toolOrigCenter -> q
-    com.brentonbostick.capsloc.geom.MutableOBB toolOrigShape -> r
-    boolean destroyed -> s
-    com.brentonbostick.capsloc.world.sprites.CarSheet$CarSheetSprite sprite -> t
-    int sheetIndex -> u
-    com.brentonbostick.capsloc.geom.GeometryPath path -> v
-    int carIDCounter -> w
-    double BRAKE_SIZE -> x
-    double BRAKE_LOCALX -> y
-    double BRAKE_LOCALY -> z
-    double CAR_BRAKE1X -> A
-    double CAR_BRAKE1Y -> B
-    double CAR_BRAKE2X -> C
-    double CAR_BRAKE2Y -> D
+    com.brentonbostick.capsloc.world.sprites.CarSheet$CarType type -> k
+    com.brentonbostick.capsloc.world.cars.CarStateEnum state -> l
+    double startingTime -> m
+    com.brentonbostick.capsloc.world.cars.Driver driver -> n
+    com.brentonbostick.capsloc.world.cars.Engine engine -> o
+    int id -> p
+    boolean atleastPartiallyOnRoad -> q
+    boolean inMerger -> r
+    com.brentonbostick.capsloc.math.Point toolOrigCenter -> s
+    com.brentonbostick.capsloc.geom.MutableOBB toolOrigShape -> t
+    boolean destroyed -> u
+    com.brentonbostick.capsloc.world.sprites.CarSheet$CarSheetSprite sprite -> v
+    int sheetIndex -> w
+    com.brentonbostick.capsloc.geom.GeometryPath path -> x
+    int carIDCounter -> y
+    double BRAKE_SIZE -> z
+    double BRAKE_LOCALX -> A
+    double BRAKE_LOCALY -> B
+    double CAR_BRAKE1X -> C
+    double CAR_BRAKE1Y -> D
+    double CAR_BRAKE2X -> E
+    double CAR_BRAKE2Y -> F
     int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$cars$CarStateEnum -> a
     65:85:void computeCtorProperties(int) -> a
     88:91:void setTransform(com.brentonbostick.capsloc.math.Point,double) -> a
@@ -1437,7 +2304,9 @@ com.brentonbostick.capsloc.world.graph.BypassBoardPosition -> com.brentonbostick
     73:73:boolean isBound() -> a
     78:174:com.brentonbostick.capsloc.world.graph.GraphPosition approachNeighbor(com.brentonbostick.capsloc.world.graph.GraphPosition,double) -> a
     185:228:double goalGPPPCombo(int,double,boolean,com.brentonbostick.capsloc.world.graph.GraphPosition) -> a
-com.brentonbostick.capsloc.world.graph.BypassStud -> com.brentonbostick.a.d.b.e:
+com.brentonbostick.capsloc.world.graph.BypassFixture -> com.brentonbostick.a.d.b.e:
+    15:15:void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
+com.brentonbostick.capsloc.world.graph.BypassStud -> com.brentonbostick.a.d.b.f:
     com.brentonbostick.capsloc.world.World world -> c
     com.brentonbostick.capsloc.world.graph.BypassBoard board -> d
     int row -> e
@@ -1446,14 +2315,14 @@ com.brentonbostick.capsloc.world.graph.BypassStud -> com.brentonbostick.a.d.b.e:
     com.brentonbostick.capsloc.geom.AABB aabb -> h
     50:50:java.lang.String toString() -> toString
     73:75:void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
-com.brentonbostick.capsloc.world.graph.Direction -> com.brentonbostick.a.d.b.f:
+com.brentonbostick.capsloc.world.graph.Direction -> com.brentonbostick.a.d.b.g:
     com.brentonbostick.capsloc.world.graph.Direction STARTTOEND -> a
     com.brentonbostick.capsloc.world.graph.Direction ENDTOSTART -> b
     boolean $assertionsDisabled -> c
     com.brentonbostick.capsloc.world.graph.Direction[] ENUM$VALUES -> d
     1:1:com.brentonbostick.capsloc.world.graph.Direction[] values() -> values
     1:1:com.brentonbostick.capsloc.world.graph.Direction valueOf(java.lang.String) -> valueOf
-com.brentonbostick.capsloc.world.graph.Edge -> com.brentonbostick.a.d.b.g:
+com.brentonbostick.capsloc.world.graph.Edge -> com.brentonbostick.a.d.b.h:
     int id -> a
     int pointCount() -> a
     double getTotalLength(com.brentonbostick.capsloc.world.graph.Vertex,com.brentonbostick.capsloc.world.graph.Vertex) -> a
@@ -1462,7 +2331,7 @@ com.brentonbostick.capsloc.world.graph.Edge -> com.brentonbostick.a.d.b.g:
     com.brentonbostick.capsloc.world.graph.Vertex getOtherVertex(com.brentonbostick.capsloc.world.graph.Axis) -> c
     com.brentonbostick.capsloc.world.graph.GraphPosition travelFromReferenceVertex(com.brentonbostick.capsloc.world.graph.Axis,double) -> a
     com.brentonbostick.capsloc.world.graph.GraphPosition travelFromOtherVertex(com.brentonbostick.capsloc.world.graph.Axis,double) -> b
-com.brentonbostick.capsloc.world.graph.EdgePosition -> com.brentonbostick.a.d.b.h:
+com.brentonbostick.capsloc.world.graph.EdgePosition -> com.brentonbostick.a.d.b.i:
     com.brentonbostick.capsloc.world.graph.Axis axis -> a
     boolean $assertionsDisabled -> b
     com.brentonbostick.capsloc.world.graph.GraphPosition travelToReferenceVertex(com.brentonbostick.capsloc.world.graph.Axis,double) -> a
@@ -1474,7 +2343,7 @@ com.brentonbostick.capsloc.world.graph.EdgePosition -> com.brentonbostick.a.d.b.
     double getCombo() -> f
     31:59:com.brentonbostick.capsloc.world.graph.GraphPosition approachNeighbor(com.brentonbostick.capsloc.world.graph.GraphPosition,double) -> a
     68:89:double goalGPPPCombo(int,double,boolean,com.brentonbostick.capsloc.world.graph.GraphPosition) -> a
-com.brentonbostick.capsloc.world.graph.Fixture -> com.brentonbostick.a.d.b.i:
+com.brentonbostick.capsloc.world.graph.Fixture -> com.brentonbostick.a.d.b.j:
     double SPAWN_FREQUENCY_SECONDS -> a
     com.brentonbostick.capsloc.world.graph.Axis a -> b
     com.brentonbostick.capsloc.world.graph.Side facingSide -> v
@@ -1500,17 +2369,17 @@ com.brentonbostick.capsloc.world.graph.Fixture -> com.brentonbostick.a.d.b.i:
     197:220:boolean active(double) -> d
     225:266:com.brentonbostick.capsloc.world.cars.AutonomousCar createNewCar() -> i
     369:409:void render() -> f
-    413:448:void paint_panel(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
+    413:448:void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
     472:472:void paintScene(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> b
     22:22:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$WorldBackground$RenderMethod() -> g
-com.brentonbostick.capsloc.world.graph.FixtureType -> com.brentonbostick.a.d.b.j:
+com.brentonbostick.capsloc.world.graph.FixtureType -> com.brentonbostick.a.d.b.k:
     com.brentonbostick.capsloc.world.graph.FixtureType SOURCE -> a
     com.brentonbostick.capsloc.world.graph.FixtureType SINK -> b
     boolean $assertionsDisabled -> c
     com.brentonbostick.capsloc.world.graph.FixtureType[] ENUM$VALUES -> d
     1:1:com.brentonbostick.capsloc.world.graph.FixtureType[] values() -> values
     1:1:com.brentonbostick.capsloc.world.graph.FixtureType valueOf(java.lang.String) -> valueOf
-com.brentonbostick.capsloc.world.graph.Graph -> com.brentonbostick.a.d.b.k:
+com.brentonbostick.capsloc.world.graph.Graph -> com.brentonbostick.a.d.b.l:
     com.brentonbostick.capsloc.world.World world -> a
     java.util.List vertices -> b
     java.util.List roads -> c
@@ -1555,22 +2424,22 @@ com.brentonbostick.capsloc.world.graph.Graph -> com.brentonbostick.a.d.b.k:
     1425:1432:void paintIDs(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> c
     27:27:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$graph$Direction() -> c
     27:27:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$WorldBackground$RenderMethod() -> d
-com.brentonbostick.capsloc.world.graph.GraphPosition -> com.brentonbostick.a.d.b.l:
+com.brentonbostick.capsloc.world.graph.GraphPosition -> com.brentonbostick.a.d.b.m:
     com.brentonbostick.capsloc.math.Point p -> i
     com.brentonbostick.capsloc.Entity entity -> j
     boolean isBound() -> a
     com.brentonbostick.capsloc.world.graph.GraphPosition approachNeighbor(com.brentonbostick.capsloc.world.graph.GraphPosition,double) -> a
     double goalGPPPCombo(int,double,boolean,com.brentonbostick.capsloc.world.graph.GraphPosition) -> a
-com.brentonbostick.capsloc.world.graph.Intersection -> com.brentonbostick.a.d.b.m:
+com.brentonbostick.capsloc.world.graph.Intersection -> com.brentonbostick.a.d.b.n:
     19:19:boolean isUserDeleteable() -> c
     23:23:boolean supportsStopSigns() -> b
     28:28:void preStart() -> d
     35:35:boolean preStep(double) -> a
     39:39:boolean postStep(double) -> c
     100:100:void render() -> f
-    104:112:void paint_panel(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
+    104:112:void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
     124:124:void paintScene(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> b
-com.brentonbostick.capsloc.world.graph.Merger -> com.brentonbostick.a.d.b.n:
+com.brentonbostick.capsloc.world.graph.Merger -> com.brentonbostick.a.d.b.o:
     com.brentonbostick.capsloc.math.Point ul -> b
     com.brentonbostick.capsloc.world.graph.Fixture top -> c
     com.brentonbostick.capsloc.world.graph.Fixture left -> d
@@ -1602,7 +2471,7 @@ com.brentonbostick.capsloc.world.graph.Merger -> com.brentonbostick.a.d.b.n:
     251:251:double getLengthFromTop(int) -> b
     307:315:void paint_panel(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
     332:338:void paintSkeleton(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> b
-com.brentonbostick.capsloc.world.graph.MergerPosition -> com.brentonbostick.a.d.b.o:
+com.brentonbostick.capsloc.world.graph.MergerPosition -> com.brentonbostick.a.d.b.p:
     com.brentonbostick.capsloc.world.graph.Merger m -> c
     int index -> d
     double param -> e
@@ -1641,8 +2510,8 @@ com.brentonbostick.capsloc.world.graph.MergerPosition -> com.brentonbostick.a.d.
     274:279:com.brentonbostick.capsloc.world.graph.GraphPosition travelToRight(com.brentonbostick.capsloc.world.graph.Merger,int,double,double) -> b
     302:307:com.brentonbostick.capsloc.world.graph.GraphPosition travelToTop(com.brentonbostick.capsloc.world.graph.Merger,int,double,double) -> c
     330:335:com.brentonbostick.capsloc.world.graph.GraphPosition travelToBottom(com.brentonbostick.capsloc.world.graph.Merger,int,double,double) -> d
-com.brentonbostick.capsloc.world.graph.RegularStud -> com.brentonbostick.a.d.b.p:
-com.brentonbostick.capsloc.world.graph.Road -> com.brentonbostick.a.d.b.q:
+com.brentonbostick.capsloc.world.graph.RegularStud -> com.brentonbostick.a.d.b.q:
+com.brentonbostick.capsloc.world.graph.Road -> com.brentonbostick.a.d.b.r:
     com.brentonbostick.capsloc.world.World world -> b
     com.brentonbostick.capsloc.world.graph.Vertex start -> c
     com.brentonbostick.capsloc.world.graph.Vertex end -> d
@@ -1709,7 +2578,7 @@ com.brentonbostick.capsloc.world.graph.Road -> com.brentonbostick.a.d.b.q:
     889:901:void paintDecorations(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> c
     28:28:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$graph$Direction() -> k
     28:28:int[] $SWITCH_TABLE$com$brentonbostick$capsloc$world$WorldBackground$RenderMethod() -> l
-com.brentonbostick.capsloc.world.graph.RoadPosition -> com.brentonbostick.a.d.b.r:
+com.brentonbostick.capsloc.world.graph.RoadPosition -> com.brentonbostick.a.d.b.s:
     com.brentonbostick.capsloc.world.graph.Road r -> c
     int index -> d
     double param -> e
@@ -1741,7 +2610,7 @@ com.brentonbostick.capsloc.world.graph.RoadPosition -> com.brentonbostick.a.d.b.
     229:232:com.brentonbostick.capsloc.world.graph.GraphPosition nextBoundForward(com.brentonbostick.capsloc.world.graph.Road,int,double) -> a
     237:247:com.brentonbostick.capsloc.world.graph.GraphPosition nextBoundBackward(com.brentonbostick.capsloc.world.graph.Road,int,double) -> b
     254:274:boolean check() -> g
-com.brentonbostick.capsloc.world.graph.Side -> com.brentonbostick.a.d.b.s:
+com.brentonbostick.capsloc.world.graph.Side -> com.brentonbostick.a.d.b.t:
     com.brentonbostick.capsloc.world.graph.Side TOP -> a
     com.brentonbostick.capsloc.world.graph.Side LEFT -> b
     com.brentonbostick.capsloc.world.graph.Side RIGHT -> c
@@ -1750,11 +2619,11 @@ com.brentonbostick.capsloc.world.graph.Side -> com.brentonbostick.a.d.b.s:
     com.brentonbostick.capsloc.world.graph.Side[] ENUM$VALUES -> f
     1:1:com.brentonbostick.capsloc.world.graph.Side[] values() -> values
     1:1:com.brentonbostick.capsloc.world.graph.Side valueOf(java.lang.String) -> valueOf
-com.brentonbostick.capsloc.world.graph.Side$1 -> com.brentonbostick.a.d.b.t:
-com.brentonbostick.capsloc.world.graph.Side$2 -> com.brentonbostick.a.d.b.u:
-com.brentonbostick.capsloc.world.graph.Side$3 -> com.brentonbostick.a.d.b.v:
-com.brentonbostick.capsloc.world.graph.Side$4 -> com.brentonbostick.a.d.b.w:
-com.brentonbostick.capsloc.world.graph.StopSign -> com.brentonbostick.a.d.b.x:
+com.brentonbostick.capsloc.world.graph.Side$1 -> com.brentonbostick.a.d.b.u:
+com.brentonbostick.capsloc.world.graph.Side$2 -> com.brentonbostick.a.d.b.v:
+com.brentonbostick.capsloc.world.graph.Side$3 -> com.brentonbostick.a.d.b.w:
+com.brentonbostick.capsloc.world.graph.Side$4 -> com.brentonbostick.a.d.b.x:
+com.brentonbostick.capsloc.world.graph.StopSign -> com.brentonbostick.a.d.b.y:
     com.brentonbostick.capsloc.world.graph.Road r -> a
     com.brentonbostick.capsloc.world.graph.Vertex v -> b
     int dir -> c
@@ -1770,7 +2639,7 @@ com.brentonbostick.capsloc.world.graph.StopSign -> com.brentonbostick.a.d.b.x:
     82:82:boolean postStep(double) -> c
     87:94:void computePoint() -> b
     116:136:void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
-com.brentonbostick.capsloc.world.graph.Vertex -> com.brentonbostick.a.d.b.y:
+com.brentonbostick.capsloc.world.graph.Vertex -> com.brentonbostick.a.d.b.z:
     double INIT_VERTEX_RADIUS -> k
     com.brentonbostick.capsloc.world.World world -> l
     com.brentonbostick.capsloc.math.Point p -> m
@@ -1790,10 +2659,10 @@ com.brentonbostick.capsloc.world.graph.Vertex -> com.brentonbostick.a.d.b.y:
     boolean supportsStopSigns() -> b
     237:263:java.util.List commonEdges(com.brentonbostick.capsloc.world.graph.Vertex,com.brentonbostick.capsloc.world.graph.Vertex) -> a
     void render() -> f
-    void paint_panel(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
+    void paint(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> a
     void paintScene(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> b
     283:286:void paintID(com.brentonbostick.capsloc.ui.paint.RenderingContext) -> c
-com.brentonbostick.capsloc.world.graph.VertexPosition -> com.brentonbostick.a.d.b.z:
+com.brentonbostick.capsloc.world.graph.VertexPosition -> com.brentonbostick.a.d.b.aa:
     com.brentonbostick.capsloc.world.graph.Vertex v -> a
     int hash -> c
     boolean $assertionsDisabled -> b
@@ -1943,18 +2812,18 @@ com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP -> com.brentonbostick.a.d
     1122:1146:double firstCollisionParam(com.brentonbostick.capsloc.world.cars.Car,com.brentonbostick.capsloc.geom.MutableSweptOBB) -> a
     1152:1229:int movesDistance(com.brentonbostick.capsloc.world.graph.gpp.MutableGPPP,com.brentonbostick.capsloc.world.cars.Car) -> a
 com.brentonbostick.capsloc.world.physics.PhysicsBody -> com.brentonbostick.a.d.c.a:
-    com.brentonbostick.capsloc.world.World world -> E
-    double length -> F
-    double width -> G
-    double localULX -> H
-    double localULY -> I
-    com.brentonbostick.capsloc.math.Point center -> J
-    double angle -> K
-    com.brentonbostick.capsloc.geom.MutableOBB shape -> L
-    double forwardSpeed -> M
-    double angularVel -> N
-    com.brentonbostick.capsloc.geom.AABB localAABB -> O
-    com.brentonbostick.capsloc.math.Point vel -> P
+    com.brentonbostick.capsloc.world.World world -> G
+    double length -> H
+    double width -> I
+    double localULX -> J
+    double localULY -> K
+    com.brentonbostick.capsloc.math.Point center -> L
+    double angle -> M
+    com.brentonbostick.capsloc.geom.MutableOBB shape -> N
+    double forwardSpeed -> O
+    double angularVel -> P
+    com.brentonbostick.capsloc.geom.AABB localAABB -> Q
+    com.brentonbostick.capsloc.math.Point vel -> R
     59:59:void physicsInit() -> h
     63:63:void computeDynamicPropertiesAlways() -> i
     87:87:void computeDynamicPropertiesMoving() -> j
@@ -2242,7 +3111,7 @@ com.brentonbostick.capsloc.world.tools.Motion -> com.brentonbostick.a.d.e.a:
     1:1:com.brentonbostick.capsloc.world.tools.Motion[] values() -> values
     1:1:com.brentonbostick.capsloc.world.tools.Motion valueOf(java.lang.String) -> valueOf
 com.brentonbostick.capsloc.world.tools.WorldToolBase -> com.brentonbostick.a.d.e.b:
-    com.brentonbostick.capsloc.world.tools.Motion lastMotion -> t
+    com.brentonbostick.capsloc.world.tools.Motion lastMotion -> u
     63:71:void pressed(com.brentonbostick.capsloc.ui.InputEvent) -> a
     74:82:void dragged(com.brentonbostick.capsloc.ui.InputEvent) -> d
     85:90:void released(com.brentonbostick.capsloc.ui.InputEvent) -> b
