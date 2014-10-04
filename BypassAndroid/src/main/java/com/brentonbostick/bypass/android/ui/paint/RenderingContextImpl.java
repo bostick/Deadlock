@@ -131,35 +131,45 @@ public class RenderingContextImpl extends RenderingContext {
 	}
 	
 	public void drawAABB(AABB a) {
+		Style old = paint.getStyle();
 		paint.setStyle(Style.STROKE);
 		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
+		paint.setStyle(old);
 	}
 	
 	public void paintAABB(AABB a) {
+		Style old = paint.getStyle();
 		paint.setStyle(Style.FILL);
 		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
+		paint.setStyle(old);
 	}
 	
 	public void drawAABB(MutableAABB a) {
+		Style old = paint.getStyle();
 		paint.setStyle(Style.STROKE);
 		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
+		paint.setStyle(old);
 	}
 	
 	public void paintAABB(MutableAABB a) {
+		Style old = paint.getStyle();
 		paint.setStyle(Style.FILL);
 		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
+		paint.setStyle(old);
 	}
 	
 	public void drawPath(GeometryPath p) {
 		
 		GeometryPathImpl pp = (GeometryPathImpl)p;
 		
+		Style old = paint.getStyle();
 		paint.setStyle(Style.STROKE);
 		int fs = paint.getFlags();
 		paint.setFlags(Paint.ANTI_ALIAS_FLAG);
 		
 		canvas.drawPath(pp.p, paint);
 		
+		paint.setStyle(old);
 		paint.setFlags(fs);
 	}
 	
@@ -167,6 +177,7 @@ public class RenderingContextImpl extends RenderingContext {
 		
 		GeometryPathImpl pp = (GeometryPathImpl)p;
 		
+		Style old = paint.getStyle();
 		paint.setStyle(Style.FILL);
 		
 		int fs = paint.getFlags();
@@ -174,6 +185,7 @@ public class RenderingContextImpl extends RenderingContext {
 		
 		canvas.drawPath(pp.p, paint);
 		
+		paint.setStyle(old);
 		paint.setFlags(fs);
 	}
 	
@@ -183,6 +195,7 @@ public class RenderingContextImpl extends RenderingContext {
 	}
 	
 	public void drawCircle(Circle c) {
+		Style old = paint.getStyle();
 		paint.setStyle(Style.STROKE);
 		
 		int fs = paint.getFlags();
@@ -190,10 +203,12 @@ public class RenderingContextImpl extends RenderingContext {
 		
 		canvas.drawCircle((float)c.center.x, (float)c.center.y, (float)c.radius, paint);
 		
+		paint.setStyle(old);
 		paint.setFlags(fs);
 	}
 	
 	public void paintCircle(Circle c) {
+		Style old = paint.getStyle();
 		paint.setStyle(Style.FILL);
 		
 		int fs = paint.getFlags();
@@ -201,6 +216,7 @@ public class RenderingContextImpl extends RenderingContext {
 		
 		canvas.drawCircle((float)c.center.x, (float)c.center.y, (float)c.radius, paint);
 		
+		paint.setStyle(old);
 		paint.setFlags(fs);
 	}
 	
