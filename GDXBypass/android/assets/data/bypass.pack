@@ -1,0 +1,173 @@
+
+bypass.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+car-3-1
+  rotate: false
+  xy: 1, 205
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
+car-3-2
+  rotate: false
+  xy: 1, 171
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
+car-3-3
+  rotate: false
+  xy: 99, 205
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
+car-3-4
+  rotate: false
+  xy: 1, 137
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
+car-3-5
+  rotate: false
+  xy: 99, 171
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
+car-3-6
+  rotate: false
+  xy: 1, 103
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
+car-3-7
+  rotate: false
+  xy: 99, 137
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
+car-2-1
+  rotate: false
+  xy: 1, 69
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+car-2-2
+  rotate: false
+  xy: 99, 103
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+car-2-3
+  rotate: false
+  xy: 1, 35
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+car-2-4
+  rotate: false
+  xy: 67, 69
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+car-2-5
+  rotate: false
+  xy: 1, 1
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+car-2-6
+  rotate: false
+  xy: 67, 35
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+car-2-7
+  rotate: false
+  xy: 67, 1
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+grass-1
+  rotate: false
+  xy: 197, 205
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grass-2
+  rotate: false
+  xy: 197, 171
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+grass-3
+  rotate: false
+  xy: 197, 137
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+car-2-8
+  rotate: false
+  xy: 165, 103
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+grass-back
+  rotate: false
+  xy: 133, 69
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tile-1
+  rotate: false
+  xy: 133, 35
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tile-2
+  rotate: false
+  xy: 167, 69
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tile-3
+  rotate: false
+  xy: 133, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tile-4
+  rotate: false
+  xy: 167, 35
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tile-5
+  rotate: false
+  xy: 167, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
