@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="Bypass-java-2"/>
+	<classpathentry kind="src" path="Capsloc-java-2"/>
 	<classpathentry kind="src" path="Capsloc-java"/>
 	<classpathentry kind="src" path="Bypass-java"/>
 	<classpathentry kind="src" path="src/main/java"/>

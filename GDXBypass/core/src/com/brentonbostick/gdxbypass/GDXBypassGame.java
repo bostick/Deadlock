@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RotateToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.ScaleToAction;
@@ -25,38 +26,14 @@ public class GDXBypassGame extends ApplicationAdapter {
 	TextureAtlas textureAtlas;
 	Sprite grassSprite;
     Sprite tileSprite;
-    Sprite carSprite;
 
-    float newSpriteSize;
-
-    public class Car extends Actor {
-
-        boolean started;
-
-        Car() {
-            setBounds(getX(),getY(),3*newSpriteSize, newSpriteSize);
-//            addListener(new InputListener(){
-//                public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-//                    ((Car)event.getTarget()).started = true;
-//                    return true;
-//                }
-//            });
-        }
-
-//        @Override
-//        public void act(float delta){
-//            if(started){
-//                x+=5;
-//            }
-//        }
-
-        @Override
-        public void draw(Batch batch, float alpha) {
-            batch.draw(carSprite, getX(), getY(), 3*newSpriteSize, newSpriteSize);
-        }
-    }
+    CarFactory carFactory;
 
     private Stage stage;
+    int grassRows;
+    int grassCols;
+
+    float unitLength;
 
 	@Override
 	public void create () {
@@ -66,28 +43,30 @@ public class GDXBypassGame extends ApplicationAdapter {
 
         grassSprite = new Sprite(textureAtlas.findRegion("grass-back"));
         tileSprite = new Sprite(textureAtlas.findRegion("tile-1"));
-        carSprite = new Sprite(textureAtlas.findRegion("car-3-1"));
 
         int width = Gdx.graphics.getWidth();
         int height = Gdx.graphics.getHeight();
+
+        grassRows = 8;
+        grassCols = 8;
         if (width > height) {
             // landscape
-            newSpriteSize = (float)height / 8.0f;
-
+            unitLength = (float)height / 8.0f;
+            grassCols = (int)Math.ceil(width / unitLength);
         } else {
-            newSpriteSize = (float)width / 8.0f;
+            unitLength = (float)width / 8.0f;
+            grassRows = (int) Math.ceil(height / unitLength);
         }
+
+        carFactory = new CarFactory(textureAtlas, unitLength);
 
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
-        Car car = new Car();
+        Car car = carFactory.newCar();
         car.setTouchable(Touchable.enabled);
 
-        MoveToAction moveAction = new MoveToAction();
-        moveAction.setPosition(300f, 0f);
-        moveAction.setDuration(10f);
-        car.addAction(moveAction);
+        car.addAction(Actions.sequence(Actions.moveTo(300, 0, 1), Actions.rotateBy(360, 0.5f)));
 
         stage.addActor(car);
 
@@ -106,24 +85,15 @@ public class GDXBypassGame extends ApplicationAdapter {
         int width = Gdx.graphics.getWidth();
         int height = Gdx.graphics.getHeight();
 
-        int grassRows = 8;
-        int grassCols = 8;
-        if (width > height) {
-            // landscape
-            grassCols = (int)Math.ceil(width / newSpriteSize);
-        } else {
-            grassRows = (int) Math.ceil(height / newSpriteSize);
-        }
-
         for (int i = 0; i < grassCols; i++) {
             for (int j = 0; j < grassRows; j++) {
-                batch.draw(grassSprite, width/2 - (grassCols*newSpriteSize)/2 + i*newSpriteSize, height/2 - (grassRows*newSpriteSize)/2 + j*newSpriteSize, newSpriteSize, newSpriteSize);
+                batch.draw(grassSprite, width/2 - (grassCols*unitLength)/2 + i*unitLength, height/2 - (grassRows*unitLength)/2 + j*unitLength, unitLength, unitLength);
             }
         }
 
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
-                batch.draw(tileSprite, width/2 - (6*newSpriteSize)/2 + i*newSpriteSize, height/2 - (6*newSpriteSize)/2 + j*newSpriteSize, newSpriteSize, newSpriteSize);
+                batch.draw(tileSprite, width/2 - (6*unitLength)/2 + i*unitLength, height/2 - (6*unitLength)/2 + j*unitLength, unitLength, unitLength);
             }
         }
 
