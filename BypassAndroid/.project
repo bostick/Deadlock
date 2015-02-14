@@ -34,7 +34,7 @@
 		<link>
 			<name>Bypass-java</name>
 			<type>2</type>
-			<location>C:/Users/brenton/Documents/GitHub/Deadlock/Bypass/src/main/java</location>
+			<locationURI>WORKSPACE_LOC/Bypass/src/main/java</locationURI>
 		</link>
 		<link>
 			<name>Bypass-java-2</name>
@@ -44,12 +44,7 @@
 		<link>
 			<name>Capsloc-java</name>
 			<type>2</type>
-			<location>C:/Users/brenton/Documents/GitHub/Deadlock/Capsloc/src/main/java</location>
-		</link>
-		<link>
-			<name>Capsloc-java-2</name>
-			<type>2</type>
-			<location>C:/Users/bbostic/Documents/GitHub/Deadlock/Capsloc/src/main/java</location>
+			<locationURI>WORKSPACE_LOC/Capsloc/src/main/java</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

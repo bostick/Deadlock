@@ -11,17 +11,14 @@ public class Car extends Actor {
 
     Sprite sprite;
 
-    float unitLength;
+//    boolean started;
 
-    boolean started;
-
-    public Car(Sprite sprite, float unitLength) {
+    public Car(Sprite sprite) {
 
         this.sprite = sprite;
-        this.unitLength = unitLength;
 
-        setWidth(3*unitLength);
-        setHeight(unitLength);
+        setWidth(3);
+        setHeight(1);
         setOrigin(getWidth()/2, getHeight()/2);
 
 //        setBounds(getX(),getY(),3*unitLength, unitLength);
@@ -42,6 +39,6 @@ public class Car extends Actor {
 
     @Override
     public void draw(Batch batch, float alpha) {
-        batch.draw(sprite, getX(), getY(), getOriginX(), getOriginY(), 3*unitLength, unitLength, getScaleX(), getScaleY(), getRotation());
+        batch.draw(sprite, 0, 0, getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 }
