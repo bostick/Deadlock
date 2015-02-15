@@ -39,6 +39,6 @@ public class Car extends Actor {
 
     @Override
     public void draw(Batch batch, float alpha) {
-        batch.draw(sprite, 0, 0, getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+        batch.draw(sprite, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 }

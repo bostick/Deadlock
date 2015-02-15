@@ -13,6 +13,8 @@ public class Board extends Actor {
     Sprite sprite;
 
     public Board(Sprite sprite) {
+        setX(-3);
+        setY(-3);
         this.sprite = sprite;
     }
 
@@ -21,7 +23,8 @@ public class Board extends Actor {
 
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
-                batch.draw(sprite, -6/2 + i, -6/2 + j, 1, 1);
+//                batch.draw(sprite, getX() + i, getY() + j, 1, 1);
+                batch.draw(sprite, getX()+i, getY()+j, getOriginX(), getOriginY(), 1, 1, getScaleX(), getScaleY(), getRotation());
             }
         }
     }
