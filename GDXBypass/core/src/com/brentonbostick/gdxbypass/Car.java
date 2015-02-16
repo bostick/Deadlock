@@ -2,6 +2,7 @@ package com.brentonbostick.gdxbypass;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 /**
@@ -41,4 +42,14 @@ public class Car extends Actor {
     public void draw(Batch batch, float alpha) {
         batch.draw(sprite, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }
+
+    @Override
+    public void drawDebug(ShapeRenderer shapeRenderer) {
+        super.drawDebug(shapeRenderer);
+        shapeRenderer.translate(getX() + getOriginX(), getY() + getOriginY(), 0);
+        shapeRenderer.rotate(0, 0, 1, getRotation());
+        shapeRenderer.translate(-(getX() + getOriginX()), -(getY() + getOriginY()), 0);
+        shapeRenderer.circle(getX()+2.5f, getY()+0.5f, 0.2f);
+    }
+
 }

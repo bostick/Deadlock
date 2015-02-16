@@ -2,6 +2,10 @@ package com.brentonbostick.gdxbypass;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -32,8 +37,8 @@ import java.util.Map;
 
 public class GDXBypassGame extends ApplicationAdapter {
 
-    int GAME_WIDTH = 640;
-    int GAME_HEIGHT = 480;
+//    int GAME_WIDTH = 640;
+//    int GAME_HEIGHT = 480;
 
     OrthographicCamera worldCamera;
     ScreenViewport worldViewport;
@@ -44,36 +49,45 @@ public class GDXBypassGame extends ApplicationAdapter {
     Stage uiStage;
 
 	SpriteBatch batch;
+    ShapeRenderer shapeRenderer;
 	TextureAtlas textureAtlas;
 	Sprite grassSprite;
     Sprite tileSprite;
 
     CarFactory carFactory;
+    Car car;
 
     int grassRows;
     int grassCols;
     float unitLength;
 
+    InputProcessor mainInputProcessor;
+
     Table table;
+
+    boolean console;
+    boolean debug;
 
 	@Override
 	public void create () {
         batch = new SpriteBatch();
-
+        shapeRenderer = new ShapeRenderer();
         textureAtlas = new TextureAtlas(Gdx.files.internal("data/bypass.pack"));
 
         grassSprite = new Sprite(textureAtlas.findRegion("grass-back"));
         tileSprite = new Sprite(textureAtlas.findRegion("tile-1"));
 
+        int width = Gdx.graphics.getWidth();
+        int height = Gdx.graphics.getHeight();
         grassRows = 8;
         grassCols = 8;
-        if (GAME_WIDTH > GAME_HEIGHT) {
+        if (width > height) {
             // landscape
-            unitLength = (float)GAME_HEIGHT / 8.0f;
-            grassCols = (int)Math.ceil(GAME_WIDTH / unitLength);
+            unitLength = (float)height / 8.0f;
+            grassCols = (int)Math.ceil(width / unitLength);
         } else {
-            unitLength = (float)GAME_WIDTH / 8.0f;
-            grassRows = (int) Math.ceil(GAME_HEIGHT / unitLength);
+            unitLength = (float)width / 8.0f;
+            grassRows = (int) Math.ceil(height / unitLength);
         }
 
         carFactory = new CarFactory(textureAtlas);
@@ -93,7 +107,7 @@ public class GDXBypassGame extends ApplicationAdapter {
 
         Board board = new Board(tileSprite);
 
-        Car car = carFactory.newCar();
+        car = carFactory.newCar();
         int firstULRow = 1;
         int firstULCol = 1;
         float carX = board.getX() + firstULCol;
@@ -102,7 +116,7 @@ public class GDXBypassGame extends ApplicationAdapter {
         car.setY(carY);
 //        car.setTouchable(Touchable.enabled);
 
-        car.addAction(Actions.sequence(Actions.rotateBy(-90, 1)));
+//
 
         Group bg = new Group();
         Group fg = new Group();
@@ -117,21 +131,39 @@ public class GDXBypassGame extends ApplicationAdapter {
 
         Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 
-        TextButton buttonPlay = new TextButton("Play", skin);
-        TextButton buttonExit = new TextButton("Exit", skin);
-        buttonPlay.addListener(new ClickListener(){
+        TextButton debugButton = new TextButton("Debug", skin);
+//        TextButton buttonExit = new TextButton("Exit", skin);
+        debugButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //Same way we moved here from the Splash Screen
                 //We set it to new Splash because we got no other screens
                 //otherwise you put the screen there where you want to go
 //                ((Game)Gdx.app.getApplicationListener()).setScreen(new Splash());
-                Gdx.app.log("MyTag", "my informative message");
+//                Gdx.app.log("MyTag", "my informative message");
+                if (!debug) {
+                    debug = true;
+                } else {
+                    debug = false;
+                }
+                car.setDebug(debug);
             }
         });
 
-        table.add(buttonPlay).row();
-        table.add(buttonExit).row();
+
+        table.add(debugButton).row();
+        table.add(new TextButton("Test 1", skin){
+            {
+                addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        car.addAction(Actions.rotateBy(360, 2));
+                    }
+                });
+            }
+        }).row();
+        table.add(new TextButton("Test 2", skin)).row();
+        table.add(new TextButton("Test 3", skin)).row();
 
         table.setFillParent(true);
 
@@ -143,13 +175,55 @@ public class GDXBypassGame extends ApplicationAdapter {
 
         uiStage = new Stage(uiViewport);
 
+//        table.addAction(Actions.sequence(Actions.rotateBy(-90, 1)));
+        table.setTransform(true);
+        table.addAction(Actions.alpha(0));
+//        table.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(2)));
+//        table.addAction(Actions.sequence(Actions.moveBy(0, 150), Actions.moveBy(0, -150, 0.75f)));
         uiStage.addActor(table);
 
-        Gdx.input.setInputProcessor(uiStage);
+        uiStage.addListener(new InputListener() {
+            @Override
+            public boolean keyUp(InputEvent ev, int keyCode) {
+                switch (keyCode) {
+                    case Input.Keys.ESCAPE:
+                        if (console) {
+                            console = false;
+//                            table.addAction(Actions.sequence(Actions.moveBy(0, 150, 0.75f)));
+                            table.addAction(Actions.fadeOut(0.2f));
+                            Gdx.input.setInputProcessor(mainInputProcessor);
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
+
+        mainInputProcessor = new InputAdapter() {
+            public boolean keyUp(int keyCode) {
+                switch (keyCode) {
+                    case Input.Keys.ESCAPE:
+                        if (!console) {
+                            console = true;
+//                            table.addAction(Actions.sequence(Actions.moveBy(0, 150), Actions.moveBy(0, -150, 0.75f)));
+                            table.addAction(Actions.fadeIn(0.2f));
+                            Gdx.input.setInputProcessor(uiStage);
+                        }
+                        break;
+                }
+                return true;
+            }
+        };
+
+//        Gdx.input.setInputProcessor(uiStage);
+        Gdx.input.setInputProcessor(mainInputProcessor);
 	}
 
 	@Override
 	public void render () {
+
+        worldStage.act(Gdx.graphics.getDeltaTime());
+        uiStage.act();
 
 //        viewport.setScreenWidth(GAME_WIDTH);
 //        viewport.setScreenHeight(GAME_HEIGHT);
@@ -162,14 +236,21 @@ public class GDXBypassGame extends ApplicationAdapter {
 
         worldCamera.position.set(0, 0, 0);
 
-        worldStage.act(Gdx.graphics.getDeltaTime());
-
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         worldStage.draw();
 
+
         uiStage.draw();
+
+//        if (debug) {
+//            shapeRenderer.setProjectionMatrix(worldViewport.getCamera().combined);
+//            shapeRenderer.setColor(Color.RED);
+//            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//            car.drawDebug(shapeRenderer);
+//            shapeRenderer.end();
+//        }
 	}
 
 //    @Override

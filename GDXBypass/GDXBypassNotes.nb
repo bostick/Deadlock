@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      2392,        101]
-NotebookOptionsPosition[      1858,         78]
-NotebookOutlinePosition[      2205,         93]
-CellTagsIndexPosition[      2162,         90]
+NotebookDataLength[      2786,        112]
+NotebookOptionsPosition[      2180,         87]
+NotebookOutlinePosition[      2527,        102]
+CellTagsIndexPosition[      2484,         99]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -73,7 +73,16 @@ Y - exit
 the board is made up of RegularStuds and BorderStuds\
 \>", "Text",
  CellChangeTimes->{{3.632916072809621*^9, 3.632916101872031*^9}, {
-  3.6329164700719213`*^9, 3.6329165010172453`*^9}}]
+  3.6329164700719213`*^9, 3.6329165010172453`*^9}}],
+
+Cell["the 6 rows and the 6 cols are called tracks", "Text",
+ CellChangeTimes->{{3.632928906974969*^9, 3.6329289162137375`*^9}}],
+
+Cell["\<\
+tracks combine with roads to make paths. paths are what cars travel on
+paths have a start and end\
+\>", "Text",
+ CellChangeTimes->{{3.632928928653202*^9, 3.6329289598732944`*^9}}]
 }, Open  ]]
 },
 WindowSize->{767, 713},
@@ -101,7 +110,9 @@ Cell[1059, 36, 176, 4, 49, "Text"]
 Cell[CellGroupData[{
 Cell[1272, 45, 104, 1, 63, "Section"],
 Cell[1379, 48, 198, 14, 224, "Program"],
-Cell[1580, 64, 262, 11, 163, "Text"]
+Cell[1580, 64, 262, 11, 163, "Text"],
+Cell[1845, 77, 127, 1, 30, "Text"],
+Cell[1975, 80, 189, 4, 49, "Text"]
 }, Open  ]]
 }
 ]
