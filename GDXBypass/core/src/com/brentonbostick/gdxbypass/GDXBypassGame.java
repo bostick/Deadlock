@@ -37,8 +37,9 @@ import java.util.Map;
 
 public class GDXBypassGame extends ApplicationAdapter {
 
-//    int GAME_WIDTH = 640;
-//    int GAME_HEIGHT = 480;
+    static GDXBypassGame game;
+
+    World world;
 
     OrthographicCamera worldCamera;
     ScreenViewport worldViewport;
@@ -51,15 +52,10 @@ public class GDXBypassGame extends ApplicationAdapter {
 	SpriteBatch batch;
     ShapeRenderer shapeRenderer;
 	TextureAtlas textureAtlas;
+
 	Sprite grassSprite;
     Sprite tileSprite;
-
-    CarFactory carFactory;
-    Car car;
-
-    int grassRows;
-    int grassCols;
-    float unitLength;
+    Sprite carSprite;
 
     InputProcessor mainInputProcessor;
 
@@ -70,83 +66,42 @@ public class GDXBypassGame extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+
+        game = this;
+
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         textureAtlas = new TextureAtlas(Gdx.files.internal("data/bypass.pack"));
 
         grassSprite = new Sprite(textureAtlas.findRegion("grass-back"));
         tileSprite = new Sprite(textureAtlas.findRegion("tile-1"));
+        carSprite = new Sprite(textureAtlas.findRegion("car-3-1"));
 
-        int width = Gdx.graphics.getWidth();
-        int height = Gdx.graphics.getHeight();
-        grassRows = 8;
-        grassCols = 8;
-        if (width > height) {
-            // landscape
-            unitLength = (float)height / 8.0f;
-            grassCols = (int)Math.ceil(width / unitLength);
-        } else {
-            unitLength = (float)width / 8.0f;
-            grassRows = (int) Math.ceil(height / unitLength);
-        }
-
-        carFactory = new CarFactory(textureAtlas);
+        world = new World();
 
         worldCamera = new OrthographicCamera();
 
         worldViewport = new ScreenViewport(worldCamera);
-        worldViewport.setUnitsPerPixel(1.0f / unitLength);
-//        viewport = new FillViewport(GAME_WIDTH / unitLength, GAME_HEIGHT / unitLength, camera);
+        worldViewport.setUnitsPerPixel(1.0f / world.unitLength);
 
         worldStage = new Stage(worldViewport);
-//        Gdx.input.setInputProcessor(stage);
 
         table = new Table();
 
-        World world = new World(grassSprite, grassCols, grassRows);
-
-        Board board = new Board(tileSprite);
-
-        car = carFactory.newCar();
-        int firstULRow = 1;
-        int firstULCol = 1;
-        float carX = board.getX() + firstULCol;
-        float carY = board.getY() + 6 - firstULRow - car.getHeight();
-        car.setX(carX);
-        car.setY(carY);
-//        car.setTouchable(Touchable.enabled);
-
-//
-
-        Group bg = new Group();
-        Group fg = new Group();
-
-        worldStage.addActor(bg);
-        worldStage.addActor(fg);
-
-        bg.addActor(world);
-        bg.addActor(board);
-
-        fg.addActor(car);
+        worldStage.addActor(world);
 
         Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 
         TextButton debugButton = new TextButton("Debug", skin);
-//        TextButton buttonExit = new TextButton("Exit", skin);
         debugButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //Same way we moved here from the Splash Screen
-                //We set it to new Splash because we got no other screens
-                //otherwise you put the screen there where you want to go
-//                ((Game)Gdx.app.getApplicationListener()).setScreen(new Splash());
-//                Gdx.app.log("MyTag", "my informative message");
                 if (!debug) {
                     debug = true;
                 } else {
                     debug = false;
                 }
-                car.setDebug(debug);
+                worldStage.setDebugAll(debug);
             }
         });
 
@@ -157,7 +112,7 @@ public class GDXBypassGame extends ApplicationAdapter {
                 addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        car.addAction(Actions.rotateBy(360, 2));
+//                        world.car.addAction(Actions.rotateBy(360, 2));
                     }
                 });
             }
@@ -170,16 +125,11 @@ public class GDXBypassGame extends ApplicationAdapter {
         uiCamera = new OrthographicCamera();
 
         uiViewport = new ScreenViewport(uiCamera);
-//        uiViewport.setUnitsPerPixel(1.0f / unitLength);
-//        viewport = new FillViewport(GAME_WIDTH / unitLength, GAME_HEIGHT / unitLength, camera);
 
         uiStage = new Stage(uiViewport);
 
-//        table.addAction(Actions.sequence(Actions.rotateBy(-90, 1)));
         table.setTransform(true);
         table.addAction(Actions.alpha(0));
-//        table.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(2)));
-//        table.addAction(Actions.sequence(Actions.moveBy(0, 150), Actions.moveBy(0, -150, 0.75f)));
         uiStage.addActor(table);
 
         uiStage.addListener(new InputListener() {
@@ -189,7 +139,6 @@ public class GDXBypassGame extends ApplicationAdapter {
                     case Input.Keys.ESCAPE:
                         if (console) {
                             console = false;
-//                            table.addAction(Actions.sequence(Actions.moveBy(0, 150, 0.75f)));
                             table.addAction(Actions.fadeOut(0.2f));
                             Gdx.input.setInputProcessor(mainInputProcessor);
                         }
@@ -205,7 +154,6 @@ public class GDXBypassGame extends ApplicationAdapter {
                     case Input.Keys.ESCAPE:
                         if (!console) {
                             console = true;
-//                            table.addAction(Actions.sequence(Actions.moveBy(0, 150), Actions.moveBy(0, -150, 0.75f)));
                             table.addAction(Actions.fadeIn(0.2f));
                             Gdx.input.setInputProcessor(uiStage);
                         }
@@ -213,9 +161,29 @@ public class GDXBypassGame extends ApplicationAdapter {
                 }
                 return true;
             }
+
+            @Override
+            public boolean touchDown (int x, int y, int pointer, int button) {
+                float width = Gdx.graphics.getWidth();
+                float height = Gdx.graphics.getHeight();
+                Gdx.app.log("MyTag", (x-width/2)/world.unitLength + " " + (-y + height/2)/world.unitLength);
+                return true;
+            }
+
+            @Override
+            public boolean touchUp (int x, int y, int pointer, int button) {
+
+                return true;
+            }
+
+            @Override
+            public boolean touchDragged (int x, int y, int pointer) {
+                return true;
+            }
         };
 
-//        Gdx.input.setInputProcessor(uiStage);
+        Gdx.graphics.setContinuousRendering(false);
+
         Gdx.input.setInputProcessor(mainInputProcessor);
 	}
 
@@ -225,51 +193,22 @@ public class GDXBypassGame extends ApplicationAdapter {
         worldStage.act(Gdx.graphics.getDeltaTime());
         uiStage.act();
 
-//        viewport.setScreenWidth(GAME_WIDTH);
-//        viewport.setScreenHeight(GAME_HEIGHT);
-//        viewport.setScreenPosition(0, 0);
-//        viewport.set
-//        camera.position.set(0.7f, 0, 0);
-//        camera.update();
-
-//        Vector3 pos = camera.position;
-
         worldCamera.position.set(0, 0, 0);
+        shapeRenderer.setProjectionMatrix(worldCamera.combined);
 
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         worldStage.draw();
 
-
         uiStage.draw();
-
-//        if (debug) {
-//            shapeRenderer.setProjectionMatrix(worldViewport.getCamera().combined);
-//            shapeRenderer.setColor(Color.RED);
-//            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-//            car.drawDebug(shapeRenderer);
-//            shapeRenderer.end();
-//        }
 	}
-
-//    @Override
-//    public void resize(int width, int height){
-//        viewport.update(width,height);
-//        camera.position.set(0,0,0);
-//    }
-
-//    @Override
-//    public void resize(int width, int height) {
-//        use true here to center the camera
-//        that's what you probably want in case of a UI
-//        stage.getViewport().update(width, height, false);
-//    }
 
     @Override
     public void dispose() {
         batch.dispose();
         textureAtlas.dispose();
+        uiStage.dispose();
         worldStage.dispose();
     }
 }
