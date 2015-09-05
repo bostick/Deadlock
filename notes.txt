@@ -62,3 +62,109 @@ Run the code in Solving.nb and LevelProcessing.nb
 
 
 
+
+
+
+deadlock notes
+
+objectives:
+connect entrances and exits for each level
+prevent crashes, deadlocks
+maximize traffic flow
+
+idea is to trick people into developing an intuition about concurrency, threading, locks, wait-free algorithms,...
+immediate design questions:
+1. working with two lane roads is very appealing, but how to rationalize it?
+something like with kirchoff, and whole scene is part of a circuit?
+flow of paired lanes is equal, actual flow will come from this and other constraints
+
+2.
+how to represent data being manipulated?
+cars are like instruction pointers moving through code sections... so like a million ips all working at same time
+what are they doing?
+doesn't matter, simply "work" of some kind, irrelevant
+
+fork-join
+
+reversible work
+all work is being done in memory, nothing with side-effects
+stm
+
+
+constraints:
+building roads cost money
+natural and artifical obstacles (hills, ponds, monuments) get in the way
+cars can crash
+cars can fly off of a road if going too fast
+construction: only one lane in a segment, but have 2-way traffic
+
+resources:
+money, based on tolls, based on traffic flow, based on fines for speeding
+
+what to buy:
+roads
+signs
+stop lights
+traffic officers
+computer systems
+speed sensors!
+
+stages:
+first design the roads, commit (compile), then run
+
+designing:
+touching and dragging will create road segment schematic
+releasing will draw road segment dropping down onto grid with satisfying "poof" and dust wooshing out from under
+
+
+
+running:
+cars have different visualizations, showing the space they will take up (think for a single lane with 2-way traffic)
+the path they are taking, with it fading out the further away from the car it is
+
+after running parallel for a sufficient distance, cars in parallel lanes may spontaneously switch lanes
+idea if they have had enough time to slow down or speed up and can see what is going on
+tunnleing??
+
+different kind of cars:
+1. mini-van, goes slow but will never crash
+2. sports car, goes as fast as possible but can crash
+3. whole spectrum in between
+
+running a level is like a cutscene that people will watch
+will have a dashboard with stats like flow, ...
+
+level ideas:
+speed traps!
+
+
+music:
+lee dorsey - working in a coal mine
+sabre dance
+anvil chorus
+
+monk theme by randy newman, while drafting
+
+
+
+
+
+
+
+
+
+
+ideas
+
+minimize stress, waiting
+
+stoplights = blocking
+stop signs = ?
+roundabouts = non-blocking algorithms?
+
+
+
+build up to a high-traffic web server
+
+
+
