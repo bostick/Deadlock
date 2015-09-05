@@ -1,0 +1,64 @@
+
+bypass level format
+
+
+tutorial.zip
+episode1.zip
+episode2.zip
+
+
+contains:
+metadata.txt and a bunch of .dat files
+
+metadata.txt contains only:
+# of .dat files
+
+
+example .dat file:
+
+gen-0-4-2-8.dat
+
+contents:
+moves: 28
+/---K--\
+|  CAAA|
+|  C B |
+|RRC B K
+| D  B |
+Y D    J
+| D    |
+\---J--/
+
+
+
+
+generating levels:
+
+There are 6 different boards that are used in the game:
+com.brentonbostick.bypass.solver.Boards.board0
+com.brentonbostick.bypass.solver.Boards.board1
+com.brentonbostick.bypass.solver.Boards.board2
+com.brentonbostick.bypass.solver.Boards.board3
+com.brentonbostick.bypass.solver.Boards.board4
+com.brentonbostick.bypass.solver.Boards.board5
+
+
+
+1. generate transcripts from java code
+
+Run these commands to generate transcripts for each board:
+generate.bat 1
+generate.bat 2
+generate.bat 3
+generate.bat 4
+generate.bat 5
+
+
+2. process the transcripts in Mathematica code
+Run the code in Solving.nb and LevelProcessing.nb
+
+
+
+
+
+
