@@ -82,8 +82,9 @@ public abstract class MenuItem {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.pushClip();
-		
+//		ctxt.pushClip();
+		ctxt.pushTransform();
+
 		/*
 		 * little pixel differences add up to the label overflowing the aabb a little bit
 		 */
@@ -101,8 +102,9 @@ public abstract class MenuItem {
 			auxLab2.paint(ctxt);
 		}
 		
-		ctxt.popClip();
-		
+//		ctxt.popClip();
+		ctxt.popTransform();
+
 		if (border) {
 			ctxt.setColor(Color.BLUE);
 			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);

@@ -10,6 +10,8 @@ import com.brentonbostick.capsloc.ui.MenuItem;
 import com.brentonbostick.capsloc.ui.paint.Color;
 import com.brentonbostick.capsloc.ui.paint.FontStyle;
 
+import java.util.Locale;
+
 public abstract class MainMenuItem extends MenuItem {
 	
 	LevelDB levelDB;
@@ -35,7 +37,7 @@ public abstract class MainMenuItem extends MenuItem {
 		aabb = new AABB(aabb.x, aabb.y, menu.columnWidth[c], 20 + lab.aabb.height + 20);
 		
 		if (levelDB.percentage != 0.0) {
-			String pString = String.format("%.2f%%", levelDB.percentage * 100);
+			String pString = String.format(Locale.US, "%.2f%%", levelDB.percentage * 100);
 			
 			auxLab1 = new Label(pString);
 			auxLab1.color = Color.LIGHT_GRAY;
